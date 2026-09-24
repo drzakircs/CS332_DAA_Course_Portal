@@ -1,0 +1,1857 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>CS-332 Week 1 — BS Cyber Security — Projector Optimized v4.1</title>
+<style>
+:root{
+ --au:#0868a8;--au2:#09a9df;--navy:#082a46;--ink:#102436;--muted:#587084;
+ --paper:#f7fbfe;--card:#fff;--line:#cfe0ec;--good:#16845f;--bad:#b84444;
+ --amber:#b87500;--s2:#6d50c6;--s3:#14856b;--shadow:0 16px 44px rgba(15,52,82,.15);
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;font-family:Inter,Segoe UI,Arial,sans-serif;background:#dfeaf2;color:var(--ink);overflow:hidden}
+button,input{font:inherit}
+button{cursor:pointer}
+#shell{width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;padding:12px;background:radial-gradient(circle at 10% 10%,rgba(9,169,223,.12),transparent 28%),radial-gradient(circle at 90% 90%,rgba(8,104,168,.12),transparent 30%),#e5eef5}
+#stage{position:relative;width:min(calc(100vw - 24px),calc((100vh - 24px)*16/9));height:min(calc(100vh - 24px),calc((100vw - 24px)*9/16));background:var(--paper);box-shadow:var(--shadow);overflow:hidden;border:1px solid #bfd3e0;outline:none}
+.slide{position:absolute;inset:0;padding:50px 66px 62px;display:none;background:linear-gradient(90deg,rgba(8,104,168,.025) 1px,transparent 1px),linear-gradient(rgba(8,104,168,.025) 1px,transparent 1px),var(--paper);background-size:36px 36px}
+.slide.active{display:flex;flex-direction:column}
+.slide.dark{background:radial-gradient(circle at 78% 18%,rgba(61,196,242,.20),transparent 28%),linear-gradient(135deg,#06223c,#0b3a63 72%,#0a4f78);color:white}
+.slide.s2dark{background:radial-gradient(circle at 80% 18%,rgba(170,144,255,.18),transparent 30%),linear-gradient(135deg,#241b49,#4a378c 75%,#5b45a7);color:white}
+.slide.s3dark{background:radial-gradient(circle at 80% 18%,rgba(91,224,181,.18),transparent 30%),linear-gradient(135deg,#0a3228,#126049 75%,#167357);color:white}
+.slide::before{content:"";position:absolute;left:0;right:0;top:0;height:9px;background:linear-gradient(90deg,var(--au2),var(--au))}
+.slide[data-session="2"]::before{background:linear-gradient(90deg,#b196ff,var(--s2))}
+.slide[data-session="3"]::before{background:linear-gradient(90deg,#66d9b4,var(--s3))}
+.logo{position:absolute;right:44px;top:28px;width:70px;height:70px;object-fit:contain;opacity:.96}
+.kicker{font-size:clamp(19px,1.35vw,27px);font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--au);margin-bottom:10px}
+[data-session="2"] .kicker{color:var(--s2)}[data-session="3"] .kicker{color:var(--s3)}
+.dark .kicker,.s2dark .kicker,.s3dark .kicker{color:#9de8ff}
+.s2dark .kicker{color:#d5c8ff}.s3dark .kicker{color:#b7f2df}
+h1,h2,h3,p{margin-top:0}
+h1{font-size:clamp(50px,4.45vw,82px);line-height:1.02;letter-spacing:-.035em;margin-bottom:22px}
+h2{font-size:clamp(40px,3.15vw,60px);line-height:1.08;letter-spacing:-.025em;margin-bottom:24px;color:var(--navy)}
+.dark h2,.s2dark h2,.s3dark h2{color:white}
+h3{font-size:clamp(27px,1.85vw,36px);line-height:1.15;margin-bottom:10px;color:var(--navy)}
+.dark h3,.s2dark h3,.s3dark h3{color:white}
+p,li,.body{font-size:clamp(24px,1.68vw,32px);line-height:1.34}
+.small{font-size:clamp(18px,1.18vw,24px);line-height:1.34}.tiny{font-size:clamp(15px,.95vw,19px)}
+.lead{font-size:clamp(31px,2.35vw,45px);line-height:1.26}.muted{color:var(--muted)}
+.dark .muted,.s2dark .muted,.s3dark .muted{color:#d0dfeb}
+.accent{color:var(--au2)}.s2c{color:var(--s2)}.s3c{color:var(--s3)}
+.center{align-items:center;justify-content:center;text-align:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px;min-height:0}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;min-height:0}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;min-height:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 24px;box-shadow:0 8px 24px rgba(17,55,85,.08);min-width:0}
+.dark .card,.s2dark .card,.s3dark .card{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.18);box-shadow:none}
+.card p,.card li{font-size:clamp(20px,1.38vw,27px)}
+.card.compact{padding:18px 20px}
+.icon{font-size:clamp(42px,3.6vw,68px);line-height:1;margin-bottom:10px}
+.big{font-size:clamp(54px,4.6vw,86px);font-weight:950;line-height:1;color:var(--au2)}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:#e7f6fc;border:1px solid #b9e5f5;font-size:clamp(17px,1.08vw,21px);font-weight:800;color:var(--navy)}
+.dark .pill,.s2dark .pill,.s3dark .pill{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.2);color:white}
+.clean{margin:0;padding-left:1.18em}.clean li{margin:.24em 0}
+.highlight{border-left:8px solid var(--au2);background:#edf9fe;border-radius:12px;padding:17px 20px}
+[data-session="2"] .highlight{border-color:#9f84ec;background:#f3f0ff}[data-session="3"] .highlight{border-color:#56c99f;background:#eefaf6}
+.dark .highlight,.s2dark .highlight,.s3dark .highlight{background:rgba(255,255,255,.08)}
+.session-tag{display:inline-flex;align-items:center;gap:10px;font-weight:900;font-size:clamp(18px,1.15vw,22px);padding:7px 13px;border-radius:10px;background:#e8f6fd;color:var(--au);border:1px solid #bce7f7}
+[data-session="2"] .session-tag{background:#f0ecff;color:var(--s2);border-color:#d6caff}[data-session="3"] .session-tag{background:#eaf8f3;color:var(--s3);border-color:#b9ead8}
+.timeline{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:12px}.timeblock{padding:15px 14px;border-radius:14px;background:white;border:1px solid var(--line);text-align:center}.timeblock b{display:block;font-size:clamp(21px,1.45vw,28px);color:var(--navy)}.timeblock span{font-size:clamp(16px,1vw,20px);color:var(--muted)}
+.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:17px;align-items:stretch}.step{position:relative;background:white;border:2px solid var(--line);border-radius:17px;padding:20px 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:165px}.step:not(:last-child)::after{content:"→";position:absolute;right:-27px;top:50%;transform:translateY(-50%);font-size:37px;color:var(--au2);font-weight:950}.step b{font-size:clamp(22px,1.5vw,29px);color:var(--navy)}.step span{font-size:clamp(16px,1.06vw,21px);color:var(--muted);margin-top:7px}
+.code{font-family:Cascadia Code,Consolas,monospace;background:#071825;color:#ecf8ff;border-radius:16px;padding:20px 23px;font-size:clamp(21px,1.5vw,28px);line-height:1.47;white-space:pre-wrap}
+/* Flip Q&A */
+.qwrap{perspective:1200px;min-height:230px}.qcard{width:100%;height:100%;min-height:230px;position:relative;transform-style:preserve-3d;transition:transform .55s ease;cursor:pointer;outline:none}.qcard.flipped{transform:rotateY(180deg)}.qface{position:absolute;inset:0;backface-visibility:hidden;border-radius:20px;padding:26px 28px;display:flex;flex-direction:column;justify-content:center;border:2px solid #f1c46e;background:linear-gradient(135deg,#fffdf4,#fff6d8);box-shadow:0 12px 26px rgba(118,83,10,.12)}.qback{transform:rotateY(180deg);border-color:#75cda9;background:linear-gradient(135deg,#f3fff9,#e2f9ef)}.qlabel{font-size:clamp(17px,1vw,20px);font-weight:950;letter-spacing:.08em;text-transform:uppercase;color:#986000;margin-bottom:10px}.qback .qlabel{color:#126948}.qtext{font-size:clamp(31px,2.35vw,44px);line-height:1.22;font-weight:850;color:var(--navy)}.ans{font-size:clamp(25px,1.72vw,33px);line-height:1.32}.clickhint{font-size:clamp(15px,.95vw,19px);margin-top:14px;color:#806b31;font-weight:750}
+/* Visual components */
+.visualbox{background:white;border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 8px 24px rgba(17,55,85,.07)}
+svg{width:100%;height:auto;display:block}
+.node{fill:#fff;stroke:#bcd4e4;stroke-width:2}.arrow{stroke:#0ba9df;stroke-width:4;fill:none;marker-end:url(#arrow)}.svgtxt{font-family:Inter,Segoe UI,Arial,sans-serif;fill:#102436;font-weight:800}.svgsub{font-family:Inter,Segoe UI,Arial,sans-serif;fill:#587084}
+/* Demo arrays */
+.arr{display:flex;gap:9px;flex-wrap:wrap}.cell{width:62px;height:62px;border-radius:12px;border:3px solid #c9d9e5;background:white;display:grid;place-items:center;font-size:27px;font-weight:900;transition:.2s}.cell.active{border-color:#f0b43d;background:#fff5d5;transform:translateY(-4px)}.cell.good{border-color:#38ad7d;background:#e7f8f0}.cell.dim{opacity:.22}
+.demo-controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.action{border:1px solid #b8d2e2;background:white;color:var(--navy);border-radius:10px;padding:10px 15px;font-size:clamp(18px,1.15vw,22px);font-weight:850}.action.primary{background:var(--au);color:white;border-color:var(--au)}.action.s2{background:var(--s2);color:white;border-color:var(--s2)}.action.s3{background:var(--s3);color:white;border-color:var(--s3)}
+.status{margin-top:14px;padding:13px 15px;border-radius:12px;background:#edf5fa;border:1px dashed #b8d0df;font-size:clamp(18px,1.18vw,23px);min-height:54px}
+/* Strategy chooser */
+.strategy-map{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.strategy{border:2px solid var(--line);background:white;border-radius:15px;padding:16px;text-align:left}.strategy.selected{border-color:var(--s2);background:#f5f2ff}.strategy strong{font-size:clamp(21px,1.35vw,26px);display:block;color:var(--navy)}.strategy span{font-size:clamp(16px,1vw,20px);color:var(--muted)}
+/* Growth bars */
+.bars{display:grid;gap:11px}.barrow{display:grid;grid-template-columns:125px 1fr 135px;gap:12px;align-items:center}.track{height:20px;border-radius:999px;background:#e8eff4;border:1px solid #d0dfe9;overflow:hidden}.fill{height:100%;border-radius:999px;transition:width .3s}.barlabel{font-size:clamp(18px,1.1vw,22px);font-weight:900}.barval{font-size:clamp(16px,1vw,20px);color:var(--muted)}
+/* Footer / controls */
+.footer{position:absolute;left:66px;right:66px;bottom:20px;display:flex;justify-content:space-between;align-items:center;font-size:15px;color:#6e8191}.dark .footer,.s2dark .footer,.s3dark .footer{color:#c8dae6}.counter{font-variant-numeric:tabular-nums}
+.note{position:absolute;left:66px;right:66px;bottom:54px;padding:10px 13px;border-radius:11px;background:#fff5c7;border:1px solid #e7cb66;color:#4d3b00;font-size:17px;display:none}.note.show{display:block}.dark .note,.s2dark .note,.s3dark .note{background:rgba(255,227,125,.16);border-color:rgba(255,227,125,.42);color:#fff3c3}
+.controls{position:fixed;right:22px;bottom:16px;display:flex;gap:7px;z-index:50}.ctrl{width:43px;height:43px;border-radius:50%;border:1px solid #b8ccd9;background:rgba(255,255,255,.96);display:grid;place-items:center;color:var(--navy);font-size:19px;font-weight:900;box-shadow:0 4px 14px rgba(18,56,84,.13)}.ctrl:hover{background:#e8f8fe;border-color:#73d5f3}.progress{position:fixed;bottom:0;left:0;right:0;height:6px;background:rgba(6,42,70,.12);z-index:45}.progress>div{height:100%;background:linear-gradient(90deg,var(--au2),var(--au));width:0;transition:width .2s}
+.session-jump{position:fixed;left:18px;bottom:15px;z-index:50;display:flex;gap:7px}.sj{border:1px solid #bdd0dd;background:rgba(255,255,255,.96);border-radius:999px;padding:8px 12px;font-weight:900;color:var(--navy);font-size:16px}.sj[data-s="2"]{color:var(--s2)}.sj[data-s="3"]{color:var(--s3)}
+/* overlays */
+.overlay{position:fixed;inset:0;z-index:80;background:rgba(4,20,34,.95);display:none;overflow:auto;padding:34px}.overlay.open{display:block}.overlay-inner{max-width:1250px;margin:auto;color:white}.overlay h2{color:white}.ovgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.ov{border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.07);color:white;padding:14px;border-radius:13px;text-align:left;min-height:82px}.ov small{display:block;color:#94ddf5;margin-bottom:4px}.close{float:right;border:0;background:white;color:var(--navy);border-radius:9px;padding:8px 12px;font-weight:900}.helpgrid{display:grid;grid-template-columns:150px 1fr;gap:12px 18px;font-size:22px}.helpbox{background:white;color:var(--ink);border-radius:18px;padding:26px;max-width:780px;margin:60px auto}.helpbox h2{color:var(--navy)}kbd{background:#edf4f8;border:1px solid #b7cad7;border-bottom-width:3px;border-radius:6px;padding:3px 8px;font-weight:850}
+.timerpanel{position:fixed;right:20px;top:20px;z-index:70;background:white;border:1px solid #bed3e0;border-radius:14px;padding:15px;width:280px;box-shadow:0 10px 30px rgba(16,51,78,.18);display:none}.timerpanel.open{display:block}.timerdigits{font-size:42px;font-weight:950;color:var(--navy);text-align:center;font-variant-numeric:tabular-nums;margin:8px 0}.timerbtns{display:flex;gap:7px;flex-wrap:wrap;justify-content:center}.timerbtns button{border:1px solid #bfd2df;background:#f5fafc;border-radius:8px;padding:7px 10px;font-weight:800;color:var(--navy)}
+@media(max-width:1050px){#shell{padding:0}#stage{width:100vw;height:100vh;max-width:none;max-height:none}.slide{padding:36px 38px 56px;overflow:auto}.grid3,.grid4{grid-template-columns:1fr 1fr}.flow{grid-template-columns:1fr}.step{min-height:auto}.step:not(:last-child)::after{content:"↓";right:auto;left:50%;top:auto;bottom:-30px;transform:translateX(-50%)}.timeline{grid-template-columns:repeat(3,1fr)}.footer{left:38px;right:38px}.note{left:38px;right:38px}.ovgrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:680px){.slide{padding:28px 22px 58px}.grid2,.grid3,.grid4,.strategy-map{grid-template-columns:1fr}.timeline{grid-template-columns:1fr 1fr}.footer{left:22px;right:22px}.note{left:22px;right:22px}.session-jump{display:none}.barrow{grid-template-columns:90px 1fr}.barval{display:none}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* v2 classroom refinements */
+.slide{padding:44px 58px 58px}
+h2{margin-bottom:18px}
+.card{padding:20px 22px}
+.qface{position:absolute}
+.flipcue{
+  position:absolute;right:18px;bottom:12px;
+  font-size:24px;font-weight:950;line-height:1;color:#8e6b15;
+  opacity:.72;transition:transform .2s,opacity .2s
+}
+.qback .flipcue{color:#167152}
+.qcard:hover .flipcue,.qcard:focus-visible .flipcue{transform:rotate(45deg);opacity:1}
+.qcard:focus-visible{outline:4px solid rgba(9,169,223,.28);outline-offset:4px;border-radius:20px}
+.flip-grid .qwrap,.flip-grid .qcard{min-height:300px}
+.flip-grid .qtext{font-size:clamp(25px,1.8vw,34px)}
+.flip-grid .ans{font-size:clamp(22px,1.45vw,28px)}
+
+.controls{
+  opacity:.18;
+  transition:opacity .25s ease;
+}
+.controls:hover,.controls:focus-within{opacity:1}
+.ctrl{
+  background:rgba(255,255,255,.12);
+  border-color:rgba(8,42,70,.16);
+  box-shadow:none;
+  backdrop-filter:blur(5px);
+  transition:background .2s,border-color .2s,transform .2s;
+}
+.controls:hover .ctrl,.ctrl:focus-visible{
+  background:rgba(255,255,255,.96);
+  border-color:#9ecfe3;
+}
+.ctrl:hover{transform:translateY(-1px)}
+#noteBtn{
+  width:32px;height:32px;
+  font-family:Georgia,serif;font-style:italic;font-size:20px;
+}
+.session-jump{display:none!important}
+
+.hero-path{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;width:100%;margin-top:8px}
+.hero-node{
+  min-height:122px;padding:14px;border:1px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.08);border-radius:16px;text-align:left
+}
+.hero-node span{display:block;color:#83e0ff;font-weight:950;font-size:18px;margin-bottom:5px}
+.hero-node b{display:block;color:white;font-size:clamp(23px,1.5vw,29px);margin-bottom:5px}
+.hero-node small{color:#d1e2ef;font-size:clamp(15px,.95vw,19px);line-height:1.25}
+
+.session-focus{width:100%;margin-top:14px}
+.session-focus .card{min-height:250px;display:flex;flex-direction:column;justify-content:center}
+.session-bridge{
+  margin-top:18px;padding:14px 18px;border:1px solid rgba(255,255,255,.18);
+  border-radius:14px;background:rgba(255,255,255,.08);
+  font-size:clamp(20px,1.3vw,25px);width:100%;text-align:center
+}
+
+.ambiguity-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:10px}
+.ambig-item{
+  min-height:112px;border:2px solid var(--line);border-radius:16px;background:white;color:var(--ink);
+  padding:16px 18px;font-size:clamp(20px,1.35vw,26px);line-height:1.25;text-align:left;
+  transition:.18s
+}
+.ambig-item:hover{border-color:#65c6e8;transform:translateY(-2px)}
+.ambig-item.hit{background:#fff2d9;border-color:#e3aa3f}
+.ambig-item.safe{background:#e9f8f1;border-color:#55b58a}
+.activity-status{margin-top:16px}
+
+.workflow-pool{display:flex;gap:12px;flex-wrap:wrap;margin:12px 0 22px}
+.workflow-chip{
+  border:2px solid #c9bdf2;background:white;color:#4a378c;border-radius:14px;
+  padding:14px 20px;font-size:clamp(21px,1.4vw,27px);font-weight:900
+}
+.workflow-chip.used{opacity:.35;pointer-events:none}
+.workflow-track{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.workflow-track span{
+  min-height:90px;border:2px dashed #c9bdf2;border-radius:15px;display:grid;place-items:center;
+  padding:10px;text-align:center;color:#7c6bb3;font-size:clamp(20px,1.3vw,25px);font-weight:850
+}
+.workflow-track span.filled{border-style:solid;background:#f2efff;color:#4a378c}
+
+.contract-options{display:grid;gap:11px}
+.contract-choice{
+  width:100%;border:2px solid var(--line);border-radius:13px;background:white;color:var(--ink);
+  padding:13px 15px;text-align:left;font-size:clamp(18px,1.18vw,23px);font-weight:750;line-height:1.25
+}
+.contract-choice.correct{background:#e9f8f1;border-color:#4eb286}
+.contract-choice.wrong{background:#fff0f0;border-color:#d98080}
+
+@media(max-width:900px){
+  .hero-path,.ambiguity-grid{grid-template-columns:1fr 1fr}
+  .session-focus{grid-template-columns:1fr}
+}
+
+/* v3: presentation build animations */
+@keyframes titleIn{
+  from{opacity:0;transform:translateY(-10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes softPop{
+  0%{opacity:0;transform:translateY(18px) scale(.985)}
+  70%{opacity:1;transform:translateY(-2px) scale(1.005)}
+  100%{opacity:1;transform:translateY(0) scale(1)}
+}
+@keyframes accentSweep{
+  from{transform:scaleX(0)}
+  to{transform:scaleX(1)}
+}
+@keyframes arrowPulse{
+  0%,100%{opacity:.55;transform:translateY(-50%) translateX(0)}
+  50%{opacity:1;transform:translateY(-50%) translateX(4px)}
+}
+
+.slide.active>.kicker,
+.slide.active>h1,
+.slide.active>h2{
+  animation:titleIn .42s cubic-bezier(.2,.8,.2,1) both;
+}
+.slide.active>h1,.slide.active>h2{animation-delay:.05s}
+.slide.active::before{
+  transform-origin:left center;
+  animation:accentSweep .55s ease-out both;
+}
+
+/* Elements participating in the click-by-click build */
+.reveal-step{
+  opacity:0;
+  transform:translateY(18px) scale(.985);
+  pointer-events:none;
+  visibility:hidden;
+}
+.reveal-step.revealed{
+  visibility:visible;
+  pointer-events:auto;
+  animation:softPop .42s cubic-bezier(.2,.8,.2,1) both;
+}
+
+/* Preserve layout while an item is waiting to be revealed */
+.reveal-step.waiting-space{
+  visibility:hidden;
+}
+
+/* A very small emphasis after visual blocks appear */
+.slide.active .step.revealed:not(:last-child)::after{
+  animation:arrowPulse 1.5s ease-in-out 1;
+}
+
+/* Small build-state marker beside the slide count */
+.build-state{
+  display:inline-flex;align-items:center;gap:6px;margin-left:10px;
+  color:#8296a8;font-size:13px;font-weight:800;letter-spacing:.03em
+}
+.build-dot{
+  width:6px;height:6px;border-radius:999px;background:#c4d2dd;display:inline-block
+}
+.build-dot.on{background:var(--cyan)}
+.dark .build-state,.s2dark .build-state,.s3dark .build-state{color:#c5d8e7}
+
+/* Gentle motion for selected visuals, only while the slide is active */
+.slide.active .icon-circle,
+.slide.active .big-number{
+  transition:transform .25s ease;
+}
+.slide.active .icon-circle:hover,
+.slide.active .big-number:hover{
+  transform:translateY(-2px) scale(1.02);
+}
+
+@media(prefers-reduced-motion:reduce){
+  .slide.active>.kicker,.slide.active>h1,.slide.active>h2,.slide.active::before,
+  .reveal-step.revealed,.slide.active .step.revealed:not(:last-child)::after{
+    animation:none!important;
+  }
+  .reveal-step{transform:none}
+}
+
+.security-pipeline{
+  display:grid;
+  grid-template-columns:1fr .18fr 1fr .18fr 1fr .18fr 1fr .18fr 1fr;
+  gap:10px;
+  align-items:center;
+  margin-top:14px;
+}
+.pipe-box{
+  min-height:180px;
+  border:2px solid #c5e4f2;
+  background:white;
+  border-radius:18px;
+  padding:20px 16px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  box-shadow:0 8px 20px rgba(15,63,101,.08);
+}
+.pipe-box b{
+  font-size:clamp(24px,1.65vw,32px);
+  color:#0d426e;
+  margin-bottom:8px;
+}
+.pipe-box span{
+  font-size:clamp(17px,1.08vw,21px);
+  color:#536879;
+  line-height:1.25;
+}
+.pipe-arrow{
+  color:#13a8e0;
+  font-size:clamp(30px,2.3vw,46px);
+  font-weight:900;
+  text-align:center;
+}
+.badge{
+  display:inline-block;
+  margin-top:8px;
+  border-radius:999px;
+  padding:5px 10px;
+  background:#e8f8ff;
+  border:1px solid #b9e9fb;
+  color:#0b4773;
+  font-size:clamp(15px,.95vw,19px);
+  font-weight:800;
+}
+.triage-grid .choice{
+  min-height:120px;
+}
+.triage-choice.ok{
+  background:#e9f8f1!important;
+  border-color:#4eb286!important;
+}
+.triage-choice.bad{
+  background:#fff0f0!important;
+  border-color:#d98080!important;
+}
+@media(max-width:900px){
+  .security-pipeline{grid-template-columns:1fr}
+  .pipe-arrow{transform:rotate(90deg)}
+}
+
+/* ==========================================================
+   v4 PROJECTOR OPTIMIZATION
+   Goal: no essential teaching text below ~24px on a 16:9
+   classroom display, while keeping every slide inside frame.
+   ========================================================== */
+
+.slide{
+  padding:42px 58px 62px;
+}
+
+/* Main teaching text */
+p,li,.body{
+  font-size:clamp(27px,1.72vw,34px);
+  line-height:1.30;
+}
+.card p,.card li{
+  font-size:clamp(25px,1.52vw,30px);
+  line-height:1.28;
+}
+.small{
+  font-size:clamp(24px,1.35vw,28px);
+}
+.tiny{
+  font-size:clamp(22px,1.18vw,25px);
+}
+.pill{
+  font-size:clamp(22px,1.25vw,25px);
+  padding:9px 15px;
+}
+.kicker{
+  font-size:clamp(22px,1.35vw,27px);
+}
+h3{
+  font-size:clamp(29px,1.9vw,38px);
+}
+
+/* Cards / grids use more of the slide area */
+.fill-slide > .grid2,
+.fill-slide > .grid3,
+.fill-slide > .grid4,
+.fill-slide > .split,
+.fill-slide > .split-big,
+.fill-slide > .flow,
+.fill-slide > .strategy-map{
+  flex:1;
+  align-content:center;
+}
+.fill-slide > .grid2 > .card,
+.fill-slide > .grid3 > .card,
+.fill-slide > .grid4 > .card{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+.fill-slide .card{
+  min-height:0;
+}
+
+/* Sparse session / structure cards */
+.session-focus .card{
+  min-height:290px;
+}
+.session-bridge{
+  font-size:clamp(24px,1.4vw,28px);
+}
+.hero-node{
+  min-height:150px;
+  padding:18px;
+}
+.hero-node span{
+  font-size:24px;
+}
+.hero-node b{
+  font-size:clamp(27px,1.6vw,32px);
+}
+.hero-node small{
+  font-size:clamp(22px,1.24vw,25px);
+  line-height:1.28;
+}
+
+/* Course purpose stack */
+.visual-stack{
+  display:grid;
+  gap:12px;
+}
+.vstep{
+  min-height:68px;
+  display:flex;
+  align-items:center;
+  padding:13px 18px;
+  border-radius:14px;
+  background:#ffffff;
+  border:2px solid #cfe0ec;
+  color:var(--navy);
+  font-size:clamp(25px,1.48vw,30px);
+  font-weight:850;
+  box-shadow:0 6px 16px rgba(17,55,85,.06);
+}
+
+/* Flippable student questions */
+.qlabel{
+  font-size:clamp(22px,1.25vw,25px);
+}
+.qtext{
+  font-size:clamp(36px,2.55vw,48px);
+  line-height:1.18;
+}
+.ans{
+  font-size:clamp(29px,1.86vw,36px);
+  line-height:1.28;
+}
+.flip-grid .qtext{
+  font-size:clamp(29px,1.85vw,36px);
+}
+.flip-grid .ans{
+  font-size:clamp(26px,1.58vw,31px);
+}
+.single-question .qwrap{
+  min-height:390px;
+  flex:1;
+  margin-top:12px;
+  max-height:500px;
+}
+.single-question .qcard{
+  min-height:390px;
+}
+.single-question .qface{
+  padding:38px 46px;
+}
+.single-question .qtext{
+  font-size:clamp(42px,3vw,56px);
+}
+.single-question .ans{
+  font-size:clamp(32px,2.1vw,40px);
+}
+
+/* Process flows */
+.flow{
+  gap:18px;
+}
+.step{
+  min-height:190px;
+  padding:22px 18px;
+}
+.step b{
+  font-size:clamp(28px,1.7vw,33px);
+}
+.step span{
+  font-size:clamp(24px,1.35vw,28px);
+  line-height:1.24;
+}
+.step .icon{
+  font-size:clamp(46px,3vw,60px);
+}
+
+/* Interactive controls used as teaching content */
+.action{
+  font-size:clamp(24px,1.35vw,27px);
+  padding:11px 17px;
+}
+.status{
+  font-size:clamp(24px,1.35vw,28px);
+  line-height:1.28;
+  min-height:62px;
+}
+.feedback{
+  font-size:clamp(24px,1.35vw,28px) !important;
+  line-height:1.28;
+}
+.choice{
+  font-size:clamp(24px,1.4vw,29px) !important;
+  line-height:1.25;
+  padding:17px 20px;
+}
+.ambig-item{
+  font-size:clamp(24px,1.42vw,29px);
+  min-height:130px;
+}
+.workflow-chip{
+  font-size:clamp(24px,1.4vw,29px);
+}
+.workflow-track span{
+  font-size:clamp(24px,1.35vw,28px);
+  min-height:100px;
+}
+.contract-choice{
+  font-size:clamp(24px,1.38vw,28px);
+  padding:16px 17px;
+}
+
+/* Strategy chooser previously inherited browser-small text */
+.strategy-card{
+  min-height:150px;
+  border:2px solid var(--line);
+  border-radius:16px;
+  background:white;
+  color:var(--ink);
+  padding:20px;
+  text-align:left;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:9px;
+  transition:.18s;
+}
+.strategy-card:hover,
+.strategy-card:focus-visible{
+  border-color:var(--s2);
+  background:#f4f1ff;
+  transform:translateY(-2px);
+}
+.strategy-card b{
+  font-size:clamp(25px,1.48vw,30px);
+  line-height:1.20;
+  color:var(--navy);
+}
+.strategy-card span{
+  font-size:clamp(23px,1.28vw,26px);
+  line-height:1.23;
+  color:var(--muted);
+}
+
+/* Cyber examples inside analysis/design cards */
+.badge{
+  font-size:clamp(22px,1.22vw,25px);
+  padding:7px 11px;
+  line-height:1.15;
+}
+
+/* Search / trace demo */
+.cell{
+  width:74px;
+  height:74px;
+  font-size:32px;
+}
+.trace-context{
+  margin-bottom:18px;
+}
+#maxState{
+  font-size:clamp(35px,2.3vw,44px);
+}
+#maxExplain{
+  font-size:clamp(25px,1.45vw,29px);
+}
+
+/* Time-space bars */
+.barlabel{
+  font-size:clamp(24px,1.35vw,27px);
+}
+.barval{
+  font-size:clamp(23px,1.25vw,26px);
+}
+.track{
+  height:26px;
+}
+.barrow{
+  grid-template-columns:150px 1fr 180px;
+}
+
+/* Representation */
+#repLang,#repPseudo,#repFlow{
+  min-height:280px;
+}
+#repLang{
+  display:flex;
+  align-items:center;
+}
+#repLang .lead{
+  margin:0;
+}
+#repPseudo{
+  font-size:clamp(26px,1.6vw,31px);
+}
+
+/* Large responsive non-SVG diagrams */
+.role-flow{
+  flex:1;
+  display:grid;
+  grid-template-columns:1fr .16fr 1.45fr .16fr 1fr .16fr 1fr;
+  gap:10px;
+  align-items:center;
+}
+.role-box{
+  min-height:260px;
+  border:2px solid #c6deeb;
+  background:white;
+  border-radius:20px;
+  padding:24px 20px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  box-shadow:0 9px 24px rgba(17,55,85,.08);
+}
+.role-main{
+  border-color:#8ddcf4;
+  background:#f2fbff;
+}
+.role-icon{
+  font-size:58px;
+  line-height:1;
+  margin-bottom:15px;
+}
+.role-box b{
+  font-size:clamp(29px,1.85vw,36px);
+  color:var(--navy);
+  margin-bottom:12px;
+}
+.role-box span{
+  font-size:clamp(24px,1.38vw,28px);
+  line-height:1.28;
+  color:var(--muted);
+}
+.role-arrow,.ipo-arrow,.contract-arrow{
+  font-size:52px;
+  font-weight:950;
+  text-align:center;
+  color:var(--au2);
+}
+
+.ipo-flow{
+  flex:1;
+  display:grid;
+  grid-template-columns:1fr .18fr 1.25fr .18fr 1fr;
+  gap:14px;
+  align-items:center;
+}
+.ipo-node{
+  min-height:330px;
+  border-radius:28px;
+  border:3px solid #9fdced;
+  background:#eefaff;
+  padding:28px 22px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+.algorithm-node{
+  background:#fff;
+  border-color:#bcd4e4;
+}
+.output-node{
+  background:#ecfaf4;
+  border-color:#8dd8bb;
+}
+.ipo-icon{
+  font-size:66px;
+  margin-bottom:12px;
+}
+.ipo-node b{
+  font-size:clamp(36px,2.35vw,46px);
+  color:var(--navy);
+  margin-bottom:12px;
+}
+.ipo-node span{
+  font-size:clamp(27px,1.6vw,32px);
+  color:var(--ink);
+  font-weight:800;
+  line-height:1.24;
+}
+.ipo-node small{
+  font-size:clamp(23px,1.3vw,26px);
+  color:var(--muted);
+  line-height:1.25;
+  margin-top:12px;
+}
+
+.contract-flow{
+  flex:1;
+  display:grid;
+  grid-template-columns:1fr .18fr 1fr .18fr 1fr;
+  gap:14px;
+  align-items:center;
+}
+.contract-node{
+  min-height:310px;
+  border:3px solid #75cfae;
+  background:#eefaf6;
+  border-radius:24px;
+  padding:28px 22px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+.alg-node{
+  background:white;
+  border-color:#bfd5e3;
+}
+.contract-icon{
+  font-size:62px;
+  margin-bottom:14px;
+}
+.contract-node b{
+  font-size:clamp(31px,2vw,39px);
+  color:var(--navy);
+  margin-bottom:14px;
+}
+.contract-node span{
+  font-size:clamp(26px,1.52vw,30px);
+  line-height:1.28;
+}
+.contract-arrow{
+  color:var(--s3);
+}
+
+/* Cyber defense pipeline */
+.pipe-box{
+  min-height:215px;
+  padding:22px 16px;
+}
+.pipe-box b{
+  font-size:clamp(27px,1.65vw,32px);
+}
+.pipe-box span{
+  font-size:clamp(24px,1.35vw,27px);
+  line-height:1.25;
+}
+
+/* Legacy SVG text safety for any diagrams that remain */
+.svgtxt{
+  font-size:32px !important;
+}
+.svgsub{
+  font-size:24px !important;
+}
+
+/* Avoid visually tiny informational text inside main slide area */
+.slide .timeblock span,
+.slide .strategy span{
+  font-size:24px;
+}
+
+/* Hidden instructor cue can remain smaller because it is for the presenter. */
+.note{
+  font-size:19px;
+}
+
+/* Utility/navigation chrome is intentionally unobtrusive. */
+.footer{
+  font-size:15px;
+}
+.build-state{
+  font-size:13px;
+}
+
+/* Mid-sized projectors: preserve readability and reflow dense layouts. */
+@media(max-width:1450px){
+  .slide{padding:36px 46px 58px}
+  h1{font-size:clamp(48px,4.2vw,72px)}
+  h2{font-size:clamp(38px,3.05vw,54px)}
+  p,li,.body{font-size:clamp(24px,1.72vw,30px)}
+  .card p,.card li{font-size:clamp(23px,1.5vw,27px)}
+  .qtext{font-size:clamp(32px,2.5vw,42px)}
+  .ans{font-size:clamp(27px,1.85vw,32px)}
+  .single-question .qtext{font-size:clamp(38px,3vw,50px)}
+  .single-question .ans{font-size:clamp(29px,2vw,35px)}
+  .security-pipeline{gap:7px}
+  .pipe-box{min-height:190px}
+  .pipe-box span{font-size:23px}
+  .role-box{min-height:225px}
+  .ipo-node,.contract-node{min-height:270px}
+}
+
+/* On smaller screens we prefer reflow over microscopic text. */
+@media(max-width:1100px){
+  .role-flow,.ipo-flow,.contract-flow,.security-pipeline{
+    grid-template-columns:1fr;
+  }
+  .role-arrow,.ipo-arrow,.contract-arrow,.pipe-arrow{
+    transform:rotate(90deg);
+    font-size:36px;
+  }
+  .slide{overflow:auto}
+}
+
+/* Final projector readability floor */
+.code{
+  font-size:clamp(24px,1.5vw,30px);
+  line-height:1.40;
+}
+.hero-node small{
+  font-size:clamp(24px,1.30vw,27px);
+}
+.badge{
+  font-size:clamp(24px,1.25vw,26px);
+}
+.strategy-card span{
+  font-size:clamp(24px,1.30vw,27px);
+}
+.barval{
+  font-size:clamp(24px,1.25vw,26px);
+}
+.pill{
+  font-size:clamp(24px,1.28vw,26px);
+}
+
+@media(max-width:1450px){
+  .card p,.card li{
+    font-size:clamp(24px,1.52vw,28px);
+  }
+  .pipe-box span{
+    font-size:24px;
+  }
+  .hero-node small{
+    font-size:24px;
+  }
+  .badge,.strategy-card span,.barval,.pill{
+    font-size:24px;
+  }
+}
+
+/* Final layout corrections discovered during projector QA */
+.split{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:24px;
+  align-items:stretch;
+  min-height:0;
+}
+.kicker{
+  font-size:clamp(24px,1.35vw,28px);
+}
+.ipo-node small{
+  font-size:clamp(24px,1.30vw,27px);
+}
+
+@media(max-width:1100px){
+  .split{
+    grid-template-columns:1fr;
+  }
+}
+
+/* Incident Triage slide — corrected projector layout */
+.triage-slide{
+  gap:0;
+}
+.triage-slide h2{
+  margin-bottom:16px;
+}
+.triage-scenario{
+  display:grid;
+  grid-template-columns:90px 1fr;
+  gap:18px;
+  align-items:center;
+  background:linear-gradient(90deg,#eef9ff,#ffffff);
+  border:2px solid #bfe6f5;
+  border-radius:18px;
+  padding:16px 22px;
+  margin-bottom:16px;
+}
+.triage-scenario-icon{
+  width:72px;
+  height:72px;
+  border-radius:18px;
+  display:grid;
+  place-items:center;
+  background:#dff4fc;
+  font-size:40px;
+}
+.triage-scenario b{
+  display:block;
+  color:var(--navy);
+  font-size:clamp(25px,1.45vw,29px);
+  margin-bottom:2px;
+}
+.triage-scenario p{
+  margin:0;
+  font-size:clamp(24px,1.42vw,28px);
+  line-height:1.23;
+}
+.triage-prompt{
+  font-size:clamp(27px,1.62vw,32px);
+  font-weight:850;
+  color:var(--navy);
+  margin:2px 0 12px;
+}
+.triage-options{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+.triage-option{
+  min-height:128px;
+  border:2px solid #cbdde9;
+  border-radius:16px;
+  background:#ffffff;
+  color:var(--ink);
+  padding:14px 16px;
+  display:grid;
+  grid-template-columns:54px 1fr;
+  gap:14px;
+  align-items:center;
+  text-align:left;
+  transition:transform .18s ease,border-color .18s ease,background .18s ease;
+}
+.triage-option:hover,
+.triage-option:focus-visible{
+  border-color:#5fc7ea;
+  background:#f5fcff;
+  transform:translateY(-2px);
+}
+.triage-letter{
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:#e8f6fc;
+  color:#0b5c86;
+  font-size:27px;
+  font-weight:950;
+}
+.triage-text{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+}
+.triage-text b{
+  font-size:clamp(25px,1.48vw,30px);
+  line-height:1.15;
+  color:var(--navy);
+}
+.triage-text small{
+  font-size:clamp(21px,1.18vw,24px);
+  line-height:1.20;
+  color:var(--muted);
+}
+.triage-option.ok{
+  background:#eaf9f2;
+  border-color:#4db387;
+}
+.triage-option.ok .triage-letter{
+  background:#ccefe0;
+  color:#176f51;
+}
+.triage-option.bad{
+  background:#fff0f0;
+  border-color:#d77979;
+}
+.triage-option.bad .triage-letter{
+  background:#f7d7d7;
+  color:#a12f2f;
+}
+.triage-feedback{
+  min-height:66px;
+  margin-top:14px;
+  border-radius:14px;
+  border:2px solid #c9dce8;
+  background:#f4f8fb;
+  padding:12px 18px;
+  display:grid;
+  grid-template-columns:42px 1fr;
+  gap:12px;
+  align-items:center;
+  font-size:clamp(23px,1.34vw,27px);
+  line-height:1.22;
+}
+.triage-feedback .feedback-icon{
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:#dfeaf2;
+  color:#41596c;
+  font-weight:950;
+}
+.triage-feedback.good{
+  background:#eaf9f2;
+  border-color:#4db387;
+  color:#155c45;
+}
+.triage-feedback.good .feedback-icon{
+  background:#ccefe0;
+  color:#176f51;
+}
+.triage-feedback.bad{
+  background:#fff0f0;
+  border-color:#d77979;
+  color:#8a3030;
+}
+.triage-feedback.bad .feedback-icon{
+  background:#f7d7d7;
+  color:#a12f2f;
+}
+@media(max-width:1100px){
+  .triage-options{grid-template-columns:1fr}
+  .triage-slide{overflow:auto}
+}
+</style>
+</head>
+<body>
+<div id="shell"><main id="stage" tabindex="0">
+<!-- 1 -->
+<section class="slide dark center" data-session="0" data-title="Week 1 Welcome">
+<img alt="Air University logo" class="logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEwAACxMBAJqcGAAABWhJREFUeJzt3U1v2zAQBuD39z/VI8dFom1al05ix4ICBkX2IhBGDyUiCzZ2c/wqJpZ8+q7w6KQSAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB4ruwB0A2n06n3f3d3t91ut9vtdrvd7Xb7dnx8fNfv9/vc7/fX8/PzW4+Pj/vt9ntkAI5qPv7+/q7Pz8/7bDZ7q+vr6/5+fHzcWq1Wu91u99vt9sEGAJxWv9/vt7e3t91u99f7+/s+Ho9H29vb+/39fS8vL/s4HI7VajV5PB4bHx/3dDqdms1mM5lM5vP5bG5u7vT0dDuZTCYWi8Xlcnm9Xu/7+vr68fFxDw8P+3w+v9/v93g8Hn+73Y5Go7FYLLlcLr/f7/v7+2symaw+Pj6WSCQWCoX0er2WSCQWCoXU6/XaZDLZ4XBYKBRKp9NpKBQKp9NpKBQKp9NpKBQKp9NpKBQKp9NpKBQKp9NpKBQKp9NpKBQKp9NpKBQKp9NpKBQKp9NpKBRK2+329vb2NhwO4+Pj4/HxcX9/f2+73a7VajWZTGbT6fT7/T6fz+fT6XS6XC6Xy+Xy+Xw+H4/H4/F4PB6Pp9Pp9Pp9Pp9Pp9Pp9Pp9Pp9Pp9Pp9Pp9Pp9Pp9Npn88HAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP8PHwAAvmLzE7n2uBoAAAAASUVORK5CYII="/>
+<div class="kicker">CS-332 · Design and Analysis of Algorithms</div>
+<h1>Week 1</h1>
+<p class="lead"><b>Orientation + Foundations of Algorithmic Thinking</b></p>
+<p class="lead muted"><b>BS Cyber Security · 7th Semester</b></p>
+<div class="hero-path">
+<div class="hero-node"><span>01</span><b>Threat / Problem</b><small>What exactly must be detected, searched, protected or optimized?</small></div>
+<div class="hero-node"><span>02</span><b>Algorithm</b><small>What precise procedure solves the task?</small></div>
+<div class="hero-node"><span>03</span><b>Correctness</b><small>Why should we trust the result?</small></div>
+<div class="hero-node"><span>04</span><b>Analysis</b><small>Will it scale to real security data?</small></div>
+</div>
+<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:18px">
+<span class="pill">Interactive</span>
+<span class="pill">Cybersecurity Examples</span>
+<span class="pill">Concept → Visual → Activity</span>
+</div>
+<p class="small muted" style="margin-top:20px"><b>Dr. Zakir Khan · Assistant Professor</b><br/>Department of Computer Science · Air University Aerospace &amp; Aviation Campus, Kamra</p>
+<div class="note">Opening cue: Ask students where algorithms appear in cyber security: password checking, hash lookup, IDS rules, routing, encryption, malware signatures, and graph-based attack paths.</div>
+</section>
+<!-- 2 -->
+<section class="slide fill-slide" data-session="0" data-title="Three-Session Map">
+<div class="kicker">Week 1 structure</div>
+<h2>One connected story for BS Cyber Security</h2>
+<div class="grid3">
+<div class="card"><div class="icon">🧭</div><h3>Course + Algorithm Foundations</h3><p>Orientation, why algorithms matter, role in cyber systems, problem vs algorithm, properties.</p></div>
+<div class="card"><div class="icon">🛠️</div><h3>Problem Solving + Design</h3><p>Inputs, outputs, constraints, analysis criteria, design strategies and representations.</p></div>
+<div class="card"><div class="icon">✅</div><h3>Correctness + Contracts</h3><p>Testing vs proof, pre/post-conditions, algorithmic trust and correctness reasoning.</p></div>
+</div>
+<div class="highlight" style="margin-top:18px"><p style="margin:0"><b>Teaching rhythm:</b> explain briefly → visualize → involve the class → reveal reasoning → apply to a security-relevant scenario.</p></div>
+</section>
+<!-- SESSION 1 -->
+<section class="slide dark center fill-slide" data-session="1" data-title="Session 1 Start">
+<div class="kicker">Session 1</div>
+<h1>Course Orientation &amp; Algorithm Foundations</h1>
+<div class="grid3 session-focus">
+<div class="card"><div class="icon">🧭</div><h3>Orient</h3><p>Course purpose, CLOs, expectations and the semester roadmap.</p></div><div class="card"><div class="icon">🧠</div><h3>Build the Concept</h3><p>Problem vs algorithm, characteristics, input-process-output and precision.</p></div><div class="card"><div class="icon">🔎</div><h3>See the Difference</h3><p>Use search and everyday examples to see why algorithm choice matters.</p></div>
+</div>
+<div class="session-bridge">Each idea will be connected to a concrete example, a visual model, or a student activity.</div>
+</section>
+<section class="slide fill-slide" data-session="1" data-title="Course Purpose">
+<div class="kicker">Orientation</div>
+<h2>What is this course trying to develop?</h2>
+<div class="split">
+<div class="visual-stack">
+<div class="vstep">🧩 Understand the problem precisely</div>
+<div class="vstep">🧠 Design a solution strategy</div>
+<div class="vstep">✅ Establish correctness</div>
+<div class="vstep">⏱️ Analyze time &amp; space</div>
+<div class="vstep">⚖️ Choose the better fit</div>
+</div>
+<div class="card">
+<h3>Cyber Security lens</h3>
+<p>Security systems process large volumes of packets, logs, alerts, files, hashes and user events.</p>
+<p>The course trains you to ask: <b>Can this method remain correct and efficient under real operational scale?</b></p>
+</div>
+</div>
+<div class="note">Relate this to cyber operations: an intrusion detection idea is not enough; it must be precise, fast, scalable, and reliable.</div>
+</section>
+<section class="slide fill-slide" data-session="1" data-title="CLOs">
+<div class="kicker">Course learning outcomes</div><h2>Where are we heading this semester?</h2>
+<div class="grid2"><div class="card compact"><h3>CLO-01</h3><p>Explain best, expected and worst cases, hard problems, and determine time/space complexity using O, Ω and Θ.</p></div><div class="card compact"><h3>CLO-02</h3><p>Analyze time complexity through recurrence relations.</p></div><div class="card compact"><h3>CLO-03</h3><p>Apply brute force, greedy, divide-and-conquer and dynamic programming strategies.</p></div><div class="card compact"><h3>CLO-04</h3><p>Solve problems using graph algorithms, shortest paths, MST and heuristic approaches.</p></div></div>
+<div class="highlight clo-bridge" style="margin-top:18px">
+<p style="margin:0"><b>Week 1 foundation:</b> the concepts of specification, correctness and analysis support all four CLOs.</p>
+</div></section>
+<section class="slide fill-slide" data-session="1" data-title="Assessment &amp; Expectations">
+<div class="kicker">Orientation</div><h2>Assessment + classroom expectations</h2>
+<div class="grid4"><div class="card center"><div class="big">15%</div><h3>Quizzes</h3></div><div class="card center"><div class="big">15%</div><h3>Assignments</h3></div><div class="card center"><div class="big">25%</div><h3>Midterm</h3></div><div class="card center"><div class="big">45%</div><h3>Final</h3></div></div>
+<div class="grid2" style="margin-top:18px"><div class="highlight"><p style="margin:0"><b>Attendance:</b> minimum 75%.</p></div><div class="highlight"><p style="margin:0"><b>Academic integrity:</b> submitted work must be the student's own work.</p></div></div>
+</section>
+<section class="slide single-question" data-session="1" data-title="Opening Question">
+<div class="kicker">Ask students</div><h2>Correct is necessary. Is it sufficient?</h2>
+<div class="qwrap"><div aria-label="Interactive question card" class="qcard" role="button" tabindex="0"><div class="qface"><div class="qlabel">Ask Students</div><div class="qtext">If two programs always produce the same correct answer, are they equally good?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Suggested Answer</div><div class="ans"><b>No.</b> Both may be correct, but one can take far more time, consume more memory, or fail to scale to large inputs. DAA studies these differences systematically.</div><span class="flipcue">↻</span></div></div></div>
+</section>
+<section class="slide fill-slide" data-session="1" data-title="Why Study Algorithms?">
+<div class="kicker">Why study algorithms?</div>
+<h2>Algorithms turn computing power into security decisions</h2>
+<div class="grid3">
+<div class="card"><div class="icon">🔎</div><h3>Threat Search</h3><p>Find malicious indicators among millions of events.</p></div>
+<div class="card"><div class="icon">🧬</div><h3>Signature Matching</h3><p>Match malware patterns, hashes, strings and behaviors.</p></div>
+<div class="card"><div class="icon">🛡️</div><h3>Access Control</h3><p>Evaluate permissions, policies and authentication rules.</p></div>
+<div class="card"><div class="icon">🔐</div><h3>Cryptography</h3><p>Encrypt, authenticate, verify and hash data.</p></div>
+<div class="card"><div class="icon">🌐</div><h3>Network Defense</h3><p>Route, filter and inspect network traffic.</p></div>
+<div class="card"><div class="icon">🚨</div><h3>Incident Triage</h3><p>Prioritize alerts when analyst time is limited.</p></div>
+</div>
+</section>
+<section class="slide" data-session="1" data-title="Role in Computing Visual">
+<div class="kicker">Role of algorithms in computing</div>
+<h2>Software is a stack of algorithmic choices</h2>
+<div class="role-flow">
+<div class="role-box">
+<div class="role-icon">👤</div>
+<b>User / Problem</b>
+<span>“What must be solved?”</span>
+</div>
+<div class="role-arrow">→</div>
+<div class="role-box role-main">
+<div class="role-icon">⚙️</div>
+<b>Algorithms</b>
+<span>Search · Sort · Match · Optimize · Decide</span>
+</div>
+<div class="role-arrow">→</div>
+<div class="role-box">
+<div class="role-icon">🖥️</div>
+<b>Compute</b>
+<span>CPU · Memory · Storage</span>
+</div>
+<div class="role-arrow">→</div>
+<div class="role-box">
+<div class="role-icon">✅</div>
+<b>Output</b>
+<span>Required result</span>
+</div>
+</div>
+<div class="highlight" style="margin-top:20px">
+<p style="margin:0"><b>Key idea:</b> hardware provides resources; algorithms determine how effectively those resources are used.</p>
+</div>
+</section><section class="slide" data-session="1" data-title="Cyber Defense Pipeline">
+<div class="kicker">Cybersecurity visual</div>
+<h2>A security tool is a pipeline of algorithms</h2>
+<div class="security-pipeline">
+<div class="pipe-box"><b>Raw Events</b><span>Packets · Logs · Files · URLs</span></div>
+<div class="pipe-arrow">→</div>
+<div class="pipe-box"><b>Parse</b><span>Extract fields and tokens</span></div>
+<div class="pipe-arrow">→</div>
+<div class="pipe-box"><b>Match / Score</b><span>Rules · Hashes · Models</span></div>
+<div class="pipe-arrow">→</div>
+<div class="pipe-box"><b>Prioritize</b><span>Rank by risk and cost</span></div>
+<div class="pipe-arrow">→</div>
+<div class="pipe-box"><b>Respond</b><span>Alert · Block · Investigate</span></div>
+</div>
+<div class="qwrap wideq" style="margin-top:22px">
+<div aria-label="Interactive question card" class="qcard" role="button" tabindex="0">
+<div class="qface"><div class="qlabel">Ask Students</div><div class="qtext">Where can poor algorithm design hurt a cyber defense pipeline?</div><span class="flipcue">↻</span></div>
+<div class="qface qback"><div class="qlabel">Suggested Answer</div><div class="ans">At every stage: slow parsing delays detection, weak matching misses threats, poor ranking creates alert fatigue, and inefficient response logic can block legitimate activity.</div><span class="flipcue">↻</span></div>
+</div>
+</div>
+<div class="note">Use this as the bridge from general algorithms to the students' discipline. Emphasize that cyber systems are algorithm-heavy.</div>
+</section>
+<section class="slide fill-slide" data-session="1" data-title="Problem vs Algorithm">
+<div class="kicker">Core distinction</div><h2>Problem ≠ Algorithm</h2>
+<div class="grid2"><div class="card"><div class="icon">🎯</div><h3>Computational Problem</h3><p>A specification of what output is required for valid inputs.</p><div class="highlight"><p style="margin:0"><b>Example:</b> Given a list of numbers, return the largest value.</p></div></div><div class="card"><div class="icon">🧭</div><h3>Algorithm</h3><p>A finite, precise procedure for transforming the input into the required output.</p><div class="highlight"><p style="margin:0"><b>Example:</b> Scan the list and maintain the largest value seen so far.</p></div></div></div>
+</section>
+<section class="slide dark center" data-session="1" data-title="Algorithm Definition">
+<div class="kicker">Concept of algorithm</div><div style="max-width:1250px"><h1>An algorithm is a <span class="accent">finite sequence of unambiguous, effective steps</span> that solves a defined problem.</h1></div>
+<div class="flow" style="width:100%;margin-top:14px"><div class="step"><b>Input</b><span>Data / state</span></div><div class="step"><b>Steps</b><span>Precise operations</span></div><div class="step"><b>Termination</b><span>Finite execution</span></div><div class="step"><b>Output</b><span>Required result</span></div><div class="step"><b>Correctness</b><span>Meets specification</span></div></div>
+</section>
+<section class="slide fill-slide" data-session="1" data-title="Characteristics">
+<div class="kicker">Characteristics of an algorithm</div><h2>Six properties to remember</h2>
+<div class="grid3"><div class="card"><h3>1. Input</h3><p>Clearly specified inputs.</p></div><div class="card"><h3>2. Output</h3><p>At least one meaningful result.</p></div><div class="card"><h3>3. Definiteness</h3><p>No ambiguous step.</p></div><div class="card"><h3>4. Finiteness</h3><p>Terminates after finite steps.</p></div><div class="card"><h3>5. Effectiveness</h3><p>Each step is executable.</p></div><div class="card"><h3>6. Correctness</h3><p>Matches the problem specification.</p></div></div>
+</section><section class="slide" data-session="1" data-title="Ambiguity Hunt">
+<div class="kicker">Interactive activity · Definiteness</div>
+<h2>Ambiguity Hunt</h2>
+<p class="lead">Tap the instructions that are <b>too vague for a computer</b>.</p>
+<div class="ambiguity-grid">
+<button class="ambig-item" data-ambig="true" type="button">Choose a <b>nice</b> number.</button>
+<button class="ambig-item" data-ambig="false" type="button">Set <b>x = 10</b>.</button>
+<button class="ambig-item" data-ambig="true" type="button">Repeat until the result <b>looks good</b>.</button>
+<button class="ambig-item" data-ambig="false" type="button">Repeat while <b>i &lt; n</b>.</button>
+<button class="ambig-item" data-ambig="true" type="button">Pick a <b>reasonable</b> value.</button>
+<button class="ambig-item" data-ambig="false" type="button">Return the <b>largest element</b> in A.</button>
+</div>
+<div class="status activity-status" id="ambiguityStatus">Find all three ambiguous instructions.</div>
+<div class="note">Use this to reinforce definiteness: words that depend on human judgement must be replaced with measurable rules.</div>
+</section>
+<section class="slide single-question" data-session="1" data-title="Algorithm or Not?">
+<div class="kicker">Ask students</div><h2>Algorithm or not?</h2>
+<div class="qwrap"><div aria-label="Interactive question card" class="qcard" role="button" tabindex="0"><div class="qface"><div class="qlabel">Ask Students</div><div class="qtext">“Keep trying passwords until one feels right.” Is this a valid algorithm?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Suggested Answer</div><div class="ans"><b>No.</b> “Feels right” is ambiguous, so definiteness is violated. Termination is also not guaranteed. A valid algorithm needs clear executable rules and finite termination.</div><span class="flipcue">↻</span></div></div></div>
+</section>
+<section class="slide" data-session="1" data-title="Input-Process-Output Visual">
+<div class="kicker">Visual model</div>
+<h2>Think of an algorithm as a transformation</h2>
+<div class="ipo-flow">
+<div class="ipo-node input-node">
+<div class="ipo-icon">📥</div>
+<b>INPUT</b>
+<span>Problem instance</span>
+<small>Example: network log records</small>
+</div>
+<div class="ipo-arrow">→</div>
+<div class="ipo-node algorithm-node">
+<div class="ipo-icon">⚙️</div>
+<b>ALGORITHM</b>
+<span>Rules · Decisions · Operations</span>
+<small>Transforms the input state</small>
+</div>
+<div class="ipo-arrow">→</div>
+<div class="ipo-node output-node">
+<div class="ipo-icon">📤</div>
+<b>OUTPUT</b>
+<span>Required result</span>
+<small>Example: ranked suspicious events</small>
+</div>
+</div>
+<div class="note">Teaching cue: Ask students to supply one cybersecurity input and its expected output before discussing the middle algorithmic process.</div>
+</section>
+<section class="slide" data-session="1" data-title="Search Comparison Demo">
+<div class="kicker">Interactive visual</div><h2>Find an Indicator of Compromise</h2>
+<div class="grid2"><div class="card"><h3>Find target <span id="searchTargetLabel">73</span></h3><div class="arr" id="searchArray"></div><div class="demo-controls"><button class="action primary" id="linearBtn">Run Linear Search</button><button class="action" id="binaryBtn">Run Binary Search</button><button class="action" id="searchReset">Reset</button></div><div class="status" id="searchStatus">Choose an algorithm.</div></div><div class="card"><h3>Concept to observe</h3><p><b>Linear Search:</b> checks elements sequentially.</p><p><b>Binary Search:</b> repeatedly halves a <u>sorted</u> search space.</p><div class="highlight"><p style="margin:0">This is a preview only. Formal complexity analysis comes next week.</p></div></div></div>
+</section><section class="slide" data-session="1" data-title="Search Decision Lab">
+<div class="kicker">Interactive activity · Algorithm choice</div>
+<h2>Choose the search idea for a cyber task</h2>
+<div class="grid3 flip-grid">
+<div class="qwrap"><div aria-label="Interactive question card" class="qcard" role="button" tabindex="0">
+<div class="qface"><div class="qlabel">Scenario A</div><div class="qtext">One analyst checks a very small unsorted alert list. Which simple approach is reasonable?</div><span class="flipcue">↻</span></div>
+<div class="qface qback"><div class="qlabel">Reasoning</div><div class="ans"><b>Linear Search.</b> For one small list, a direct scan is acceptable and easy to implement.</div><span class="flipcue">↻</span></div>
+</div></div>
+<div class="qwrap"><div aria-label="Interactive question card" class="qcard" role="button" tabindex="0">
+<div class="qface"><div class="qlabel">Scenario B</div><div class="qtext">A sorted threat-intel list is searched thousands of times per hour. What becomes attractive?</div><span class="flipcue">↻</span></div>
+<div class="qface qback"><div class="qlabel">Reasoning</div><div class="ans"><b>Binary Search.</b> Sorted order lets us discard half of the remaining search space after each comparison.</div><span class="flipcue">↻</span></div>
+</div></div>
+<div class="qwrap"><div aria-label="Interactive question card" class="qcard" role="button" tabindex="0">
+<div class="qface"><div class="qlabel">Scenario C</div><div class="qtext">A SIEM repeatedly checks event hashes against a known-bad list. What should we consider?</div><span class="flipcue">↻</span></div>
+<div class="qface qback"><div class="qlabel">Reasoning</div><div class="ans"><b>Indexing / hashing.</b> Extra preprocessing and memory can make repeated exact-key checks much faster.</div><span class="flipcue">↻</span></div>
+</div></div>
+</div>
+</section>
+<section class="slide" data-session="1" data-title="Session 1 Check">
+<div class="kicker">Session 1 recap</div><h2>Checkpoint</h2>
+<div class="grid2"><div class="qwrap"><div aria-label="Interactive question card" class="qcard" tabindex="0"><div class="qface"><div class="qlabel">Ask Students</div><div class="qtext">What is the difference between a problem and an algorithm?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Suggested Answer</div><div class="ans">A <b>problem</b> specifies what output is required. An <b>algorithm</b> specifies the finite sequence of steps used to obtain that output.</div><span class="flipcue">↻</span></div></div></div><div class="qwrap"><div aria-label="Interactive question card" class="qcard" tabindex="0"><div class="qface"><div class="qlabel">Ask Students</div><div class="qtext">Name any three essential properties of an algorithm.</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Suggested Answer</div><div class="ans">Examples: input, output, definiteness, finiteness, effectiveness and correctness.</div><span class="flipcue">↻</span></div></div></div></div>
+</section>
+<!-- SESSION 2 -->
+<section class="slide s2dark center" data-session="2" data-title="Session 2 Start">
+<div class="kicker">Session 2</div>
+<h1>Algorithmic Problem Solving &amp; Design</h1>
+<div class="grid3 session-focus">
+<div class="card"><div class="icon">🔍</div><h3>Understand</h3><p>Clarify inputs, outputs, constraints and assumptions before coding.</p></div><div class="card"><div class="icon">🛠️</div><h3>Design</h3><p>Choose a strategy and represent the solution clearly.</p></div><div class="card"><div class="icon">📈</div><h3>Evaluate</h3><p>Compare correctness, time, space, scalability and trade-offs.</p></div>
+</div>
+<div class="session-bridge">Each idea will be connected to a concrete example, a visual model, or a student activity.</div>
+</section>
+<section class="slide" data-session="2" data-title="Problem-Solving Workflow">
+<div class="kicker">Fundamentals of algorithmic problem solving</div><h2>Do not start with code</h2>
+<div class="flow"><div class="step"><div class="icon">🔍</div><b>Understand</b><span>Clarify the task</span></div><div class="step"><div class="icon">📥</div><b>Specify</b><span>Input · output · constraints</span></div><div class="step"><div class="icon">🧠</div><b>Design</b><span>Choose a strategy</span></div><div class="step"><div class="icon">✅</div><b>Verify</b><span>Reason about correctness</span></div><div class="step"><div class="icon">📈</div><b>Analyze</b><span>Time · space · trade-offs</span></div></div>
+<div class="highlight" style="margin-top:18px"><p style="margin:0"><b>Professional habit:</b> understand the problem before choosing the data structure or writing code.</p></div>
+</section><section class="slide" data-session="2" data-title="Build the Workflow">
+<div class="kicker">Interactive activity · Problem-solving discipline</div>
+<h2>Build the Algorithmic Workflow</h2>
+<p class="lead">Select the stages in the order a disciplined solution should follow.</p>
+<div class="workflow-pool" id="workflowPool">
+<button class="workflow-chip" data-order="2" type="button">Design</button>
+<button class="workflow-chip" data-order="4" type="button">Analyze</button>
+<button class="workflow-chip" data-order="0" type="button">Understand</button>
+<button class="workflow-chip" data-order="3" type="button">Verify</button>
+<button class="workflow-chip" data-order="1" type="button">Specify</button>
+</div>
+<div class="workflow-track" id="workflowTrack">
+<span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+</div>
+<div class="demo-controls"><button class="action s2" id="workflowReset" type="button">Reset</button></div>
+<div class="status" id="workflowStatus">Start with the stage that comes before writing code.</div>
+<div class="note">Expected order: Understand → Specify → Design → Verify → Analyze.</div>
+</section>
+<section class="slide fill-slide" data-session="2" data-title="Ask Before Designing">
+<div class="kicker">Basic issues related to algorithms</div><h2>Questions that shape the solution</h2>
+<div class="grid2"><div class="card"><h3>About the input</h3><ul class="clean"><li>What is the input size?</li><li>Is the data sorted?</li><li>Can values repeat?</li><li>Are there invalid inputs?</li></ul></div><div class="card"><h3>About constraints</h3><ul class="clean"><li>How fast must the answer be?</li><li>How much memory is available?</li><li>Is an approximate answer acceptable?</li><li>Must the algorithm work online / in real time?</li></ul></div></div>
+</section>
+<section class="slide single-question" data-session="2" data-title="Constraint Question">
+<div class="kicker">Ask students</div><h2>Constraints can change the algorithm</h2>
+<div class="qwrap"><div aria-label="Interactive question card" class="qcard" tabindex="0"><div class="qface"><div class="qlabel">Ask Students</div><div class="qtext">Suppose we must search the same large dataset thousands of times. Would preprocessing the data ever be worth the cost?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Suggested Answer</div><div class="ans"><b>Yes.</b> If repeated queries are expected, we may spend extra time or memory once—such as sorting or indexing—to make later searches much faster. This is a classic preprocessing trade-off.</div><span class="flipcue">↻</span></div></div></div>
+</section>
+<section class="slide" data-session="2" data-title="Worked Case MAX">
+<div class="kicker">Worked case</div>
+<h2>Problem: identify the highest-risk alert</h2>
+<div class="split">
+<div class="card">
+<h3>Input</h3>
+<p>Risk scores: [7, 3, 14, 2, 9]</p>
+<h3>Required output</h3>
+<p>14</p>
+<h3>Security interpretation</h3>
+<p>The alert with the highest score should be investigated first.</p>
+</div>
+<div class="code">MAX-RISK(A)
+max ← A[0]
+for each score in A:
+    if score &gt; max:
+        max ← score
+return max</div>
+</div>
+</section>
+<section class="slide fill-slide" data-session="2" data-title="MAX Trace Demo">
+<div class="kicker">Interactive trace</div><h2>Watch the state change</h2>
+<p class="lead trace-context">Alert risk scores: [7, 3, 14, 2, 9] — trace how the current maximum changes.</p><div class="grid2"><div class="card"><div class="arr" id="maxArray"></div><div class="demo-controls"><button class="action s2" id="maxNext">Next Step</button><button class="action" id="maxReset">Reset</button></div></div><div class="card"><h3>Current state</h3><p class="lead" id="maxState">Press Next Step.</p><p class="small muted" id="maxExplain"></p></div></div>
+</section>
+<section class="slide fill-slide" data-session="2" data-title="Analysis Criteria">
+<div class="kicker">Criterion for analyzing algorithms</div>
+<h2>How do we judge an algorithm in cyber systems?</h2>
+<div class="grid3">
+<div class="card"><h3>Correctness</h3><p>Does it report the required result for valid input?</p><span class="badge">Example: no false logic in access checks</span></div>
+<div class="card"><h3>Time</h3><p>Can it respond fast enough for live data?</p><span class="badge">Example: packet inspection latency</span></div>
+<div class="card"><h3>Space</h3><p>How much memory or storage does it need?</p><span class="badge">Example: hash tables / indexes</span></div>
+<div class="card"><h3>Simplicity</h3><p>Can it be implemented and audited reliably?</p><span class="badge">Example: policy logic</span></div>
+<div class="card"><h3>Scalability</h3><p>What happens when logs grow from thousands to millions?</p><span class="badge">Example: SIEM ingestion</span></div>
+<div class="card"><h3>Trade-offs</h3><p>Can memory, preprocessing or approximation improve speed?</p><span class="badge">Example: Bloom filter idea</span></div>
+</div>
+</section><section class="slide triage-slide" data-session="2" data-title="Incident Triage Activity">
+<div class="kicker">Interactive activity · Analysis criteria</div>
+<h2>Incident Triage Decision</h2>
+<div class="triage-scenario">
+<div class="triage-scenario-icon">🚨</div>
+<div>
+<b>SOC Scenario</b>
+<p>A SOC receives <strong>2 million logs per hour</strong>. The detection algorithm gives correct results on sample data, but it is too slow for operational use.</p>
+</div>
+</div>
+<div class="triage-prompt">Which actions address the <b>algorithmic performance problem</b>?</div>
+<div class="triage-options" id="triageGrid">
+<button class="triage-option triage-choice" data-good="true" type="button">
+<span class="triage-letter">A</span>
+<span class="triage-text">
+<b>Analyze dominant operations</b>
+<small>Relate the work to input size and identify the expensive step.</small>
+</span>
+</button>
+<button class="triage-option triage-choice" data-good="false" type="button">
+<span class="triage-letter">B</span>
+<span class="triage-text">
+<b>Only improve dashboard colors</b>
+<small>This changes presentation, not algorithmic cost.</small>
+</span>
+</button>
+<button class="triage-option triage-choice" data-good="true" type="button">
+<span class="triage-letter">C</span>
+<span class="triage-text">
+<b>Consider indexing or preprocessing</b>
+<small>Spend setup or memory to reduce repeated search cost.</small>
+</span>
+</button>
+<button class="triage-option triage-choice" data-good="false" type="button">
+<span class="triage-letter">D</span>
+<span class="triage-text">
+<b>Ignore rare cases to save time</b>
+<small>This can damage correctness and does not justify the algorithm.</small>
+</span>
+</button>
+</div>
+<div aria-live="polite" class="triage-feedback neutral" id="triageFeedback">
+<span class="feedback-icon">?</span>
+<span>Ask students to choose an option, then select it to reveal the reasoning.</span>
+</div>
+<div class="note">Teaching cue: Correctness alone is not enough in cyber operations. A method must also process the expected workload within resource and latency limits.</div>
+</section>
+<section class="slide" data-session="2" data-title="Time-Space Tradeoff">
+<div class="kicker">Interactive intuition</div><h2>Trade-off: spend memory to save repeated work</h2>
+<div class="grid2"><div class="card"><h3>Scenario</h3><p>A SIEM repeatedly checks indicators against a large threat-intelligence collection.</p><label class="small" for="queries">Number of repeated queries: <b id="qLabel">100</b></label><input id="queries" max="1000" min="1" style="width:100%;margin-top:14px" type="range" value="100"/></div><div class="card"><div class="bars"><div class="barrow"><span class="barlabel">No index</span><div class="track"><div class="fill" id="noIndexBar" style="background:#e19545"></div></div><span class="barval" id="noIndexVal"></span></div><div class="barrow"><span class="barlabel">With index</span><div class="track"><div class="fill" id="indexBar" style="background:#6d50c6"></div></div><span class="barval" id="indexVal"></span></div></div><div class="status" id="tradeStatus"></div></div></div>
+</section>
+<section class="slide fill-slide" data-session="2" data-title="Design Strategies Map">
+<div class="kicker">Algorithm design strategies</div>
+<h2>A toolbox for cyber security problems</h2>
+<div class="grid3">
+<div class="card"><h3>Brute Force</h3><p>Try all candidates when the space is small or as a baseline.</p><span class="badge">Password-space reasoning</span></div>
+<div class="card"><h3>Divide &amp; Conquer</h3><p>Split data, solve smaller parts, combine results.</p><span class="badge">Large log partitions</span></div>
+<div class="card"><h3>Greedy</h3><p>Choose the locally best option at each step.</p><span class="badge">Patch prioritization idea</span></div>
+<div class="card"><h3>Dynamic Programming</h3><p>Reuse solutions to overlapping subproblems.</p><span class="badge">Edit distance / diff</span></div>
+<div class="card"><h3>Graph Methods</h3><p>Model relationships as nodes and edges.</p><span class="badge">Attack paths / networks</span></div>
+<div class="card"><h3>Heuristics</h3><p>Use practical rules when exact optimization is too costly.</p><span class="badge">Alert triage</span></div>
+</div>
+</section>
+<section class="slide fill-slide" data-session="2" data-title="Strategy Chooser">
+<div class="kicker">Interactive classification</div>
+<h2>Which design idea fits the cyber scenario?</h2>
+<div class="strategy-map" id="strategyMap">
+<button class="strategy-card" data-msg="Brute force baseline: useful for reasoning about search space, but usually infeasible for strong credentials." type="button"><b>Try every password candidate</b><span>Direct exhaustive search</span></button>
+<button class="strategy-card" data-msg="Divide and conquer: split a large log file by time window or source, process chunks, then combine summaries." type="button"><b>Split a huge log dataset</b><span>Solve parts, then merge</span></button>
+<button class="strategy-card" data-msg="Greedy: prioritize the currently highest-risk vulnerability or patch under resource limits." type="button"><b>Patch highest-risk asset first</b><span>Local best choice</span></button>
+<button class="strategy-card" data-msg="Dynamic programming: repeated string/diff computations can reuse overlapping sub-results." type="button"><b>Compare suspicious strings</b><span>Reuse repeated subproblems</span></button>
+<button class="strategy-card" data-msg="Graph method: model hosts, accounts and privileges as nodes/edges to reason about attack paths." type="button"><b>Trace lateral movement</b><span>Use graph structure</span></button>
+<button class="strategy-card" data-msg="Heuristic: useful for triage when exact optimization is too slow or unavailable." type="button"><b>Rank alerts by practical rules</b><span>Good-enough decision support</span></button>
+</div>
+<div class="status" id="strategyStatus">Select a scenario to reveal the likely design idea.</div>
+</section>
+<section class="slide fill-slide" data-session="2" data-title="Representation">
+<div class="kicker">Algorithms representation</div><h2>Same logic · different representation</h2>
+<div class="grid3"><div class="card"><div class="icon">🗣️</div><h3>Natural Language</h3><p>Easy to discuss, but can become ambiguous.</p></div><div class="card"><div class="icon">🧾</div><h3>Pseudocode</h3><p>Precise, language-independent algorithmic notation.</p></div><div class="card"><div class="icon">🔀</div><h3>Flowchart</h3><p>Visualizes control flow and decisions.</p></div></div>
+<div class="highlight" style="margin-top:20px"><p style="margin:0"><b>For DAA:</b> pseudocode is especially useful because it emphasizes the algorithm, not programming-language syntax.</p></div>
+</section>
+<section class="slide fill-slide" data-session="2" data-title="Representation Tabs">
+<div class="kicker">Interactive representation</div><h2>MAX(A) in three forms</h2>
+<div class="demo-controls" id="repBtns"><button class="action s2" data-rep="lang">Natural Language</button><button class="action" data-rep="pseudo">Pseudocode</button><button class="action" data-rep="flow">Flow Logic</button></div>
+<div class="card" id="repLang" style="margin-top:14px"><p class="lead">Set max to the first element. Scan every element. If an element is larger than max, update max. Return max.</p></div>
+<div class="code" id="repPseudo" style="margin-top:14px;display:none">max ← A[0]
+for each x in A:
+    if x &gt; max:
+        max ← x
+return max</div>
+<div class="flow" id="repFlow" style="margin-top:14px;display:none;grid-template-columns:repeat(4,1fr)"><div class="step"><b>Start</b><span>Read A</span></div><div class="step"><b>Initialize</b><span>max=A[0]</span></div><div class="step"><b>Repeat</b><span>Compare/update</span></div><div class="step"><b>Finish</b><span>Return max</span></div></div>
+</section>
+<section class="slide single-question" data-session="2" data-title="Representation Question">
+<div class="kicker">Ask students</div><h2>Choose the right representation</h2>
+<div class="qwrap"><div aria-label="Interactive question card" class="qcard" tabindex="0"><div class="qface"><div class="qlabel">Ask Students</div><div class="qtext">Why do algorithm textbooks often prefer pseudocode instead of a specific programming language?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Suggested Answer</div><div class="ans">Because pseudocode focuses on <b>algorithmic logic</b> while avoiding language-specific syntax and implementation details. This makes analysis easier and the ideas more transferable.</div><span class="flipcue">↻</span></div></div></div>
+</section>
+<section class="slide" data-session="2" data-title="Session 2 Check">
+<div class="kicker">Session 2 recap</div><h2>Checkpoint</h2>
+<div class="grid2"><div class="qwrap"><div aria-label="Interactive question card" class="qcard" tabindex="0"><div class="qface"><div class="qlabel">Ask Students</div><div class="qtext">What should come before coding?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Suggested Answer</div><div class="ans">Understand and specify the problem: input, required output, assumptions and constraints. Then choose/design a strategy.</div><span class="flipcue">↻</span></div></div></div><div class="qwrap"><div aria-label="Interactive question card" class="qcard" tabindex="0"><div class="qface"><div class="qlabel">Ask Students</div><div class="qtext">Name three criteria for comparing algorithms.</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Suggested Answer</div><div class="ans">Correctness, time, space, scalability, simplicity and trade-offs are all valid criteria.</div><span class="flipcue">↻</span></div></div></div></div>
+</section>
+<!-- SESSION 3 -->
+<section class="slide s3dark center" data-session="3" data-title="Session 3 Start">
+<div class="kicker">Session 3</div>
+<h1>Correctness, Pre-conditions &amp; Post-conditions</h1>
+<div class="grid3 session-focus">
+<div class="card"><div class="icon">📋</div><h3>Specify</h3><p>State what the algorithm may assume and what it must guarantee.</p></div><div class="card"><div class="icon">🧩</div><h3>Reason</h3><p>Follow the algorithm state and identify why each step remains valid.</p></div><div class="card"><div class="icon">✅</div><h3>Justify</h3><p>Distinguish testing evidence from a general correctness argument.</p></div>
+</div>
+<div class="session-bridge">Each idea will be connected to a concrete example, a visual model, or a student activity.</div>
+</section>
+<section class="slide fill-slide" data-session="3" data-title="Correctness Matters">
+<div class="kicker">Proving correctness of algorithms</div><h2>A fast wrong answer is still wrong</h2>
+<div class="grid2"><div class="card center"><div class="icon">⚡</div><h3>Fast but incorrect</h3><p>Useless for the specified problem.</p></div><div class="card center"><div class="icon">✅</div><h3>Correct + efficient</h3><p>The real target of algorithm design.</p></div></div>
+<div class="highlight" style="margin-top:20px"><p style="margin:0">Correctness asks whether the algorithm satisfies its specification for every valid input.</p></div>
+</section>
+<section class="slide fill-slide" data-session="3" data-title="Testing vs Proof">
+<div class="kicker">Correctness intuition</div><h2>Testing can find bugs. Proof explains why it must work.</h2>
+<div class="grid2"><div class="card"><div class="icon">🧪</div><h3>Testing</h3><p>Checks selected cases.</p><ul class="clean"><li>Useful for implementation</li><li>Can expose errors</li><li>Cannot normally cover every possible input</li></ul></div><div class="card"><div class="icon">🧠</div><h3>Correctness argument</h3><p>Reasons about all valid inputs.</p><ul class="clean"><li>Uses specification</li><li>Uses invariants / induction later</li><li>Provides a general guarantee</li></ul></div></div>
+</section>
+<section class="slide single-question" data-session="3" data-title="Testing Question">
+<div class="kicker">Ask students</div><h2>Can testing prove correctness?</h2>
+<div class="qwrap"><div aria-label="Interactive question card" class="qcard" tabindex="0"><div class="qface"><div class="qlabel">Ask Students</div><div class="qtext">If an algorithm passes 10,000 test cases, have we proved that it is correct for every valid input?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Suggested Answer</div><div class="ans"><b>Not necessarily.</b> Tests increase confidence and can reveal defects, but untested cases may still fail. A correctness proof/argument reasons about the complete valid input space.</div><span class="flipcue">↻</span></div></div></div>
+</section><section class="slide" data-session="3" data-title="Proof or Test Activity">
+<div class="kicker">Interactive activity · Evidence vs guarantee</div>
+<h2>Test Evidence or Correctness Reasoning?</h2>
+<div class="grid3 flip-grid">
+<div class="qwrap"><div aria-label="Interactive question card" class="qcard" role="button" tabindex="0">
+<div class="qface"><div class="qlabel">Statement 1</div><div class="qtext">“It worked on 10,000 random inputs.”</div><span class="flipcue">↻</span></div>
+<div class="qface qback"><div class="qlabel">Classification</div><div class="ans"><b>Testing evidence.</b> Stronger evidence, but still only a finite sample of inputs.</div><span class="flipcue">↻</span></div>
+</div></div>
+<div class="qwrap"><div aria-label="Interactive question card" class="qcard" role="button" tabindex="0">
+<div class="qface"><div class="qlabel">Statement 2</div><div class="qtext">“After every iteration, max is the largest value seen so far.”</div><span class="flipcue">↻</span></div>
+<div class="qface qback"><div class="qlabel">Classification</div><div class="ans"><b>Correctness reasoning.</b> This is an invariant-style statement that supports a general argument.</div><span class="flipcue">↻</span></div>
+</div></div>
+<div class="qwrap"><div aria-label="Interactive question card" class="qcard" role="button" tabindex="0">
+<div class="qface"><div class="qlabel">Statement 3</div><div class="qtext">“I tried the empty case, one element, and several large arrays.”</div><span class="flipcue">↻</span></div>
+<div class="qface qback"><div class="qlabel">Classification</div><div class="ans"><b>Testing evidence.</b> Edge cases are valuable, but they do not cover every valid input.</div><span class="flipcue">↻</span></div>
+</div></div>
+</div>
+</section>
+<section class="slide" data-session="3" data-title="Pre and Post Conditions">
+<div class="kicker">Pre-condition · Post-condition</div>
+<h2>Think of an algorithm as a contract</h2>
+<div class="contract-flow">
+<div class="contract-node pre-node">
+<div class="contract-icon">📋</div>
+<b>PRE-CONDITION</b>
+<span>What must be true <u>before</u> execution</span>
+</div>
+<div class="contract-arrow">→</div>
+<div class="contract-node alg-node">
+<div class="contract-icon">⚙️</div>
+<b>ALGORITHM</b>
+<span>Transforms the valid input state</span>
+</div>
+<div class="contract-arrow">→</div>
+<div class="contract-node post-node">
+<div class="contract-icon">✅</div>
+<b>POST-CONDITION</b>
+<span>What is guaranteed <u>after</u> execution</span>
+</div>
+</div>
+<div class="highlight" style="margin-top:22px">
+<p style="margin:0"><b>Correctness contract:</b> if the pre-condition is true and the algorithm terminates correctly, the post-condition must be true.</p>
+</div>
+</section><section class="slide" data-session="3" data-title="Contract Builder">
+<div class="kicker">Interactive activity · Specification</div>
+<h2>Build a Contract for Binary Search</h2>
+<div class="grid2">
+<div class="card">
+<h3>Choose a valid pre-condition</h3>
+<div class="contract-options">
+<button class="contract-choice" data-good="false" data-kind="pre" type="button">The target must be present.</button>
+<button class="contract-choice" data-good="true" data-kind="pre" type="button">The sequence is sorted using the comparison order.</button>
+<button class="contract-choice" data-good="false" data-kind="pre" type="button">The sequence has exactly 100 elements.</button>
+</div>
+</div>
+<div class="card">
+<h3>Choose a valid post-condition</h3>
+<div class="contract-options">
+<button class="contract-choice" data-good="true" data-kind="post" type="button">Return a valid matching position, or correctly report no match.</button>
+<button class="contract-choice" data-good="false" data-kind="post" type="button">The array becomes sorted.</button>
+<button class="contract-choice" data-good="false" data-kind="post" type="button">The target is inserted if absent.</button>
+</div>
+</div>
+</div>
+<div class="status" id="contractStatus">Select one condition from each side.</div>
+</section>
+<section class="slide fill-slide" data-session="3" data-title="MAX Contract">
+<div class="kicker">Contract example</div><h2>MAX(A): specification before implementation</h2>
+<div class="grid2"><div class="card"><h3>Pre-condition</h3><p>A is a <b>non-empty</b> array of comparable values.</p><div class="highlight"><p style="margin:0">This tells us what inputs the algorithm is allowed to assume.</p></div></div><div class="card"><h3>Post-condition</h3><p>The returned value belongs to A and is ≥ every element in A.</p><div class="highlight"><p style="margin:0">This states what the algorithm must guarantee.</p></div></div></div>
+</section>
+<section class="slide single-question" data-session="3" data-title="Sorting Postcondition">
+<div class="kicker">Ask students</div><h2>Strong enough specification?</h2>
+<div class="qwrap"><div aria-label="Interactive question card" class="qcard" tabindex="0"><div class="qface"><div class="qlabel">Ask Students</div><div class="qtext">For sorting, is this post-condition enough: “The output has the same length as the input”?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Suggested Answer</div><div class="ans"><b>No.</b> A correct sorting post-condition should say that the output is a <b>permutation of the input</b> and that the elements are in the required sorted order (e.g., nondecreasing).</div><span class="flipcue">↻</span></div></div></div>
+</section>
+<section class="slide fill-slide" data-session="3" data-title="Correctness Reasoning MAX">
+<div class="kicker">Reasoning pattern</div><h2>Why does MAX(A) work?</h2>
+<div class="flow" style="grid-template-columns:repeat(4,1fr)"><div class="step"><b>Initialize</b><span>max = first element</span></div><div class="step"><b>Maintain</b><span>after each comparison, max is largest seen so far</span></div><div class="step"><b>Terminate</b><span>all elements have been seen</span></div><div class="step"><b>Conclude</b><span>max is largest in A</span></div></div>
+<div class="highlight" style="margin-top:20px"><p style="margin:0">This “initialize–maintain–terminate” pattern prepares students for loop invariants in Week 2.</p></div>
+</section>
+<section class="slide" data-session="3" data-title="Counterexample Detective">
+<div class="kicker">Interactive reasoning</div><h2>Counterexample detective</h2>
+<div class="card"><p class="lead"><b>Claim:</b> “The maximum value of an array is always the last element.”</p><div class="demo-controls"><button class="action s3" data-ce="a">[1, 2, 3]</button><button class="action" data-ce="b">[9, 2, 5]</button><button class="action" data-ce="c">[4, 4, 4]</button></div><div class="status" id="ceStatus">Select an input that disproves the claim.</div></div>
+</section>
+<section class="slide single-question" data-session="3" data-title="Binary Search Precondition">
+<div class="kicker">Ask students</div>
+<h2>Pre-conditions matter</h2>
+<div class="qwrap wideq">
+<div aria-label="Interactive question card" class="qcard" role="button" tabindex="0">
+<div class="qface"><div class="qlabel">Ask Students</div><div class="qtext">A threat-intel list is searched using Binary Search. What important pre-condition is required?</div><span class="flipcue">↻</span></div>
+<div class="qface qback"><div class="qlabel">Suggested Answer</div><div class="ans">The list must be sorted according to the same ordering used by the comparisons. Without sorted order, discarding half of the list is not logically justified.</div><span class="flipcue">↻</span></div>
+</div>
+</div>
+</section>
+<section class="slide fill-slide" data-session="3" data-title="Design + Correctness + Analysis">
+<div class="kicker">Putting the course together</div><h2>Three dimensions of a strong algorithm</h2>
+<div class="grid3"><div class="card center"><div class="icon">🧠</div><h3>Design</h3><p>How will we solve the problem?</p></div><div class="card center"><div class="icon">✅</div><h3>Correctness</h3><p>Why does the solution always satisfy the specification?</p></div><div class="card center"><div class="icon">📈</div><h3>Analysis</h3><p>How do time and memory grow with input size?</p></div></div>
+</section>
+<section class="slide fill-slide" data-session="3" data-title="Week 1 Synthesis">
+<div class="kicker">Week 1 synthesis</div><h2>The mental model you should keep</h2>
+<div class="flow"><div class="step"><b>Problem</b><span>What must be solved?</span></div><div class="step"><b>Specification</b><span>Input, output, constraints</span></div><div class="step"><b>Algorithm</b><span>Precise steps</span></div><div class="step"><b>Correctness</b><span>Why it works</span></div><div class="step"><b>Analysis</b><span>How well it scales</span></div></div>
+</section>
+<section class="slide" data-session="3" data-title="Exit Questions">
+<div class="kicker">Exit check</div><h2>Four questions before you leave</h2>
+<div class="grid2">
+<div class="qwrap" style="min-height:180px"><div aria-label="Interactive question card" class="qcard" style="min-height:180px" tabindex="0"><div class="qface"><div class="qlabel">Q1</div><div class="qtext" style="font-size:30px">Problem vs algorithm?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans">Problem = required input/output relation. Algorithm = procedure that realizes it.</div><span class="flipcue">↻</span></div></div></div>
+<div class="qwrap" style="min-height:180px"><div aria-label="Interactive question card" class="qcard" style="min-height:180px" tabindex="0"><div class="qface"><div class="qlabel">Q2</div><div class="qtext" style="font-size:30px">Why analyze algorithms?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans">To compare resource use, understand trade-offs and predict scalability.</div><span class="flipcue">↻</span></div></div></div>
+<div class="qwrap" style="min-height:180px"><div aria-label="Interactive question card" class="qcard" style="min-height:180px" tabindex="0"><div class="qface"><div class="qlabel">Q3</div><div class="qtext" style="font-size:30px">Pre-condition?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans">What the algorithm is allowed to assume before execution.</div><span class="flipcue">↻</span></div></div></div>
+<div class="qwrap" style="min-height:180px"><div aria-label="Interactive question card" class="qcard" style="min-height:180px" tabindex="0"><div class="qface"><div class="qlabel">Q4</div><div class="qtext" style="font-size:30px">Post-condition?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans">What the algorithm guarantees after successful execution.</div><span class="flipcue">↻</span></div></div></div>
+</div>
+</section>
+<section class="slide s3dark center" data-session="3" data-title="Next Week Preview">
+<div class="kicker">Week 2 preview</div><h1>Now we formalize analysis</h1><p class="lead">Loop invariants · Insertion Sort · Mathematical induction · Growth of functions · Big-O · Big-Ω · Big-Θ · Best / Worst / Average Case</p><div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:20px"><span class="pill">From intuition</span><span class="pill">to mathematical reasoning</span></div>
+</section><section class="slide s3dark center fill-slide" data-session="3" data-title="Thank You">
+<div class="kicker">Week 1 complete</div>
+<h1>Thank You</h1>
+<p class="lead"><b>Any Questions?</b></p>
+<div class="grid3" style="width:100%;margin-top:20px">
+<div class="card"><div class="icon">🧠</div><h3>Design</h3><p>Think before coding.</p></div>
+<div class="card"><div class="icon">✅</div><h3>Correctness</h3><p>Know why it works.</p></div>
+<div class="card"><div class="icon">📈</div><h3>Analysis</h3><p>Know how it scales in cyber systems.</p></div>
+</div>
+<p class="small muted" style="margin-top:22px"><b>Dr. Zakir Khan · Assistant Professor</b><br/>Department of Computer Science<br/>Air University Aerospace &amp; Aviation Campus, Kamra</p>
+</section>
+<!-- footer injected logically per current slide -->
+<div class="footer"><span id="footerSession">Week 1</span><span>CS-332 · Design and Analysis of Algorithms</span><span class="counter" id="counter">1 / 1</span><span class="build-state" id="buildState"></span></div>
+<div class="note" id="globalNote"></div>
+</main></div>
+<div class="controls"><button aria-label="Instructor cue" class="ctrl" id="noteBtn" title="Instructor cue (I)">i</button><button class="ctrl" id="timerBtn" title="Class timer (T)">⏱</button><button class="ctrl" id="overviewBtn" title="Overview (O)">▦</button><button class="ctrl" id="fullBtn" title="Full screen (F)">⛶</button><button class="ctrl" id="helpBtn" title="Help (?)">?</button></div>
+<div class="progress"><div id="progress"></div></div>
+<div class="overlay" id="overview"><div class="overlay-inner"><button class="close" id="ovClose">Close</button><h2>Week 1 Slide Overview</h2><div class="ovgrid" id="ovgrid"></div></div></div>
+<div class="overlay" id="help"><div class="helpbox"><button class="close" id="helpClose">Close</button><h2>Presentation Controls</h2><div class="helpgrid">
+<kbd>→ / Space</kbd><span>Reveal next item; after the build is complete, move to the next slide</span>
+<kbd>Click blank area</kbd><span>Reveal next item / continue to next slide</span>
+<kbd>←</kbd><span>Previous slide</span>
+<kbd>A</kbd><span>Reveal all remaining items on the current slide</span>
+<kbd>S</kbd><span>Switch to the next session</span>
+<kbd>Page Down</kbd><span>Next session</span>
+<kbd>Page Up</kbd><span>Previous session</span>
+<kbd>I</kbd><span>Instructor cue</span>
+<kbd>T</kbd><span>Timer</span>
+<kbd>O</kbd><span>Slide overview</span>
+<kbd>F</kbd><span>Full screen</span>
+<kbd>Home / End</kbd><span>First / last slide</span>
+<kbd>Esc</kbd><span>Close overlay / exit full screen</span>
+</div></div></div>
+<div class="timerpanel" id="timerPanel"><div class="tiny muted">Class Activity Timer</div><div class="timerdigits" id="timerDigits">05:00</div><div class="timerbtns"><button data-min="2">2 min</button><button data-min="5">5 min</button><button data-min="10">10 min</button><button data-min="15">15 min</button><button id="timerStart">Start/Pause</button><button id="timerReset">Reset</button></div></div>
+<script>
+(function(){
+const stage=document.getElementById('stage');
+const slides=[...document.querySelectorAll('.slide')];
+const counter=document.getElementById('counter');
+const progress=document.getElementById('progress');
+const footerSession=document.getElementById('footerSession');
+const globalNote=document.getElementById('globalNote');
+let current=0;
+const sessionStarts={1:slides.findIndex(s=>s.dataset.session==='1'),2:slides.findIndex(s=>s.dataset.session==='2'),3:slides.findIndex(s=>s.dataset.session==='3')};
+
+const buildState=document.getElementById('buildState');
+
+function markRevealSteps(){
+  slides.forEach(slide=>{
+    const chosen=[];
+    const add=el=>{
+      if(!el || chosen.includes(el))return;
+      if(el.classList.contains('note') || el.classList.contains('footer'))return;
+      if(el.closest('.qback'))return;
+      chosen.push(el);
+    };
+
+    // Expand meaningful visual groups so their items build one-by-one.
+    [
+      '.hero-path','.session-focus','.grid2','.grid3','.grid4',
+      '.flow','.timeline','.ambiguity-grid','.strategy-map',
+      '.workflow-pool','.contract-options'
+    ].forEach(sel=>{
+      slide.querySelectorAll(sel).forEach(group=>{
+        [...group.children].forEach(add);
+      });
+    });
+
+    // Standalone interactive / explanatory blocks.
+    [...slide.children].forEach(el=>{
+      if(el.matches('.qwrap,.highlight,.activity,.code,.status,.session-bridge,.demoarea,.demo-controls,.tabs,.barbox,.trade-grid,.workflow-track')){
+        add(el);
+      }
+    });
+
+    // If the slide has very little buildable content, reveal one substantial block instead.
+    if(chosen.length===0){
+      [...slide.children].forEach(el=>{
+        if(el.matches('p.lead,.split,.split-big,.compare-table,.visual-board'))add(el);
+      });
+    }
+
+    // Keep the number of clicks reasonable on dense slides.
+    const maxSteps=8;
+    chosen.slice(0,maxSteps).forEach((el,idx)=>{
+      el.classList.add('reveal-step');
+      el.dataset.revealIndex=String(idx);
+    });
+  });
+}
+
+function updateBuildState(){
+  if(!buildState)return;
+  const steps=getRevealSteps();
+  if(!steps.length){buildState.textContent='';return}
+  const done=steps.filter(x=>x.classList.contains('revealed')).length;
+  buildState.innerHTML='<span class="build-dot '+(done<steps.length?'on':'')+'"></span>'+(done)+'/'+steps.length;
+}
+
+function labelSession(s){return s==='1'?'Session 1 · Foundations':s==='2'?'Session 2 · Problem Solving':s==='3'?'Session 3 · Correctness':'Week 1 · Orientation'}
+function show(i){
+  current=Math.max(0,Math.min(slides.length-1,i));
+  slides.forEach((s,k)=>s.classList.toggle('active',k===current));
+  counter.textContent=(current+1)+' / '+slides.length;
+  progress.style.width=((current+1)/slides.length*100)+'%';
+  footerSession.textContent=labelSession(slides[current].dataset.session);
+  globalNote.classList.remove('show');
+  globalNote.textContent='';
+  updateBuildState();
+  stage.focus({preventScroll:true});
+}
+function getRevealSteps(slide=slides[current]){return [...slide.querySelectorAll('.reveal-step')]}
+function revealNext(){
+  const steps=getRevealSteps();
+  const nextStep=steps.find(x=>!x.classList.contains('revealed'));
+  if(!nextStep)return false;
+  nextStep.classList.add('revealed');
+  updateBuildState();
+  return true;
+}
+function revealAll(){
+  getRevealSteps().forEach(x=>x.classList.add('revealed'));
+  updateBuildState();
+}
+function next(){if(!revealNext())show(current+1)}
+function prev(){show(current-1)}
+
+// flip cards
+function toggleCard(card){card.classList.toggle('flipped')}
+document.querySelectorAll('.qcard').forEach(c=>{c.addEventListener('click',()=>toggleCard(c));c.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleCard(c)}})});
+
+// Instructor note system: use embedded slide note if present.
+function toggleNote(){const n=slides[current].querySelector('.note');const txt=n?n.textContent.trim():'';if(!txt){globalNote.textContent='Instructor cue: Use this slide for explanation, examples, and short student discussion.'}else{globalNote.textContent=txt}globalNote.classList.toggle('show')}
+document.getElementById('noteBtn').addEventListener('click',toggleNote);
+
+// fullscreen
+async function fullscreen(){try{if(!document.fullscreenElement)await document.documentElement.requestFullscreen();else await document.exitFullscreen()}catch(e){}}
+document.getElementById('fullBtn').addEventListener('click',fullscreen);
+
+// overview
+const overview=document.getElementById('overview'),ovgrid=document.getElementById('ovgrid');
+slides.forEach((s,i)=>{const b=document.createElement('button');b.className='ov';b.innerHTML='<small>'+labelSession(s.dataset.session)+' · Slide '+(i+1)+'</small>'+s.dataset.title;b.addEventListener('click',()=>{show(i);overview.classList.remove('open')});ovgrid.appendChild(b)});
+document.getElementById('overviewBtn').addEventListener('click',()=>overview.classList.add('open'));document.getElementById('ovClose').addEventListener('click',()=>overview.classList.remove('open'));
+const help=document.getElementById('help');document.getElementById('helpBtn').addEventListener('click',()=>help.classList.add('open'));document.getElementById('helpClose').addEventListener('click',()=>help.classList.remove('open'));
+
+// timer
+const timerPanel=document.getElementById('timerPanel'),timerDigits=document.getElementById('timerDigits');let timerSeconds=300,timerRun=false,timerId=null;
+function drawTimer(){const m=Math.floor(timerSeconds/60),s=timerSeconds%60;timerDigits.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
+function toggleTimerPanel(){timerPanel.classList.toggle('open')}
+document.getElementById('timerBtn').addEventListener('click',toggleTimerPanel);document.querySelectorAll('[data-min]').forEach(b=>b.addEventListener('click',()=>{timerSeconds=+b.dataset.min*60;timerRun=false;clearInterval(timerId);drawTimer()}));
+document.getElementById('timerStart').addEventListener('click',()=>{timerRun=!timerRun;clearInterval(timerId);if(timerRun)timerId=setInterval(()=>{if(timerSeconds>0){timerSeconds--;drawTimer()}else{timerRun=false;clearInterval(timerId);timerDigits.textContent='TIME!'}},1000)});document.getElementById('timerReset').addEventListener('click',()=>{timerRun=false;clearInterval(timerId);timerSeconds=300;drawTimer()});drawTimer();
+
+// search demo
+const searchData=[4,9,13,18,27,35,42,56,68,73,81,95],searchTarget=73,searchArray=document.getElementById('searchArray'),searchStatus=document.getElementById('searchStatus');let searchTimers=[];
+function clearSearchTimers(){searchTimers.forEach(clearTimeout);searchTimers=[]}
+function drawSearch(){searchArray.innerHTML='';searchData.forEach(v=>{const d=document.createElement('div');d.className='cell';d.textContent=v;searchArray.appendChild(d)})}
+function resetSearch(){clearSearchTimers();drawSearch();searchStatus.textContent='Choose an algorithm.'}
+function linear(){resetSearch();const cells=[...searchArray.children];let found=searchData.indexOf(searchTarget);for(let i=0;i<=found;i++){searchTimers.push(setTimeout(()=>{cells.forEach(c=>c.classList.remove('active'));cells[i].classList.add(i===found?'good':'active');searchStatus.textContent=i===found?'Found '+searchTarget+' after '+(i+1)+' comparisons.':'Checking '+searchData[i]+'...';},i*450))}}
+function binary(){resetSearch();const cells=[...searchArray.children];let lo=0,hi=searchData.length-1,steps=[];while(lo<=hi){let mid=Math.floor((lo+hi)/2);steps.push({lo,hi,mid});if(searchData[mid]===searchTarget)break;if(searchData[mid]<searchTarget)lo=mid+1;else hi=mid-1}steps.forEach((st,k)=>{searchTimers.push(setTimeout(()=>{cells.forEach((c,i)=>{c.className='cell'+(i<st.lo||i>st.hi?' dim':'')});cells[st.mid].className='cell '+(searchData[st.mid]===searchTarget?'good':'active');searchStatus.textContent=searchData[st.mid]===searchTarget?'Found '+searchTarget+' after '+(k+1)+' comparisons.':'Middle = '+searchData[st.mid]+'. Keep the correct half.';},k*700))})}
+document.getElementById('linearBtn').addEventListener('click',linear);document.getElementById('binaryBtn').addEventListener('click',binary);document.getElementById('searchReset').addEventListener('click',resetSearch);drawSearch();
+
+// MAX trace
+const maxData=[7,3,14,2,9],maxArray=document.getElementById('maxArray'),maxState=document.getElementById('maxState'),maxExplain=document.getElementById('maxExplain');let mi=-1,mv=null;
+function drawMax(){maxArray.innerHTML='';maxData.forEach((v,i)=>{const d=document.createElement('div');d.className='cell'+(i===mi?' active':'');d.textContent=v;maxArray.appendChild(d)})}
+function resetMax(){mi=-1;mv=null;drawMax();maxState.textContent='Press Next Step.';maxExplain.textContent=''}
+function maxNext(){if(mi===-1){mi=0;mv=maxData[0];maxState.innerHTML='Initialize: max = <b>'+mv+'</b>';maxExplain.textContent='The first element is the largest among the elements seen so far.'}else if(mi<maxData.length-1){mi++;const old=mv,v=maxData[mi];if(v>mv)mv=v;maxState.innerHTML='Inspect <b>'+v+'</b> → max = <b>'+mv+'</b>';maxExplain.textContent=v>old?'Update max because '+v+' is larger.':'Keep max because '+v+' is not larger.'}else{maxState.innerHTML='Return <b>'+mv+'</b>';maxExplain.textContent='Every element has been inspected.'}drawMax()}
+document.getElementById('maxNext').addEventListener('click',maxNext);document.getElementById('maxReset').addEventListener('click',resetMax);resetMax();
+
+// tradeoff demo: illustrative conceptual operation counts
+const queries=document.getElementById('queries'),qLabel=document.getElementById('qLabel'),noIndexBar=document.getElementById('noIndexBar'),indexBar=document.getElementById('indexBar'),noIndexVal=document.getElementById('noIndexVal'),indexVal=document.getElementById('indexVal'),tradeStatus=document.getElementById('tradeStatus');
+function updateTrade(){const q=+queries.value,n=1000;const no=q*n;const idx=1000+q*10;const mx=Math.max(no,idx);qLabel.textContent=q;noIndexBar.style.width=Math.max(2,no/mx*100)+'%';indexBar.style.width=Math.max(2,idx/mx*100)+'%';noIndexVal.textContent=no.toLocaleString()+' units';indexVal.textContent=idx.toLocaleString()+' units';tradeStatus.textContent='Illustrative model: indexing has an upfront cost, but repeated queries can make that investment worthwhile.'}
+queries.addEventListener('input',updateTrade);updateTrade();
+
+// strategy chooser
+const desc={brute:'Brute Force: useful as a simple baseline or when the search space is small.',divide:'Divide & Conquer: useful when a problem naturally splits into smaller independent subproblems.',greedy:'Greedy: useful when local choices can be shown to lead to a globally valid/optimal solution.',dp:'Dynamic Programming: useful when subproblems overlap and their results can be reused.',graph:'Graph methods: useful when the problem is fundamentally about entities and relationships.',heur:'Heuristics: useful when exact optimization is too expensive and a good practical solution is acceptable.'};
+document.querySelectorAll('.strategy').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.strategy').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');document.getElementById('strategyStatus').textContent=desc[b.dataset.strategy]}));
+
+// representation buttons
+const reps={lang:'repLang',pseudo:'repPseudo',flow:'repFlow'};document.querySelectorAll('[data-rep]').forEach(b=>b.addEventListener('click',()=>{Object.values(reps).forEach(id=>document.getElementById(id).style.display='none');document.getElementById(reps[b.dataset.rep]).style.display=b.dataset.rep==='flow'?'grid':'block';document.querySelectorAll('[data-rep]').forEach(x=>x.classList.remove('s2'));b.classList.add('s2')}));
+
+// counterexample detective
+document.querySelectorAll('[data-ce]').forEach(b=>b.addEventListener('click',()=>{const good=b.dataset.ce==='b';document.getElementById('ceStatus').innerHTML=good?'<b>Correct.</b> [9, 2, 5] disproves the claim because the maximum is 9, not the last element.':'This example does not disprove the claim. Look for an array where the last element is not the maximum.'}));
+
+
+
+// incident triage activity
+const triageFeedback=document.getElementById('triageFeedback');
+document.querySelectorAll('.triage-choice').forEach(b=>b.addEventListener('click',()=>{
+  const good=b.dataset.good==='true';
+  b.classList.remove('ok','bad');
+  b.classList.add(good?'ok':'bad');
+  triageFeedback.classList.remove('neutral','good','bad');
+  triageFeedback.classList.add(good?'good':'bad');
+  triageFeedback.innerHTML=good
+    ?'<span class="feedback-icon">✓</span><span><b>Correct direction.</b> This directly addresses algorithmic cost, scalability, or repeated-work reduction.</span>'
+    :'<span class="feedback-icon">×</span><span><b>Not sufficient.</b> This does not solve the core algorithmic performance problem and may even harm correctness.</span>';
+}));
+
+// ambiguity hunt
+const ambiguityStatus=document.getElementById('ambiguityStatus');
+document.querySelectorAll('.ambig-item').forEach(b=>b.addEventListener('click',()=>{
+  const vague=b.dataset.ambig==='true';
+  b.classList.add(vague?'hit':'safe');
+  b.disabled=true;
+  const found=document.querySelectorAll('.ambig-item.hit').length;
+  const safe=document.querySelectorAll('.ambig-item.safe').length;
+  ambiguityStatus.innerHTML=vague
+    ?'<b>Good catch.</b> This instruction depends on human judgement. Ambiguous found: '+found+'/3.'
+    :'<b>This one is precise.</b> A computer can evaluate it directly.';
+  if(found===3)ambiguityStatus.innerHTML='<b>All three found.</b> “nice”, “looks good”, and “reasonable” must be replaced with measurable rules.';
+}));
+
+// workflow ordering activity
+let workflowNext=0;
+const workflowLabels=['Understand','Specify','Design','Verify','Analyze'];
+const workflowSlots=[...document.querySelectorAll('#workflowTrack span')];
+const workflowStatus=document.getElementById('workflowStatus');
+function resetWorkflow(){
+  workflowNext=0;
+  document.querySelectorAll('.workflow-chip').forEach(b=>b.classList.remove('used'));
+  workflowSlots.forEach((s,i)=>{s.classList.remove('filled');s.textContent=String(i+1)});
+  workflowStatus.textContent='Start with the stage that comes before writing code.';
+}
+document.querySelectorAll('.workflow-chip').forEach(b=>b.addEventListener('click',()=>{
+  const order=Number(b.dataset.order);
+  if(order===workflowNext){
+    workflowSlots[workflowNext].textContent=workflowLabels[workflowNext];
+    workflowSlots[workflowNext].classList.add('filled');
+    b.classList.add('used');
+    workflowNext++;
+    workflowStatus.innerHTML=workflowNext===5
+      ?'<b>Complete.</b> Understand → Specify → Design → Verify → Analyze.'
+      :'<b>Correct.</b> Choose the next stage.';
+  }else{
+    workflowStatus.innerHTML='<b>Try again.</b> Think about what must logically happen before that stage.';
+  }
+}));
+document.getElementById('workflowReset').addEventListener('click',resetWorkflow);
+resetWorkflow();
+
+// contract builder
+let contractPicked={pre:false,post:false};
+const contractStatus=document.getElementById('contractStatus');
+document.querySelectorAll('.contract-choice').forEach(b=>b.addEventListener('click',()=>{
+  const kind=b.dataset.kind,good=b.dataset.good==='true';
+  document.querySelectorAll('.contract-choice[data-kind="'+kind+'"]').forEach(x=>x.classList.remove('correct','wrong'));
+  b.classList.add(good?'correct':'wrong');
+  contractPicked[kind]=good;
+  if(good){
+    contractStatus.innerHTML='<b>Valid '+(kind==='pre'?'pre-condition':'post-condition')+'.</b> '+(kind==='pre'
+      ?'Sorted order justifies eliminating half of the remaining search space.'
+      :'The result must correctly represent either a match or absence of a match.');
+  }else{
+    contractStatus.innerHTML='<b>Not part of the Binary Search contract.</b> Re-check what the algorithm needs before execution and what it promises afterward.';
+  }
+  if(contractPicked.pre&&contractPicked.post){
+    contractStatus.innerHTML='<b>Contract complete.</b> Pre: sorted sequence. Post: return a valid match position or correctly report no match.';
+  }
+}));
+
+// keyboard
+function closeOverlays(){overview.classList.remove('open');help.classList.remove('open')}
+function switchSession(dir=1){
+  const raw=slides[current].dataset.session;
+  const s=(raw==='1'||raw==='2'||raw==='3')?Number(raw):0;
+  let target;
+  if(s===0){target=dir<0?3:1}
+  else if(dir>0){target=s===3?1:s+1}
+  else{target=s===1?3:s-1}
+  show(sessionStarts[target]);
+}
+document.addEventListener('keydown',e=>{
+  const tag=(e.target.tagName||'').toUpperCase();
+  if(['INPUT','TEXTAREA','SELECT'].includes(tag))return;
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}
+  else if(e.key==='ArrowLeft'){e.preventDefault();prev()}
+  else if(e.key==='PageDown'){e.preventDefault();switchSession(1)}
+  else if(e.key==='PageUp'){e.preventDefault();switchSession(-1)}
+  else if(e.key==='Home'){show(0)}
+  else if(e.key==='End'){show(slides.length-1)}
+  else if(e.key.toLowerCase()==='s'){e.preventDefault();switchSession(e.shiftKey?-1:1)}
+  else if(e.key.toLowerCase()==='a'){e.preventDefault();revealAll()}
+  else if(e.key.toLowerCase()==='f'){fullscreen()}
+  else if(e.key.toLowerCase()==='o'){overview.classList.toggle('open')}
+  else if(e.key.toLowerCase()==='i'){toggleNote()}
+  else if(e.key.toLowerCase()==='t'){toggleTimerPanel()}
+  else if(e.key==='?'){help.classList.add('open')}
+  else if(e.key==='Escape'){closeOverlays()}
+});
+let startX=null;stage.addEventListener('pointerdown',e=>startX=e.clientX);stage.addEventListener('pointerup',e=>{if(startX===null)return;const dx=e.clientX-startX;startX=null;if(Math.abs(dx)>90)(dx<0?next():prev())});
+
+// Click/tap on empty slide space follows the same build sequence as the Right Arrow.
+// Interactive controls/cards keep their own click behavior and do not advance the slide.
+stage.addEventListener('click',e=>{
+  if(e.target.closest('button,a,input,select,textarea,.qcard,.ambig-item,.workflow-chip,.contract-choice,.ctrl,.timer-panel,.tabs,.strategy-card'))return;
+  next();
+});
+
+markRevealSteps();
+show(0);
+})();
+</script>
+</body></html>

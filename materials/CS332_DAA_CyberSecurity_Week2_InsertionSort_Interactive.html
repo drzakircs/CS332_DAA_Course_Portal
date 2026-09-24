@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CS332 — Insertion Sort Interactive Learning Lab v3</title>
+<style>
+:root{
+  --navy:#0b2a4a; --navy2:#123f6a; --cyan:#10a8df; --ink:#102033; --muted:#5a6c7e;
+  --paper:#f7fbfe; --card:#fff; --line:#d2e2ee; --green:#13805b; --green-bg:#eaf9f2;
+  --amber:#a96a00; --amber-bg:#fff6df; --red:#b33e3e; --red-bg:#fff0f0;
+  --purple:#5b48a8; --purple-bg:#f2efff; --shadow:0 12px 30px rgba(14,54,84,.10);
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:radial-gradient(circle at 12% 5%,rgba(16,168,223,.08),transparent 24rem),#eef5fa}
+button,input,select,textarea{font:inherit} button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:4px solid rgba(16,168,223,.25);outline-offset:2px}
+.app{max-width:1500px;margin:auto;padding:18px}
+.header{position:sticky;top:0;z-index:30;background:rgba(247,251,254,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:12px 0 10px}
+.header-top{display:flex;justify-content:space-between;gap:18px;align-items:center;flex-wrap:wrap}
+.brand h1{font-size:clamp(28px,3vw,48px);line-height:1.05;margin:0;color:var(--navy)}
+.brand p{margin:6px 0 0;color:var(--muted);font-size:clamp(16px,1.15vw,21px)}
+.progress-wrap{min-width:270px;max-width:420px;flex:1}
+.progress-label{display:flex;justify-content:space-between;color:var(--muted);font-size:14px;margin-bottom:5px}
+.progress{height:9px;background:#dfeaf2;border-radius:999px;overflow:hidden}
+.progress>div{height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--navy2));transition:.3s}
+.nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.nav button{border:1px solid var(--line);background:#fff;color:var(--navy);border-radius:10px;padding:9px 12px;font-weight:800}
+.nav button.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.module{display:none;padding:28px 0 56px}.module.active{display:block}
+.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:24px;align-items:stretch}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:24px}
+h2{font-size:clamp(32px,2.7vw,50px);line-height:1.08;color:var(--navy);margin:0 0 18px}
+h3{font-size:clamp(24px,1.8vw,34px);line-height:1.12;color:var(--navy2);margin:0 0 12px}
+p,li{font-size:clamp(20px,1.35vw,27px);line-height:1.36}
+.small{font-size:clamp(16px,1.05vw,20px);line-height:1.35}.lead{font-size:clamp(26px,2vw,37px);line-height:1.27}.muted{color:var(--muted)}
+.kicker{font-size:clamp(17px,1.1vw,21px);font-weight:900;letter-spacing:.07em;text-transform:uppercase;color:var(--cyan);margin-bottom:9px}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.pill{padding:7px 11px;border-radius:999px;background:#e8f8ff;border:1px solid #bdeaf9;color:var(--navy2);font-weight:800;font-size:clamp(15px,1vw,19px)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.callout{border-left:7px solid var(--cyan);background:#edfaff;border-radius:12px;padding:16px 18px}.warn{border-left-color:#e3a63b;background:var(--amber-bg)}.good{border-left-color:#4db387;background:var(--green-bg)}.bad{border-left-color:#d87979;background:var(--red-bg)}
+.icon{font-size:52px;margin-bottom:10px}.metric{font-size:clamp(34px,2.9vw,52px);font-weight:950;color:var(--cyan)}.metric small{display:block;font-size:16px;color:var(--muted);font-weight:600;margin-top:6px}
+.action{border:2px solid var(--line);background:#fff;color:var(--navy);border-radius:12px;padding:11px 16px;font-weight:900;min-height:46px}
+.action.primary{background:var(--navy);border-color:var(--navy);color:#fff}.action.cyan{background:var(--cyan);border-color:var(--cyan);color:#052338}.action.green{background:var(--green);border-color:var(--green);color:#fff}
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+input[type=text],input[type=number],select{border:2px solid var(--line);border-radius:11px;background:#fff;color:var(--ink);padding:10px 12px;font-size:18px}
+input[type=range]{width:min(360px,70vw)}
+.array{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin:16px 0;min-height:94px}
+.cell{width:72px;height:72px;border-radius:14px;border:3px solid #c5d8e6;display:grid;place-items:center;background:#fff;color:var(--navy);font-size:30px;font-weight:950;position:relative;transition:.22s}
+.cell .idx{position:absolute;bottom:-25px;font-size:13px;color:var(--muted);font-weight:700}.cell.sorted{background:var(--green-bg);border-color:#56b88d}.cell.key{background:var(--amber-bg);border-color:#d9a137;transform:translateY(-5px)}.cell.compare{box-shadow:0 0 0 5px rgba(16,168,223,.17);border-color:var(--cyan)}.cell.shift{background:var(--purple-bg);border-color:#8a77d8}.cell.final{background:#e8f8ff;border-color:var(--cyan)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:16px;margin-top:16px}.swatch{display:inline-block;width:12px;height:12px;border-radius:4px;margin-right:5px}
+.code{background:#071827;color:#e8f5ff;border-radius:16px;padding:18px 20px;font-family:"Cascadia Code",Consolas,monospace;font-size:clamp(18px,1.25vw,23px);line-height:1.48;white-space:pre-wrap}
+.code-line{display:block;padding:1px 7px;border-radius:6px}.code-line.active{background:#163f5e;color:#fff;font-weight:800}
+.status{background:#edf5fb;border:1px dashed #9ebbd0;border-radius:13px;padding:14px 16px;min-height:68px;font-size:clamp(18px,1.2vw,23px);line-height:1.32}
+.explain{background:#fffaf0;border:2px solid #efc96c;border-radius:14px;padding:15px 17px;font-size:clamp(18px,1.2vw,23px);line-height:1.32}
+.step-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:20px}.demo-board{min-height:570px}
+.counter-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}.counter{border:1px solid var(--line);border-radius:13px;background:#fbfdff;padding:13px;text-align:center}.counter b{display:block;font-size:30px;color:var(--navy)}.counter span{font-size:15px;color:var(--muted)}
+.case-card{min-height:230px;display:flex;flex-direction:column;justify-content:center}.case-card .case-array{font-family:Consolas,monospace;font-size:24px;font-weight:900;color:var(--navy);margin:8px 0}
+.formula{font-family:Georgia,serif;font-size:clamp(30px,2.5vw,45px);font-weight:800;color:var(--navy2)}
+.bar-row{display:grid;grid-template-columns:150px 1fr 155px;gap:12px;align-items:center;margin:10px 0}.track{height:22px;background:#e5edf4;border-radius:999px;overflow:hidden}.fill{height:100%;background:var(--cyan);border-radius:999px;transition:.35s}
+.invariant-flow{display:grid;grid-template-columns:1fr .15fr 1fr .15fr 1fr;gap:12px;align-items:center}.inv-node{min-height:230px;border:2px solid var(--line);border-radius:18px;background:#fff;padding:20px;display:flex;flex-direction:column;justify-content:center;text-align:center}.inv-node b{font-size:clamp(27px,1.7vw,33px);color:var(--navy);margin-bottom:9px}.inv-node span{font-size:clamp(20px,1.25vw,24px);color:var(--muted);line-height:1.27}.arrow{font-size:44px;font-weight:950;color:var(--cyan);text-align:center}
+.quiz-q{background:#fff;border:1px solid var(--line);border-radius:15px;padding:18px;margin:14px 0}.quiz-q b{font-size:clamp(20px,1.3vw,25px)}.quiz-q label{display:block;padding:8px 10px;border-radius:9px;font-size:clamp(18px,1.15vw,22px)}.quiz-q label:hover{background:#f2f8fc}
+.challenge{border:2px solid #c6baf3;background:#f5f2ff;border-radius:17px;padding:20px}
+.checklist{list-style:none;padding:0;margin:0;display:grid;gap:10px}.checklist li{position:relative;padding:12px 14px 12px 46px;background:#fff;border:1px solid var(--line);border-radius:11px}.checklist li:before{content:"✓";position:absolute;left:15px;color:var(--green);font-weight:950}
+.footer-actions{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:24px}.kbd{border:1px solid #bdceda;border-bottom-width:3px;background:#fff;border-radius:6px;padding:2px 6px;font-size:14px;font-weight:800}.hidden{display:none!important}
+@media(max-width:1000px){.hero,.grid2,.grid3,.grid4,.step-grid,.counter-grid,.invariant-flow{grid-template-columns:1fr}.arrow{transform:rotate(90deg)}.bar-row{grid-template-columns:100px 1fr 110px}}
+
+.quiz-explain{display:none;margin-top:10px;border-radius:10px;padding:10px 12px;font-size:clamp(16px,1.05vw,20px);line-height:1.3}
+.quiz-explain.show{display:block}
+.quiz-explain.correct{background:var(--green-bg);border:1px solid #71c8a4;color:#155d45}
+.quiz-explain.wrong{background:var(--red-bg);border:1px solid #df9898;color:#8b3030}
+
+</style>
+</head>
+<body>
+<div class="app" id="app">
+<header class="header">
+  <div class="header-top">
+    <div class="brand"><h1>Insertion Sort Interactive Learning Lab</h1><p>CS332 · Design and Analysis of Algorithms · Self-Study Environment</p></div>
+    <div class="progress-wrap"><div class="progress-label"><span>Your learning progress</span><b id="progressText">0%</b></div><div class="progress"><div id="progressFill"></div></div></div>
+  </div>
+  <nav class="nav" id="nav"></nav>
+</header>
+
+<section class="module active" data-title="Start">
+  <div class="hero">
+    <div class="card">
+      <div class="kicker">Learn by doing</div>
+      <h2>Understand Insertion Sort from the inside</h2>
+      <p class="lead">You will <b>predict</b>, <b>trace</b>, <b>measure</b>, <b>compare</b>, and <b>prove</b> the algorithm yourself.</p>
+      <div class="pills"><span class="pill">Step-by-step trace</span><span class="pill">Custom arrays</span><span class="pill">Best / Average / Worst</span><span class="pill">Operation counters</span><span class="pill">Loop invariant</span><span class="pill">Self-test</span></div>
+      <div class="callout good"><p style="margin:0"><b>Learning goal:</b> by the end, you should be able to explain how Insertion Sort works, why it is correct, and why its running time changes with input order.</p></div>
+    </div>
+    <div class="card">
+      <h3>Recommended path</h3>
+      <ul class="checklist">
+        <li>Build the intuition</li><li>Trace a complete execution</li><li>Compare sorted / random / reverse arrays</li><li>Measure comparisons and shifts</li><li>Understand time and space complexity</li><li>Prove correctness with a loop invariant</li><li>Complete the challenge and quiz</li>
+      </ul>
+      <p class="small muted">Keyboard: <span class="kbd">→</span> next module, <span class="kbd">←</span> previous module, <span class="kbd">Space</span> next algorithm step inside the Trace module.</p>
+    </div>
+  </div>
+  <div class="footer-actions"><span></span><button class="action primary nextModule">Start Learning →</button></div>
+</section>
+
+<section class="module" data-title="Intuition">
+  <div class="kicker">Concept first</div><h2>How does Insertion Sort think?</h2>
+  <div class="grid3">
+    <div class="card case-card"><div class="icon">🃏</div><h3>1. Keep a sorted prefix</h3><p>The left part of the array is treated as already sorted.</p></div>
+    <div class="card case-card"><div class="icon">🔑</div><h3>2. Pick the next key</h3><p>Take the next unsorted element and remember its value.</p></div>
+    <div class="card case-card"><div class="icon">↪️</div><h3>3. Insert it correctly</h3><p>Shift larger prefix elements right until the key can be placed.</p></div>
+  </div>
+  <div class="card" style="margin-top:20px">
+    <h3>Card-hand analogy</h3>
+    <div class="array"><div class="cell sorted">2</div><div class="cell sorted">4</div><div class="cell sorted">7</div><div class="cell key">5</div><div style="font-size:38px;font-weight:900;color:var(--cyan);align-self:center">→</div><div class="cell sorted">2</div><div class="cell sorted">4</div><div class="cell final">5</div><div class="cell sorted">7</div></div>
+    <div class="callout"><p style="margin:0"><b>Key idea:</b> Insertion Sort grows a sorted prefix one element at a time.</p></div>
+  </div>
+  <div class="footer-actions"><button class="action prevModule">← Back</button><button class="action primary nextModule">Next: Algorithm →</button></div>
+</section>
+
+<section class="module" data-title="Algorithm">
+  <div class="kicker">Algorithm mechanics</div><h2>The standard Insertion Sort algorithm</h2>
+  <div class="grid2">
+    <div class="card"><div class="code">
+<span class="code-line">for j = 1 to n−1:</span>
+<span class="code-line">    key = A[j]</span>
+<span class="code-line">    i = j − 1</span>
+<span class="code-line">    while i ≥ 0 and A[i] &gt; key:</span>
+<span class="code-line">        A[i+1] = A[i]     // shift right</span>
+<span class="code-line">        i = i − 1</span>
+<span class="code-line">    A[i+1] = key          // insert key</span></div></div>
+    <div class="card">
+      <h3>What each part means</h3>
+      <div class="callout"><p><b>Outer loop:</b> chooses each new key from left to right.</p></div>
+      <div class="callout warn"><p><b>While loop:</b> moves elements that are larger than the key.</p></div>
+      <div class="callout good"><p><b>Final assignment:</b> places the key into the newly opened position.</p></div>
+      <p class="small muted">It sorts <b>in place</b>: only a few extra variables are needed.</p>
+    </div>
+  </div>
+  <div class="footer-actions"><button class="action prevModule">← Back</button><button class="action primary nextModule">Next: Trace Lab →</button></div>
+</section>
+
+<section class="module" data-title="Trace Lab">
+  <div class="kicker">Main interactive laboratory</div><h2>Trace Insertion Sort yourself</h2>
+  <div class="controls card" style="margin-bottom:18px">
+    <label><b>Preset:</b></label>
+    <select id="preset"><option value="random">Unsorted: 7, 3, 8, 2, 6, 4, 5</option><option value="sorted">Already sorted: 1, 2, 3, 4, 5, 6, 7</option><option value="reverse">Reverse: 7, 6, 5, 4, 3, 2, 1</option><option value="nearly">Nearly sorted: 1, 2, 4, 3, 5, 6, 7</option><option value="duplicates">With duplicates: 4, 2, 4, 1, 3, 2, 5</option></select>
+    <label for="custom"><b>or custom array:</b></label><input id="custom" type="text" value="7,3,8,2,6,4,5"><button class="action cyan" id="loadCustom" type="button">Load</button>
+  </div>
+  <div class="step-grid">
+    <div class="card demo-board">
+      <h3>Array state</h3><div class="array" id="traceArray"></div>
+      <div class="legend"><span><i class="swatch" style="background:var(--green-bg);border:1px solid #56b88d"></i>sorted prefix</span><span><i class="swatch" style="background:var(--amber-bg);border:1px solid #d9a137"></i>key</span><span><i class="swatch" style="background:var(--purple-bg);border:1px solid #8a77d8"></i>shifted</span></div>
+      <div class="controls" style="margin-top:30px"><button class="action primary" id="prevStep" type="button">← Previous</button><button class="action cyan" id="nextStep" type="button">Next Step →</button><button class="action" id="autoRun" type="button">Auto-run</button><button class="action" id="resetTrace" type="button">Reset</button><label>Speed <input id="speed" type="range" min="250" max="1800" value="850" step="50"></label></div>
+      <div class="counter-grid"><div class="counter"><b id="cComp">0</b><span>element comparisons</span></div><div class="counter"><b id="cShift">0</b><span>shifts</span></div><div class="counter"><b id="cInsert">0</b><span>key insertions</span></div><div class="counter"><b id="cOuter">0</b><span>outer iterations</span></div></div>
+    </div>
+    <div class="card">
+      <h3>Explanation of this step</h3><div class="status" id="stepTitle">Load an array, then press Next Step.</div><div class="explain" id="stepExplain" style="margin-top:12px">The explanation will tell you what the algorithm is doing and why.</div>
+      <h3 style="margin-top:18px">Pseudocode focus</h3>
+      <div class="code" id="tracePseudo"><span class="code-line" data-line="1">for j = 1 to n−1:</span><span class="code-line" data-line="2">    key = A[j]</span><span class="code-line" data-line="3">    i = j − 1</span><span class="code-line" data-line="4">    while i ≥ 0 and A[i] &gt; key:</span><span class="code-line" data-line="5">        A[i+1] = A[i]</span><span class="code-line" data-line="6">        i = i − 1</span><span class="code-line" data-line="7">    A[i+1] = key</span></div>
+    </div>
+  </div>
+  <div class="footer-actions"><button class="action prevModule">← Back</button><button class="action primary nextModule">Next: Compare Cases →</button></div>
+</section>
+
+<section class="module" data-title="Cases">
+  <div class="kicker">What changes with input order?</div><h2>Best, typical, and worst behavior</h2>
+  <div class="grid3">
+    <div class="card case-card"><div class="icon">✅</div><h3>Already sorted</h3><div class="case-array">[1,2,3,4,5,6,7]</div><p>Each key is compared with its predecessor and immediately stays in place.</p><div class="formula">Θ(n)</div><p class="small muted">Few comparisons, zero shifts.</p></div>
+    <div class="card case-card"><div class="icon">🔀</div><h3>Unsorted / typical</h3><div class="case-array">[7,3,8,2,6,4,5]</div><p>Some keys move a little; others move across several earlier values.</p><div class="formula">Θ(n²)</div><p class="small muted">Average work grows quadratically.</p></div>
+    <div class="card case-card"><div class="icon">↩️</div><h3>Reverse order</h3><div class="case-array">[7,6,5,4,3,2,1]</div><p>Every new key is smaller than all earlier elements and moves to the front.</p><div class="formula">Θ(n²)</div><p class="small muted">Maximum shifts: n(n−1)/2.</p></div>
+  </div>
+  <div class="card" style="margin-top:20px"><h3>Run a direct comparison</h3><div class="controls"><label for="caseN"><b>n:</b></label><input id="caseN" type="number" min="2" max="80" value="10"><button class="action cyan" id="compareCases" type="button">Compare</button></div><div id="caseBars" style="margin-top:14px"></div><p class="small muted">Counts shown are element comparisons and shifts for the standard algorithm used in this lab.</p></div>
+  <div class="footer-actions"><button class="action prevModule">← Back</button><button class="action primary nextModule">Next: Complexity →</button></div>
+</section>
+
+<section class="module" data-title="Complexity">
+  <div class="kicker">Analyze the cost</div><h2>Time and space complexity</h2>
+  <div class="grid2">
+    <div class="card"><h3>Best case: already sorted</h3><p>The while-condition fails after one element comparison for each key.</p><div class="formula">(n−1) comparisons → Θ(n)</div><div class="callout good"><p>For n=7: 6 element comparisons and 0 shifts.</p></div></div>
+    <div class="card"><h3>Worst case: reverse sorted</h3><p>For key j, all j earlier elements are larger and shift right.</p><div class="formula">1+2+…+(n−1)=n(n−1)/2</div><div class="callout bad"><p>Quadratic comparisons and quadratic shifts → Θ(n²).</p></div></div>
+  </div>
+  <div class="grid4" style="margin-top:20px"><div class="card"><h3>Best Time</h3><div class="metric">Θ(n)</div></div><div class="card"><h3>Average Time</h3><div class="metric">Θ(n²)</div></div><div class="card"><h3>Worst Time</h3><div class="metric">Θ(n²)</div></div><div class="card"><h3>Auxiliary Space</h3><div class="metric">O(1)</div><p class="small">In-place</p></div></div>
+  <div class="card" style="margin-top:20px"><h3>What does O(1) auxiliary space mean?</h3><p>Only a few extra variables such as <b>key</b>, <b>i</b>, and <b>j</b> are needed; extra working memory does not grow with n.</p><div class="callout warn"><p style="margin:0"><b>Do not confuse this with input storage:</b> the array itself occupies Θ(n) memory. Auxiliary space measures extra working memory.</p></div></div>
+  <div class="footer-actions"><button class="action prevModule">← Back</button><button class="action primary nextModule">Next: Properties →</button></div>
+</section>
+
+<section class="module" data-title="Properties">
+  <div class="kicker">Algorithm characteristics</div><h2>Important properties</h2>
+  <div class="grid4">
+    <div class="card"><div class="icon">📦</div><h3>In-place</h3><p>Uses O(1) auxiliary space.</p></div>
+    <div class="card"><div class="icon">🤝</div><h3>Stable</h3><p>Equal keys keep their original relative order when only strictly larger values are shifted.</p></div>
+    <div class="card"><div class="icon">📈</div><h3>Adaptive</h3><p>Already or nearly sorted data requires fewer shifts.</p></div>
+    <div class="card"><div class="icon">🧩</div><h3>Good for small inputs</h3><p>Simple and often efficient when n is small.</p></div>
+  </div>
+  <div class="callout" style="margin-top:20px"><p style="margin:0"><b>Practical intuition:</b> asymptotic worst-case performance is quadratic, but actual work can be much smaller when the array is close to sorted.</p></div>
+  <div class="footer-actions"><button class="action prevModule">← Back</button><button class="action primary nextModule">Next: Loop Invariant →</button></div>
+</section>
+
+<section class="module" data-title="Loop Invariant">
+  <div class="kicker">Why is it correct?</div><h2>The Insertion Sort loop invariant</h2>
+  <div class="callout good"><p class="lead" style="margin:0"><b>Invariant:</b> Before each outer-loop iteration with index j, A[0…j−1] is sorted and contains exactly the same elements that originally occupied A[0…j−1].</p></div>
+  <div class="invariant-flow" style="margin-top:22px">
+    <div class="inv-node"><div class="icon">🚦</div><b>Initialization</b><span>Before the first iteration, the prefix has one element. A one-element array is sorted.</span></div><div class="arrow">→</div>
+    <div class="inv-node"><div class="icon">🔁</div><b>Maintenance</b><span>Shift larger prefix elements right, insert the key, and the larger prefix remains sorted.</span></div><div class="arrow">→</div>
+    <div class="inv-node"><div class="icon">🏁</div><b>Termination</b><span>When j=n, the sorted prefix is the entire array. Therefore the whole array is sorted.</span></div>
+  </div>
+  <div class="card" style="margin-top:22px"><h3>Interactive invariant checker</h3><div class="controls"><select id="invScenario"><option value="init">Initialization</option><option value="maint">Maintenance</option><option value="term">Termination</option></select><button class="action cyan" id="checkInvariant" type="button">Explain this proof duty</button></div><div class="status" id="invStatus" style="margin-top:12px">Choose a proof duty.</div></div>
+  <div class="footer-actions"><button class="action prevModule">← Back</button><button class="action primary nextModule">Next: Challenge →</button></div>
+</section>
+
+<section class="module" data-title="Challenge">
+  <div class="kicker">Student challenge</div><h2>Predict before running</h2>
+  <div class="grid2">
+    <div class="challenge"><h3>Challenge A</h3><p>Array: <b>[1,2,3,4,5]</b></p><label>How many shifts? <input type="number" id="chA" min="0" max="20"></label><button class="action cyan" id="checkA" type="button">Check</button><div class="status" id="chAStatus" style="margin-top:10px">Think before checking.</div></div>
+    <div class="challenge"><h3>Challenge B</h3><p>Array: <b>[5,4,3,2,1]</b></p><label>How many shifts? <input type="number" id="chB" min="0" max="20"></label><button class="action cyan" id="checkB" type="button">Check</button><div class="status" id="chBStatus" style="margin-top:10px">Hint: 1+2+3+4.</div></div>
+  </div>
+  <div class="card" style="margin-top:20px"><h3>Challenge C — explain in your own words</h3><p>Why can Insertion Sort be fast on nearly sorted data even though its average and worst-case complexity are Θ(n²)?</p><textarea id="reflection" rows="4" style="width:100%;border:2px solid var(--line);border-radius:12px;padding:12px" placeholder="Write your explanation here..."></textarea><button class="action green" id="showModel" type="button" style="margin-top:10px">Compare with model answer</button><div class="status hidden" id="modelAnswer" style="margin-top:10px"><b>Model answer:</b> when data is nearly sorted, most keys are already near their final positions, so the while loop performs few comparisons and shifts. Actual work can be much less than the quadratic worst case.</div></div>
+  <div class="footer-actions"><button class="action prevModule">← Back</button><button class="action primary nextModule">Next: Quiz →</button></div>
+</section>
+
+<section class="module" data-title="Quiz">
+  <div class="kicker">Self-assessment</div><h2>Check your understanding</h2>
+  <form id="quiz">
+    <div class="quiz-q"><b>1. What is sorted before each outer iteration?</b><label><input type="radio" name="q1" value="a"> Entire array</label><label><input type="radio" name="q1" value="b"> Prefix A[0…j−1]</label><label><input type="radio" name="q1" value="c"> Final element only</label><div class="quiz-explain" data-feedback="q1"></div></div>
+    <div class="quiz-q"><b>2. What is the best-case time complexity of the standard Insertion Sort algorithm when the input array is already sorted?</b><label><input type="radio" name="q2" value="a"> Θ(n)</label><label><input type="radio" name="q2" value="b"> Θ(log n)</label><label><input type="radio" name="q2" value="c"> Θ(n²)</label><div class="quiz-explain" data-feedback="q2"></div></div>
+    <div class="quiz-q"><b>3. Which input gives maximum shifts?</b><label><input type="radio" name="q3" value="a"> Sorted</label><label><input type="radio" name="q3" value="b"> Reverse sorted</label><label><input type="radio" name="q3" value="c"> All equal</label><div class="quiz-explain" data-feedback="q3"></div></div>
+    <div class="quiz-q"><b>4. What is the <em>auxiliary (extra working)</em> space complexity of the standard in-place Insertion Sort?</b><label><input type="radio" name="q4" value="a"> O(n)</label><label><input type="radio" name="q4" value="b"> O(log n)</label><label><input type="radio" name="q4" value="c"> O(1)</label><div class="quiz-explain" data-feedback="q4"></div></div>
+    <div class="quiz-q"><b>5. Why is the standard version stable?</b><label><input type="radio" name="q5" value="a"> It swaps equal keys</label><label><input type="radio" name="q5" value="b"> It shifts only values strictly greater than key</label><label><input type="radio" name="q5" value="c"> Stability is unrelated to comparisons</label><div class="quiz-explain" data-feedback="q5"></div></div>
+    <button class="action primary" type="submit">Check Score</button><button class="action" id="clearQuiz" type="button">Reset Quiz</button>
+  </form>
+  <div class="status" id="quizResult" style="margin-top:14px">Complete all five questions.</div>
+  <div class="footer-actions"><button class="action prevModule">← Back</button><button class="action primary nextModule">Finish →</button></div>
+</section>
+
+<section class="module" data-title="Summary">
+  <div class="kicker">You should now be able to explain this yourself</div><h2>Insertion Sort — complete mental model</h2>
+  <div class="grid3">
+    <div class="card"><h3>How it works</h3><p>Grow a sorted prefix. Pick the next key. Shift larger elements right. Insert the key.</p></div>
+    <div class="card"><h3>Why cases differ</h3><p>Running time depends on how far keys must move through the sorted prefix.</p></div>
+    <div class="card"><h3>Complexities</h3><p><b>Best:</b> Θ(n)<br><b>Average:</b> Θ(n²)<br><b>Worst:</b> Θ(n²)<br><b>Auxiliary space:</b> O(1)</p></div>
+    <div class="card"><h3>Correctness</h3><p>The sorted-prefix invariant is initialized, maintained, and then used at termination.</p></div>
+    <div class="card"><h3>Properties</h3><p>In-place, stable in the standard form, and adaptive to nearly sorted input.</p></div>
+    <div class="card"><h3>When it shines</h3><p>Small inputs and data already close to sorted.</p></div>
+  </div>
+  <div class="callout good" style="margin-top:20px"><p style="margin:0"><b>Mastery check:</b> If you can explain why reverse order creates 1+2+…+(n−1) shifts and why the invariant proves the prefix stays sorted, you understand the core of Insertion Sort.</p></div>
+  <div class="footer-actions"><button class="action prevModule">← Back</button><button class="action primary" id="restartAll" type="button">Restart Lab</button></div>
+</section>
+</div>
+
+<script>
+(function(){
+const root=document.getElementById('app'), modules=[...root.querySelectorAll('.module')], nav=document.getElementById('nav'), progressFill=document.getElementById('progressFill'), progressText=document.getElementById('progressText');
+let current=0; const visited=new Set([0]);
+modules.forEach((m,i)=>{const b=document.createElement('button');b.type='button';b.textContent=(i+1)+'. '+m.dataset.title;b.addEventListener('click',()=>showModule(i));nav.appendChild(b)});
+const navBtns=[...nav.querySelectorAll('button')];
+function updateProgress(){const pct=Math.round(visited.size/modules.length*100);progressFill.style.width=pct+'%';progressText.textContent=pct+'%'}
+function showModule(i){current=Math.max(0,Math.min(modules.length-1,i));modules.forEach((m,k)=>m.classList.toggle('active',k===current));navBtns.forEach((b,k)=>b.classList.toggle('active',k===current));visited.add(current);updateProgress();window.scrollTo({top:0,behavior:'smooth'})}
+root.querySelectorAll('.nextModule').forEach(b=>b.addEventListener('click',()=>showModule(current+1)));root.querySelectorAll('.prevModule').forEach(b=>b.addEventListener('click',()=>showModule(current-1)));
+
+const presets={random:[7,3,8,2,6,4,5],sorted:[1,2,3,4,5,6,7],reverse:[7,6,5,4,3,2,1],nearly:[1,2,4,3,5,6,7],duplicates:[4,2,4,1,3,2,5]};
+let source=[...presets.random],steps=[],stepIndex=0,autoTimer=null;
+const traceArray=document.getElementById('traceArray'),stepTitle=document.getElementById('stepTitle'),stepExplain=document.getElementById('stepExplain'),cComp=document.getElementById('cComp'),cShift=document.getElementById('cShift'),cInsert=document.getElementById('cInsert'),cOuter=document.getElementById('cOuter');
+
+function buildSteps(input){
+  const A=[...input],S=[];let comp=0,shift=0,insert=0,outer=0;
+  S.push({a:[...A],j:null,i:null,key:null,sorted:1,line:1,type:'start',title:'Start',explain:'The first element is a sorted prefix of length 1. The first key will be the element at index 1.',comp,shift,insert,outer});
+  for(let j=1;j<A.length;j++){
+    outer++;let key=A[j],i=j-1;
+    S.push({a:[...A],j,i,key,sorted:j,line:2,type:'key',title:`Choose key = ${key} at index ${j}`,explain:`A[0…${j-1}] is already sorted. Insert ${key} into the correct position inside this prefix.`,comp,shift,insert,outer});
+    while(i>=0){
+      comp++;
+      S.push({a:[...A],j,i,key,sorted:j,line:4,type:'compare',title:`Compare A[${i}] = ${A[i]} with key = ${key}`,explain:A[i]>key?`${A[i]} > ${key}, so ${A[i]} must shift one position right.`:`${A[i]} ≤ ${key}. Stop shifting; ${key} belongs immediately after index ${i}.`,comp,shift,insert,outer});
+      if(!(A[i]>key))break;
+      const moved=A[i];A[i+1]=A[i];shift++;
+      S.push({a:[...A],j,i,key,sorted:j,line:5,type:'shift',shiftFrom:i,shiftTo:i+1,title:`Shift ${moved} right`,explain:`Move ${moved} from index ${i} to ${i+1}. This opens space for the key further left.`,comp,shift,insert,outer});
+      i--;
+      S.push({a:[...A],j,i,key,sorted:j,line:6,type:'move',title:'Move comparison pointer left',explain:`Set i = ${i}. If i ≥ 0, compare the next earlier element with the key.`,comp,shift,insert,outer});
+    }
+    A[i+1]=key;insert++;
+    S.push({a:[...A],j,i,key,sorted:j+1,line:7,type:'insert',insertAt:i+1,title:`Insert key ${key} at index ${i+1}`,explain:`Place ${key} into the gap. A[0…${j}] is now sorted, so the sorted prefix grows by one.`,comp,shift,insert,outer});
+  }
+  S.push({a:[...A],j:null,i:null,key:null,sorted:A.length,line:7,type:'done',title:'Sorting complete',explain:'The sorted prefix is now the entire array. By the loop invariant, the entire array is sorted.',comp,shift,insert,outer});
+  return S;
+}
+function renderStep(s){
+  traceArray.innerHTML='';
+  s.a.forEach((v,idx)=>{const d=document.createElement('div');d.className='cell';d.textContent=v;if(idx<s.sorted)d.classList.add('sorted');if(s.type==='key'&&idx===s.j)d.classList.add('key');if(s.type==='compare'&&idx===s.i)d.classList.add('compare');if(s.type==='shift'&&idx===s.shiftTo)d.classList.add('shift');if(s.type==='insert'&&idx===s.insertAt)d.classList.add('key');if(s.type==='done')d.classList.add('final');const ix=document.createElement('span');ix.className='idx';ix.textContent=idx;d.appendChild(ix);traceArray.appendChild(d)});
+  stepTitle.innerHTML=`<b>Step ${stepIndex}:</b> ${s.title}`;stepExplain.textContent=s.explain;cComp.textContent=s.comp;cShift.textContent=s.shift;cInsert.textContent=s.insert;cOuter.textContent=s.outer;
+  [...document.querySelectorAll('#tracePseudo .code-line')].forEach(x=>x.classList.toggle('active',Number(x.dataset.line)===s.line));
+}
+function stopAuto(){if(autoTimer){clearInterval(autoTimer);autoTimer=null;document.getElementById('autoRun').textContent='Auto-run'}}
+function loadArray(a){stopAuto();source=[...a];steps=buildSteps(source);stepIndex=0;renderStep(steps[0]);document.getElementById('custom').value=source.join(',')}
+function nextStep(){if(stepIndex<steps.length-1){stepIndex++;renderStep(steps[stepIndex])}else stopAuto()}
+function prevStep(){if(stepIndex>0){stepIndex--;renderStep(steps[stepIndex])}}
+document.getElementById('nextStep').onclick=nextStep;document.getElementById('prevStep').onclick=prevStep;document.getElementById('resetTrace').onclick=()=>loadArray(source);
+document.getElementById('autoRun').onclick=()=>{if(autoTimer){stopAuto();return}document.getElementById('autoRun').textContent='Pause';autoTimer=setInterval(()=>{if(stepIndex<steps.length-1)nextStep();else stopAuto()},Number(document.getElementById('speed').value))};
+document.getElementById('preset').onchange=e=>loadArray(presets[e.target.value]);document.getElementById('loadCustom').onclick=()=>{const vals=document.getElementById('custom').value.split(',').map(x=>Number(x.trim())).filter(Number.isFinite);if(vals.length<2||vals.length>12){stepTitle.textContent='Please enter 2–12 numbers separated by commas.';return}loadArray(vals)};loadArray(source);
+
+function countInsertion(a){let A=[...a],comp=0,shift=0;for(let j=1;j<A.length;j++){const key=A[j];let i=j-1;while(i>=0){comp++;if(!(A[i]>key))break;A[i+1]=A[i];shift++;i--}A[i+1]=key}return{comp,shift}}
+function mixedArray(n){const a=Array.from({length:n},(_,i)=>i+1);for(let i=0;i<n;i++){const j=(i*7+3)%n;[a[i],a[j]]=[a[j],a[i]]}return a}
+function renderCaseBars(){let n=Math.max(2,Math.min(80,Number(document.getElementById('caseN').value)||10));document.getElementById('caseN').value=n;const sorted=Array.from({length:n},(_,i)=>i+1),reverse=[...sorted].reverse(),mixed=mixedArray(n),data=[['Sorted',countInsertion(sorted)],['Mixed',countInsertion(mixed)],['Reverse',countInsertion(reverse)]],max=Math.max(...data.map(x=>x[1].comp),1),box=document.getElementById('caseBars');box.innerHTML='';data.forEach(([name,r])=>{const row=document.createElement('div');row.className='bar-row';row.innerHTML=`<b>${name}</b><div class="track"><div class="fill" style="width:${Math.max(2,r.comp/max*100)}%"></div></div><span>${r.comp} comp / ${r.shift} shifts</span>`;box.appendChild(row)})}
+document.getElementById('compareCases').onclick=renderCaseBars;renderCaseBars();
+
+const invText={init:'Initialization: before the first outer iteration (j=1), A[0…0] has one element. A one-element array is sorted, so the invariant is true.',maint:'Maintenance: assume A[0…j−1] is sorted. The while loop shifts every element larger than key one place right, then inserts key into the gap. Therefore A[0…j] is sorted and contains the same elements.',term:'Termination: when the outer loop finishes, j=n. The invariant says A[0…n−1] is sorted. That is the entire array, so the post-condition holds.'};
+document.getElementById('checkInvariant').onclick=()=>document.getElementById('invStatus').textContent=invText[document.getElementById('invScenario').value];
+
+document.getElementById('checkA').onclick=()=>{const v=Number(document.getElementById('chA').value);document.getElementById('chAStatus').innerHTML=v===0?'<b>Correct.</b> Already sorted → 0 shifts.':'<b>Try again.</b> No earlier value is larger than its key.'};
+document.getElementById('checkB').onclick=()=>{const v=Number(document.getElementById('chB').value);document.getElementById('chBStatus').innerHTML=v===10?'<b>Correct.</b> 1+2+3+4 = 10 shifts.':'<b>Try again.</b> Reverse n=5 gives 1+2+3+4 shifts.'};
+document.getElementById('showModel').onclick=()=>document.getElementById('modelAnswer').classList.remove('hidden');
+
+const answers={q1:'b',q2:'a',q3:'b',q4:'c',q5:'b'};
+const quizFeedback={
+  q1:{correct:'Correct. Before each outer-loop iteration, A[0…j−1] is the sorted prefix.',wrong:'The correct answer is: Prefix A[0…j−1]. This is the loop invariant used to prove Insertion Sort correct.'},
+  q2:{correct:'Correct. For standard Insertion Sort, an already sorted array gives the best-case time Θ(n).',wrong:'The correct answer is Θ(n). In standard Insertion Sort, when the array is already sorted, the outer loop still examines each key. Each key needs only one comparison with its predecessor and no shifting, giving approximately n−1 comparisons overall.'},
+  q3:{correct:'Correct. Reverse-sorted input produces the maximum number of shifts.',wrong:'The correct answer is Reverse sorted. Each new key must move across all earlier elements.'},
+  q4:{correct:'Correct. The auxiliary-space complexity is O(1).',wrong:'The correct answer is O(1). Standard in-place Insertion Sort uses only a constant number of extra variables such as key, i, and j. The input array itself uses Θ(n) storage, but that is not auxiliary space.'},
+  q5:{correct:'Correct. Standard Insertion Sort shifts only elements strictly greater than the key.',wrong:'The correct answer is: it shifts only values strictly greater than the key. Equal elements are not moved past one another, which preserves their original relative order.'}
+};
+document.getElementById('quiz').onsubmit=e=>{
+  e.preventDefault();
+  let score=0,done=0;
+  Object.entries(answers).forEach(([q,a])=>{
+    const x=document.querySelector(`input[name="${q}"]:checked`);
+    const fb=document.querySelector(`[data-feedback="${q}"]`);
+    if(x){
+      done++;
+      const ok=x.value===a;
+      if(ok)score++;
+      fb.className='quiz-explain show '+(ok?'correct':'wrong');
+      fb.innerHTML='<b>'+(ok?'Correct.':'Review:')+'</b> '+(ok?quizFeedback[q].correct.replace(/^Correct\.\s*/,''):quizFeedback[q].wrong);
+    }else{
+      fb.className='quiz-explain';
+      fb.textContent='';
+    }
+  });
+  const r=document.getElementById('quizResult');
+  if(done<5){r.innerHTML=`Answered ${done}/5. Complete all questions before checking the final score.`;return}
+  r.innerHTML=`<b>Score: ${score}/5.</b> `+(score===5?'Excellent — all core Insertion Sort concepts are correct.':score>=4?'Very good — review the highlighted explanation for the missed item.':score>=3?'Good start — revisit the Trace, Complexity, and Loop Invariant modules.':'Use the Trace Lab again and then retry the quiz.');
+};
+document.getElementById('clearQuiz').onclick=()=>{
+  document.getElementById('quiz').reset();
+  document.getElementById('quizResult').textContent='Complete all five questions.';
+  document.querySelectorAll('.quiz-explain').forEach(x=>{x.className='quiz-explain';x.textContent=''});
+};
+
+document.addEventListener('keydown',e=>{const tag=(e.target.tagName||'').toUpperCase();if(['INPUT','TEXTAREA','SELECT'].includes(tag))return;if(e.key==='ArrowRight')showModule(current+1);else if(e.key==='ArrowLeft')showModule(current-1);else if(e.key===' '&&modules[current].dataset.title==='Trace Lab'){e.preventDefault();nextStep()}});
+document.getElementById('restartAll').onclick=()=>{visited.clear();visited.add(0);showModule(0)};
+showModule(0);
+})();
+</script>
+</body>
+</html>

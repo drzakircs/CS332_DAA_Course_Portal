@@ -1,0 +1,497 @@
+{
+  "course": {
+    "code": "CS332",
+    "title": "Design and Analysis of Algorithms",
+    "program": "BS Computer Science",
+    "semester": "Fall 2026",
+    "academic_year": "Fall 2026",
+    "instructor": "Dr. Zakir Khan",
+    "designation": "Assistant Professor, Department of Computer Science",
+    "campus": "Air University Aerospace & Aviation Campus, Kamra",
+    "weeks": 15,
+    "sessions_per_week": 3,
+    "total_sessions": 45,
+    "teaching_mode": "Theory",
+    "prerequisites": [
+      "CS-214 Data Structures and Algorithms",
+      "CS-214L Data Structures and Algorithms Lab"
+    ],
+    "programming_language_tools": null,
+    "quizzes": 4,
+    "assignments": 4,
+    "midterm": "After Week 8",
+    "final_exam": "After Week 15"
+  },
+  "weekly_clo_note": "The source course log does not contain a per-session CLO column. Week-level CLO badges in this portal are transparent alignments derived from the approved CLO definitions plus the explicit CLO–assessment mapping; the session topics and assessments themselves are transcribed from the course guide.",
+  "weeks": [
+    {
+      "week": 1,
+      "title": "Algorithm Foundations",
+      "clo": [
+        "CLO-1"
+      ],
+      "clo_basis": "Derived from the CLO definitions and the session topics; the source course log does not provide a week-level CLO column.",
+      "sessions": [
+        {
+          "session": 1,
+          "topic": "Course orientation and role of algorithms",
+          "coverage": "Course outline, grading, CLOs, why algorithms matter, role of algorithms in computing, examples of algorithmic thinking.",
+          "activity": "Diagnostic Q/A; discuss familiar algorithms.",
+          "assessment": "—"
+        },
+        {
+          "session": 2,
+          "topic": "Algorithm fundamentals",
+          "coverage": "Concept and properties of an algorithm; characteristics; computational problem-solving steps; basic issues related to algorithms.",
+          "activity": "Identify algorithm components from everyday/computing examples.",
+          "assessment": "—"
+        },
+        {
+          "session": 3,
+          "topic": "Representation and correctness",
+          "coverage": "Algorithm representation using pseudocode/flowcharts; criterion for analyzing algorithms; proving correctness; pre-condition and post-condition.",
+          "activity": "Write a simple algorithm and specify its pre/post-conditions.",
+          "assessment": "—"
+        }
+      ]
+    },
+    {
+      "week": 2,
+      "title": "Correctness, Loop Invariants & Insertion Sort",
+      "clo": [
+        "CLO-1"
+      ],
+      "clo_basis": "Derived from the CLO definitions and the session topics; the source course log does not provide a week-level CLO column.",
+      "sessions": [
+        {
+          "session": 4,
+          "topic": "Loop invariants",
+          "coverage": "Correctness of iterative algorithms; initialization, maintenance, termination; constructing and proving a loop invariant.",
+          "activity": "Guided proof using a simple loop.",
+          "assessment": "—"
+        },
+        {
+          "session": 5,
+          "topic": "Insertion Sort and correctness",
+          "coverage": "Insertion Sort algorithm, dry run, loop invariant for Insertion Sort, correctness argument, initial complexity view.",
+          "activity": "Trace Insertion Sort on sample arrays.",
+          "assessment": "—"
+        },
+        {
+          "session": 6,
+          "topic": "Correctness of recursive algorithms",
+          "coverage": "Recursive thinking; mathematical induction for recursive correctness; base case and inductive step.",
+          "activity": "Induction-based correctness exercise.",
+          "assessment": "—"
+        }
+      ]
+    },
+    {
+      "week": 3,
+      "title": "Algorithm Analysis Fundamentals",
+      "clo": [
+        "CLO-1"
+      ],
+      "clo_basis": "Supported by Assignment 1 coverage/CLO mapping and by the CLO-1 definition.",
+      "sessions": [
+        {
+          "session": 7,
+          "topic": "Analysis fundamentals",
+          "coverage": "Nature and size of input; basic operation; running time; time and space complexity; counting operations.",
+          "activity": "Analyze simple code fragments.",
+          "assessment": "—"
+        },
+        {
+          "session": 8,
+          "topic": "Best, worst, and average case",
+          "coverage": "Meaning and use of best-case, worst-case, and average/expected behavior; choosing representative input size.",
+          "activity": "Compare cases for searching/sorting examples.",
+          "assessment": "—"
+        },
+        {
+          "session": 9,
+          "topic": "Growth of functions and complexity classes",
+          "coverage": "Constant, logarithmic, linear, linearithmic, quadratic, polynomial, exponential growth; comparison of growth rates.",
+          "activity": "Growth-rate comparison exercise.",
+          "assessment": "Assignment 1 issued"
+        }
+      ]
+    },
+    {
+      "week": 4,
+      "title": "Asymptotic Notation & Iterative Analysis",
+      "clo": [
+        "CLO-1"
+      ],
+      "clo_basis": "Supported by Quiz 1 coverage/CLO mapping and by the CLO-1 definition.",
+      "sessions": [
+        {
+          "session": 10,
+          "topic": "Big-O notation",
+          "coverage": "Asymptotic upper bounds; constants and lower-order terms; formal intuition and practical interpretation.",
+          "activity": "Derive Big-O for code examples.",
+          "assessment": "—"
+        },
+        {
+          "session": 11,
+          "topic": "Omega, Theta, little-o, little-omega",
+          "coverage": "Lower bounds, tight bounds, non-tight bounds; relationships among asymptotic notations.",
+          "activity": "Notation identification and proof-style examples.",
+          "assessment": "—"
+        },
+        {
+          "session": 12,
+          "topic": "Analysis of iterative algorithms",
+          "coverage": "Single loops, consecutive loops, nested loops; summation-based analysis; best/worst-case variations.",
+          "activity": "Timed complexity worksheet.",
+          "assessment": "Quiz 1"
+        }
+      ]
+    },
+    {
+      "week": 5,
+      "title": "Recursion & Recurrence Relations",
+      "clo": [
+        "CLO-2"
+      ],
+      "clo_basis": "Supported by the CLO-2 definition and Assignment 2/Quiz 2 coverage mapping.",
+      "sessions": [
+        {
+          "session": 13,
+          "topic": "Recursion and recurrence relations",
+          "coverage": "Recursive algorithms; forming a recurrence from algorithm structure; base conditions.",
+          "activity": "Translate recursive pseudocode into recurrences.",
+          "assessment": "—"
+        },
+        {
+          "session": 14,
+          "topic": "Solving recurrences — substitution/iteration",
+          "coverage": "Expansion/iteration and substitution ideas; validating a proposed bound.",
+          "activity": "Solve representative recurrences.",
+          "assessment": "—"
+        },
+        {
+          "session": 15,
+          "topic": "Recurrence-tree method",
+          "coverage": "Constructing a recurrence tree; per-level cost; number of levels; total cost.",
+          "activity": "Recurrence-tree problems.",
+          "assessment": "Assignment 1 due"
+        }
+      ]
+    },
+    {
+      "week": 6,
+      "title": "Divide-and-Conquer & Merge Sort",
+      "clo": [
+        "CLO-2"
+      ],
+      "clo_basis": "Supported by Assignment 2 coverage/CLO mapping; the design-strategy aspect also prepares CLO-3.",
+      "sessions": [
+        {
+          "session": 16,
+          "topic": "Divide-and-conquer strategy",
+          "coverage": "Divide, conquer, combine; generic recurrence; when divide-and-conquer is appropriate; contrast with brute force.",
+          "activity": "Classify problems suitable for divide-and-conquer.",
+          "assessment": "—"
+        },
+        {
+          "session": 17,
+          "topic": "Merge Sort",
+          "coverage": "Merge Sort algorithm, merge procedure, recursion structure, dry run, correctness idea.",
+          "activity": "Trace and annotate a Merge Sort execution.",
+          "assessment": "—"
+        },
+        {
+          "session": 18,
+          "topic": "Merge Sort analysis + Master Method overview",
+          "coverage": "T(n)=2T(n/2)+Θ(n); recurrence-tree analysis; Master Method form and purpose.",
+          "activity": "Connect Merge Sort recurrence to Master Method.",
+          "assessment": "Assignment 2 issued"
+        }
+      ]
+    },
+    {
+      "week": 7,
+      "title": "Master Method & Quick Sort",
+      "clo": [
+        "CLO-2"
+      ],
+      "clo_basis": "Supported by Quiz 2 coverage/CLO mapping and by the CLO-2 definition.",
+      "sessions": [
+        {
+          "session": 19,
+          "topic": "Master Method",
+          "coverage": "Cases 1–3, applicability conditions, interpretation of a, b, and f(n), numerical examples.",
+          "activity": "Solve multiple Master Method examples.",
+          "assessment": "—"
+        },
+        {
+          "session": 20,
+          "topic": "Quick Sort: partition and correctness",
+          "coverage": "Quick Sort overview; pivot; partitioning; partition procedure; recursive structure; proof-of-correctness intuition.",
+          "activity": "Dry run with different pivot positions.",
+          "assessment": "—"
+        },
+        {
+          "session": 21,
+          "topic": "Quick Sort analysis and randomization",
+          "coverage": "Best, average/expected, and worst cases; randomized Quick Sort; comparison with Merge Sort.",
+          "activity": "Complexity comparison activity.",
+          "assessment": "Quiz 2"
+        }
+      ]
+    },
+    {
+      "week": 8,
+      "title": "Sorting Families & Pre-Mid Consolidation",
+      "clo": [
+        "CLO-1",
+        "CLO-2"
+      ],
+      "clo_basis": "Derived from the Week 8 topics and pre-mid coverage. The Mid-Semester Exam after Week 8 covers CLO-1 to CLO-3 as mapped in the course guide.",
+      "sessions": [
+        {
+          "session": 22,
+          "topic": "Selection Sort and Bubble Sort",
+          "coverage": "Algorithms, dry runs, best/worst/average behavior, comparison with Insertion Sort.",
+          "activity": "Sorting comparison table.",
+          "assessment": "—"
+        },
+        {
+          "session": 23,
+          "topic": "Counting, Bucket, and Radix Sort",
+          "coverage": "Non-comparison sorting; assumptions; procedures; analysis; when linear-time sorting is possible.",
+          "activity": "Choose appropriate sorting method for given data.",
+          "assessment": "Assignment 2 due"
+        },
+        {
+          "session": 24,
+          "topic": "Pre-mid consolidation",
+          "coverage": "Integrated review: correctness, asymptotic analysis, iterative/recursive analysis, recurrences, divide-and-conquer, Merge/Quick Sort, sorting families.",
+          "activity": "Problem-solving clinic; resolve misconceptions.",
+          "assessment": "No assessment"
+        }
+      ]
+    },
+    {
+      "week": 9,
+      "title": "Heaps & Heap Sort",
+      "clo": [
+        "CLO-3"
+      ],
+      "clo_basis": "Supported by the Quiz 3 coverage/CLO-3 mapping, which includes heaps and AVL topics.",
+      "sessions": [
+        {
+          "session": 25,
+          "topic": "Heaps: overview and representation",
+          "coverage": "Heap as complete binary tree; array representation; min heap, max heap; heap property; applications.",
+          "activity": "Build heaps manually from arrays.",
+          "assessment": "—"
+        },
+        {
+          "session": 26,
+          "topic": "Heap operations",
+          "coverage": "Heapify, build-heap, insertion, extract-min/max, deletion; operation costs.",
+          "activity": "Step-by-step heap operations.",
+          "assessment": "—"
+        },
+        {
+          "session": 27,
+          "topic": "Heap Sort and applications",
+          "coverage": "Heap Sort procedure; complexity; in-place behavior; comparison with other sorting algorithms; priority-queue applications.",
+          "activity": "Heap Sort dry run.",
+          "assessment": "—"
+        }
+      ]
+    },
+    {
+      "week": 10,
+      "title": "AVL Trees & Algorithm-Design Strategies",
+      "clo": [
+        "CLO-3"
+      ],
+      "clo_basis": "Supported by the CLO-3 definition and Assignment 3/Quiz 3 coverage mapping.",
+      "sessions": [
+        {
+          "session": 28,
+          "topic": "AVL trees and rotations",
+          "coverage": "Height-balanced search trees; balance factor; single rotations; double rotations; insertion examples.",
+          "activity": "Perform LL, RR, LR, RL rotations.",
+          "assessment": "—"
+        },
+        {
+          "session": 29,
+          "topic": "Algorithm-design strategies",
+          "coverage": "Brute force, divide-and-conquer, greedy, dynamic programming; identifying optimal substructure and overlapping subproblems.",
+          "activity": "Strategy-selection scenarios.",
+          "assessment": "—"
+        },
+        {
+          "session": 30,
+          "topic": "Greedy method",
+          "coverage": "Greedy-choice property; constructing greedy solutions; examples; strengths and limitations; comparison with dynamic programming.",
+          "activity": "Greedy-choice justification exercise.",
+          "assessment": "Assignment 3 issued"
+        }
+      ]
+    },
+    {
+      "week": 11,
+      "title": "Dynamic Programming",
+      "clo": [
+        "CLO-3"
+      ],
+      "clo_basis": "Supported by the CLO-3 definition and Quiz 3/Assignment 3 coverage mapping.",
+      "sessions": [
+        {
+          "session": 31,
+          "topic": "Dynamic programming fundamentals",
+          "coverage": "Optimal substructure; overlapping subproblems; recurrence formulation; memoization vs tabulation; DP workflow.",
+          "activity": "Convert recursive relation to a DP table.",
+          "assessment": "—"
+        },
+        {
+          "session": 32,
+          "topic": "0–1 Knapsack and Rod Cutting",
+          "coverage": "State definition, recurrence, base cases, table construction, solution reconstruction, complexity.",
+          "activity": "Solve compact examples in class.",
+          "assessment": "—"
+        },
+        {
+          "session": 33,
+          "topic": "Matrix-chain multiplication and LCS",
+          "coverage": "Matrix-chain cost minimization; Longest Common Subsequence recurrence and table; applications.",
+          "activity": "DP table construction activity.",
+          "assessment": "Quiz 3"
+        }
+      ]
+    },
+    {
+      "week": 12,
+      "title": "Graph Representation, BFS & DFS",
+      "clo": [
+        "CLO-3",
+        "CLO-4"
+      ],
+      "clo_basis": "The graph topics align with CLO-4; Assignment 3 explicitly includes early graph work under CLO-3 in the assessment calendar.",
+      "sessions": [
+        {
+          "session": 34,
+          "topic": "Graph search: overview and representation",
+          "coverage": "Graph terminology; directed/undirected and weighted graphs; adjacency matrix/list; search goals and connectivity.",
+          "activity": "Represent the same graph in multiple forms.",
+          "assessment": "—"
+        },
+        {
+          "session": 35,
+          "topic": "Breadth-First Search (BFS)",
+          "coverage": "Queue-based BFS; BFS tree; distances; shortest path in unweighted graphs; undirected connectivity.",
+          "activity": "BFS tracing and path recovery.",
+          "assessment": "—"
+        },
+        {
+          "session": 36,
+          "topic": "Depth-First Search (DFS)",
+          "coverage": "Recursive/stack DFS; discovery structure; connected components; comparison with BFS.",
+          "activity": "DFS tracing and connectivity task.",
+          "assessment": "Assignment 3 due"
+        }
+      ]
+    },
+    {
+      "week": 13,
+      "title": "Minimum Spanning Trees & Huffman Coding",
+      "clo": [
+        "CLO-3",
+        "CLO-4"
+      ],
+      "clo_basis": "MST topics align with CLO-4; Huffman coding is a greedy-design application aligned with CLO-3. Assignment 4 is mapped to CLO-4.",
+      "sessions": [
+        {
+          "session": 37,
+          "topic": "Minimum spanning trees + Prim",
+          "coverage": "MST concept; growing an MST; cut intuition; Prim’s algorithm; priority-queue perspective; complexity.",
+          "activity": "Construct an MST using Prim.",
+          "assessment": "—"
+        },
+        {
+          "session": 38,
+          "topic": "Kruskal and MST comparison",
+          "coverage": "Kruskal’s algorithm; sorted edges; cycle avoidance / disjoint sets concept; complexity; Prim vs Kruskal.",
+          "activity": "Construct and compare MSTs.",
+          "assessment": "—"
+        },
+        {
+          "session": 39,
+          "topic": "Huffman coding and data compression",
+          "coverage": "Lossless compression idea; prefix codes; Huffman tree construction; code assignment; compression/decompression workflow.",
+          "activity": "Build Huffman codes for sample frequencies.",
+          "assessment": "Assignment 4 issued"
+        }
+      ]
+    },
+    {
+      "week": 14,
+      "title": "Shortest-Path Algorithms",
+      "clo": [
+        "CLO-4"
+      ],
+      "clo_basis": "Supported directly by the CLO-4 definition and Quiz 4/Assignment 4 coverage mapping.",
+      "sessions": [
+        {
+          "session": 40,
+          "topic": "Shortest paths + Dijkstra",
+          "coverage": "Shortest-path problem; relaxation idea; Dijkstra’s algorithm; assumptions; correctness intuition; complexity.",
+          "activity": "Run Dijkstra step-by-step.",
+          "assessment": "—"
+        },
+        {
+          "session": 41,
+          "topic": "Bellman–Ford and DAG shortest paths",
+          "coverage": "Negative edges; repeated relaxation; negative-cycle detection; shortest paths in directed acyclic graphs.",
+          "activity": "Compare Dijkstra, Bellman–Ford, DAG approach.",
+          "assessment": "—"
+        },
+        {
+          "session": 42,
+          "topic": "All-pairs shortest paths: Floyd–Warshall",
+          "coverage": "Dynamic-programming formulation; distance matrix updates; complexity; comparison of shortest-path algorithms.",
+          "activity": "Matrix-based Floyd–Warshall example.",
+          "assessment": "Quiz 4"
+        }
+      ]
+    },
+    {
+      "week": 15,
+      "title": "String Matching, TSP & Complexity Classes",
+      "clo": [
+        "CLO-1",
+        "CLO-4"
+      ],
+      "clo_basis": "CLO-1 includes hard problems; CLO-4 includes heuristic approaches. The final exam is mapped to CLO-3–4 in the assessment calendar.",
+      "sessions": [
+        {
+          "session": 43,
+          "topic": "String matching",
+          "coverage": "Naive context; Rabin–Karp hashing; spurious hits; string matching with finite automata; examples and comparison.",
+          "activity": "Trace Rabin–Karp and finite-automata matching.",
+          "assessment": "—"
+        },
+        {
+          "session": 44,
+          "topic": "Travelling Salesman Problem and reductions",
+          "coverage": "TSP formulation; brute-force view; heuristic approaches; motivation for hard problems; polynomial-time reductions and completeness idea.",
+          "activity": "Discuss exact vs heuristic solution trade-offs.",
+          "assessment": "Assignment 4 due"
+        },
+        {
+          "session": 45,
+          "topic": "Complexity classes and final synthesis",
+          "coverage": "Polynomial-time solvable problems; P, NP, NP-Hard, NP-Complete; differentiation; relationship to reductions; comprehensive final review.",
+          "activity": "Concept map and final Q/A.",
+          "assessment": "No assessment"
+        }
+      ]
+    }
+  ]
+}

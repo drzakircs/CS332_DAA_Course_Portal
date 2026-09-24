@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>CS332 Week 3 — Enhanced Interactive Algorithm Analysis Deck</title>
+<style>
+:root{
+  --navy:#0b2a4a; --navy2:#123f6a; --cyan:#10a8df; --cyan2:#72d8f7;
+  --ink:#102033; --muted:#5b6e80; --paper:#f7fbfe; --card:#ffffff;
+  --line:#d2e2ee; --green:#13805b; --green-bg:#eaf9f2;
+  --amber:#a96a00; --amber-bg:#fff6df; --red:#b33e3e; --red-bg:#fff0f0;
+  --purple:#5b48a8; --purple-bg:#f2efff; --shadow:0 14px 36px rgba(14,54,84,.13);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#eaf2f8;color:var(--ink);font-family:Inter,Segoe UI,Arial,sans-serif;overflow:hidden}
+button,input,select{font:inherit}
+button{cursor:pointer}
+#deck{height:100vh;width:100vw;display:flex;align-items:center;justify-content:center;padding:18px;background:radial-gradient(circle at 12% 8%,rgba(16,168,223,.11),transparent 25%),#eaf2f8}
+.stage{position:relative;width:min(100%,177.777vh);height:min(100%,56.25vw);max-width:1600px;max-height:900px;background:var(--paper);box-shadow:var(--shadow);border:1px solid #c8dcea;overflow:hidden}
+.slide{position:absolute;inset:0;display:none;padding:42px 58px 64px;background:linear-gradient(90deg,rgba(16,168,223,.04) 1px,transparent 1px),linear-gradient(rgba(16,168,223,.04) 1px,transparent 1px),var(--paper);background-size:34px 34px}
+.slide.active{display:flex;flex-direction:column}
+.slide.dark{background:radial-gradient(circle at 80% 20%,rgba(16,168,223,.23),transparent 30%),linear-gradient(135deg,#08233f,#0d426e);color:white}
+.slide::before{content:"";position:absolute;left:0;right:0;top:0;height:9px;background:linear-gradient(90deg,var(--cyan),var(--navy))}
+.dark::before{background:linear-gradient(90deg,#6fdcff,#11a8df)}
+.kicker{font-size:clamp(22px,1.35vw,28px);font-weight:950;letter-spacing:.08em;text-transform:uppercase;color:var(--cyan);margin-bottom:9px}
+.dark .kicker{color:#85e4ff}
+h1,h2,h3,p{margin-top:0}
+h1{font-size:clamp(48px,4.4vw,78px);line-height:1.05;margin-bottom:20px;letter-spacing:-.03em}
+h2{font-size:clamp(40px,3.15vw,58px);line-height:1.08;margin-bottom:18px;color:var(--navy);letter-spacing:-.02em}
+.dark h2{color:white}
+h3{font-size:clamp(29px,1.9vw,38px);line-height:1.14;color:var(--navy2);margin-bottom:10px}
+.dark h3{color:#c7f2ff}
+p,li{font-size:clamp(24px,1.55vw,31px);line-height:1.30}
+.small{font-size:clamp(21px,1.25vw,25px);line-height:1.32}
+.lead{font-size:clamp(30px,2.25vw,42px);line-height:1.24}
+.muted{color:var(--muted)}
+.dark .muted{color:#c9d9e6}
+.accent{color:var(--cyan)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 10px 26px rgba(17,55,85,.08)}
+.dark .card{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.20);box-shadow:none}
+.card p,.card li{font-size:clamp(22px,1.36vw,27px)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;min-height:0}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;min-height:0}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;min-height:0}
+.split{display:grid;grid-template-columns:1.05fr .95fr;gap:24px;align-items:stretch;min-height:0}
+.center{align-items:center;justify-content:center;text-align:center}
+.icon{font-size:54px;margin-bottom:8px}
+.pill{display:inline-flex;align-items:center;border-radius:999px;padding:8px 14px;background:#e8f8ff;border:1px solid #bdeaf9;color:var(--navy2);font-size:clamp(21px,1.22vw,25px);font-weight:850}
+.dark .pill{background:rgba(117,220,255,.12);border-color:rgba(117,220,255,.34);color:#dff7ff}
+.pills{display:flex;gap:9px;flex-wrap:wrap;justify-content:center;margin-top:16px}
+.big{font-size:clamp(44px,4vw,72px);font-weight:950;line-height:1;color:var(--cyan)}
+.metric{font-size:clamp(38px,3vw,58px);font-weight:950;color:var(--cyan);line-height:1.05}
+.metric small{display:block;font-size:18px;color:var(--muted);font-weight:600;margin-top:6px}
+.callout{border-left:7px solid var(--cyan);background:#edfaff;border-radius:13px;padding:15px 18px}
+.good{border-left-color:#4db387;background:var(--green-bg)}
+.warn{border-left-color:#e1a53f;background:var(--amber-bg)}
+.bad{border-left-color:#d77979;background:var(--red-bg)}
+.code{background:#071827;color:#e8f5ff;border-radius:16px;padding:18px 20px;font-family:"Cascadia Code",Consolas,monospace;font-size:clamp(23px,1.42vw,29px);line-height:1.42;white-space:pre-wrap}
+.code-line{display:block;padding:2px 8px;border-radius:7px}
+.code-line.active{background:#194966;color:#fff;font-weight:900}
+.action{border:2px solid var(--line);background:white;color:var(--navy);border-radius:12px;padding:11px 16px;font-weight:900;min-height:46px;font-size:clamp(21px,1.2vw,24px)}
+.action.primary{background:var(--navy);border-color:var(--navy);color:white}
+.action.cyan{background:var(--cyan);border-color:var(--cyan);color:#052338}
+.action.green{background:var(--green);border-color:var(--green);color:white}
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.status{background:#edf5fb;border:1px dashed #9ebbd0;border-radius:13px;padding:14px 16px;min-height:66px;font-size:clamp(22px,1.3vw,27px);line-height:1.30}
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.choice{min-height:105px;border:2px solid var(--line);border-radius:15px;background:white;color:var(--ink);padding:16px 18px;text-align:left;font-size:clamp(23px,1.35vw,28px);font-weight:800;line-height:1.24}
+.choice:hover,.choice:focus-visible{border-color:var(--cyan);background:#f3fbff;transform:translateY(-2px)}
+.choice.correct{background:var(--green-bg);border-color:#4db387}
+.choice.wrong{background:var(--red-bg);border-color:#d77979}
+.qwrap{perspective:1200px;min-height:310px}
+.qcard{position:relative;width:100%;height:100%;min-height:310px;transform-style:preserve-3d;transition:transform .55s ease;border-radius:20px}
+.qcard.flipped{transform:rotateY(180deg)}
+.qface{position:absolute;inset:0;backface-visibility:hidden;background:white;border:2px solid #cfe0ec;border-radius:20px;padding:28px 32px;display:flex;flex-direction:column;justify-content:center;box-shadow:0 10px 28px rgba(17,55,85,.08)}
+.qback{transform:rotateY(180deg);background:var(--green-bg);border-color:#64bd94}
+.qlabel{font-size:clamp(21px,1.24vw,25px);color:var(--cyan);font-weight:950;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.qtext{font-size:clamp(33px,2.35vw,48px);line-height:1.18;font-weight:900;color:var(--navy)}
+.ans{font-size:clamp(27px,1.75vw,35px);line-height:1.26}
+.flipcue{position:absolute;right:18px;bottom:12px;font-size:25px;font-weight:950;color:#916b16;opacity:.72}
+.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;align-items:stretch}
+.flow-node{background:white;border:2px solid var(--line);border-radius:18px;padding:18px;text-align:center;display:flex;flex-direction:column;justify-content:center;min-height:180px;position:relative}
+.flow-node:not(:last-child)::after{content:"→";position:absolute;right:-25px;top:50%;transform:translateY(-50%);font-size:36px;font-weight:950;color:var(--cyan)}
+.flow-node b{font-size:clamp(25px,1.5vw,31px);color:var(--navy);margin-bottom:8px}
+.flow-node span{font-size:clamp(20px,1.16vw,24px);color:var(--muted);line-height:1.25}
+.bar-row{display:grid;grid-template-columns:160px 1fr 125px;gap:12px;align-items:center;margin:10px 0}
+.track{height:24px;background:#e5edf4;border-radius:999px;overflow:hidden;border:1px solid #d0dde8}
+.fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--navy2));border-radius:999px;transition:.35s}
+.array{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:14px 0;min-height:78px}
+.cell{width:68px;height:68px;border-radius:13px;border:3px solid #c5d8e6;display:grid;place-items:center;background:white;color:var(--navy);font-size:28px;font-weight:950;position:relative;transition:.22s}
+.cell.active{background:var(--amber-bg);border-color:#d9a137;transform:translateY(-4px)}
+.cell.found{background:var(--green-bg);border-color:#4db387}
+.cell.discard{opacity:.28}
+.cell .idx{position:absolute;bottom:-22px;font-size:12px;color:var(--muted);font-weight:700}
+.complexity-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.class-card{min-height:175px;display:flex;flex-direction:column;justify-content:center;text-align:center}
+.class-card .formula{font-family:Georgia,serif;font-size:clamp(36px,2.6vw,50px);font-weight:900;color:var(--navy2)}
+.class-card p{font-size:clamp(20px,1.18vw,24px)}
+.table-wrap{overflow:auto}
+table{border-collapse:collapse;width:100%;font-size:clamp(19px,1.12vw,23px)}
+th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:#edf5fb;color:var(--navy)}
+.footer{position:absolute;left:58px;right:58px;bottom:20px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:14px;color:#6a8093;font-size:15px}
+.current-clock{justify-self:center;font-size:18px;font-weight:900;letter-spacing:.035em;color:#36556c;padding:5px 11px;border-radius:999px;background:rgba(255,255,255,.58);border:1px solid rgba(130,163,186,.34);font-variant-numeric:tabular-nums;white-space:nowrap}
+.footer-right{justify-self:end;display:inline-flex;gap:7px;align-items:center}
+.controls-ui{position:fixed;right:25px;bottom:19px;z-index:50;display:flex;gap:8px;opacity:.14;transition:opacity .22s ease}
+.controls-ui:hover,.controls-ui:focus-within{opacity:1}
+.ctrl{width:40px;height:40px;border-radius:50%;border:1px solid rgba(8,42,70,.16);background:rgba(255,255,255,.15);backdrop-filter:blur(5px);color:var(--navy);display:grid;place-items:center;font-size:18px;font-weight:950}
+.controls-ui:hover .ctrl,.ctrl:focus-visible{background:rgba(255,255,255,.96);border-color:#9ecfe3}
+.progress{position:fixed;left:0;right:0;bottom:0;height:6px;background:rgba(11,42,74,.12);z-index:45}
+.progress>div{height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--navy2));transition:.25s}
+.overlay{position:fixed;inset:0;z-index:80;background:rgba(5,22,38,.93);display:none;padding:30px;overflow:auto}
+.overlay.open{display:block}
+.overlay-inner{max-width:1180px;margin:0 auto;color:white}
+.overlay h2{color:white}
+.overview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
+.ov{border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);color:white;border-radius:14px;padding:15px;text-align:left;min-height:78px}
+.ov small{display:block;color:#9edff5;margin-bottom:4px}
+.closebtn{float:right;border:0;background:#edf5fb;color:var(--navy);border-radius:9px;padding:8px 12px;font-weight:900}
+.timer-panel{position:fixed;right:25px;bottom:70px;z-index:70;background:white;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:16px;display:none;width:300px}
+.timer-panel.open{display:block}
+.timer-display{font-size:44px;font-weight:950;text-align:center;color:var(--navy);font-variant-numeric:tabular-nums}
+.timer-buttons{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+.note{position:absolute;left:58px;right:58px;bottom:57px;border-radius:12px;background:#fff7d7;border:1px solid #ead180;color:#4b3a00;padding:11px 14px;font-size:19px;display:none}
+.note.show{display:block}
+@keyframes titleIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes softPop{0%{opacity:0;transform:translateY(18px) scale(.985)}70%{opacity:1;transform:translateY(-2px) scale(1.005)}100%{opacity:1;transform:translateY(0) scale(1)}}
+.slide.active>.kicker,.slide.active>h1,.slide.active>h2{animation:titleIn .42s cubic-bezier(.2,.8,.2,1) both}
+.reveal-step{opacity:0;visibility:hidden;transform:translateY(18px) scale(.985);pointer-events:none}
+.reveal-step.revealed{visibility:visible;pointer-events:auto;animation:softPop .42s cubic-bezier(.2,.8,.2,1) both}
+.build-state{display:inline-flex;align-items:center;gap:6px;margin-left:10px;color:#8296a8;font-size:13px;font-weight:800}
+.build-dot{width:6px;height:6px;border-radius:999px;background:#c4d2dd;display:inline-block}
+.build-dot.on{background:var(--cyan)}
+.helpgrid{display:grid;grid-template-columns:260px 1fr;gap:12px 18px;font-size:22px;margin-top:18px}
+kbd{background:#eef4f8;color:#132e45;border:1px solid #bacbd8;border-bottom-width:3px;border-radius:6px;padding:4px 8px;font-weight:800}
+.hidden{display:none!important}
+@media(max-width:1100px){
+  .grid2,.grid3,.grid4,.split,.flow,.complexity-grid{grid-template-columns:1fr}
+  .flow-node:not(:last-child)::after{content:"↓";right:auto;left:50%;top:auto;bottom:-31px;transform:translateX(-50%)}
+  .slide{overflow:auto}
+  .overview-grid{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal-step{transform:none}}
+
+/* v2 additions */
+.formula{
+  font-family:Georgia,serif;
+  font-size:clamp(31px,2.2vw,44px);
+  font-weight:900;
+  color:var(--navy2);
+  line-height:1.18;
+}
+.sortCaseBtn{
+  min-height:170px;
+  text-align:center;
+  justify-content:center;
+  display:flex;
+  align-items:center;
+}
+#singleLoopCount,#twoLoopCount,#nestedLoopCount{
+  font-size:clamp(32px,2.5vw,50px);
+  font-weight:950;
+  color:var(--cyan);
+  margin:6px 0;
+}
+</style>
+</head>
+<body>
+<div id="deck">
+<main aria-label="CS332 Week 3 Interactive Slides" class="stage" id="stage" tabindex="0">
+<section class="slide active dark center" data-session="0" data-title="Title">
+<div class="kicker">CS332 · Design and Analysis of Algorithms</div>
+<h1>Week 3</h1>
+<p class="lead"><b>Algorithm Analysis Fundamentals</b></p>
+<p class="lead muted">Input Size · Basic Operation · Best/Worst/Average Case · Growth of Functions</p>
+<div class="pills"><span class="pill">BS Cyber Security</span><span class="pill">7th Semester</span><span class="pill">Interactive Teaching Deck</span></div>
+<p class="small muted" style="margin-top:24px"><b>Dr. Zakir Khan · Assistant Professor</b><br/>Department of Computer Science · Air University Aerospace &amp; Aviation Campus, Kamra</p>
+<div class="note">Opening cue: Ask students: “A malware scanner works on 100 files. What changes when it must scan 10 million files?”</div>
+</section>
+<section class="slide" data-session="0" data-title="Course Guide Alignment">
+<div class="kicker">Course-guide alignment</div>
+<h2>Week 3 continues the analysis block</h2>
+<div class="grid3">
+<div class="card"><div class="icon">🔬</div><h3>Session 7</h3><p><b>Analysis fundamentals</b></p><p>Nature and size of input, basic operation, running time, time/space complexity, counting operations.</p></div>
+<div class="card"><div class="icon">⚖️</div><h3>Session 8</h3><p><b>Best, worst, average case</b></p><p>Meaning, use, representative input size, and comparing cases using searching/sorting examples.</p></div>
+<div class="card"><div class="icon">📈</div><h3>Session 9</h3><p><b>Growth and classes</b></p><p>Constant, logarithmic, linear, linearithmic, quadratic, polynomial, and exponential growth.</p></div>
+</div>
+<div class="callout" style="margin-top:18px"><p style="margin:0"><b>Instructor message:</b> Week 3 changes the question from “Does it work?” to “How much work does it require as input grows?”</p></div>
+</section>
+<section class="slide dark center" data-session="0" data-title="Week 3 Big Question">
+<div class="kicker">Big question</div>
+<h2>When input grows, which algorithm survives?</h2>
+<div class="grid3" style="width:100%;margin-top:20px">
+<div class="card"><h3>Correctness</h3><p>Does it produce the right result?</p></div>
+<div class="card"><h3>Cost</h3><p>How many operations and how much memory?</p></div>
+<div class="card"><h3>Scale</h3><p>What happens from 100 to 10 million inputs?</p></div>
+</div>
+<div class="note">Transition: “Correctness alone is not enough. A cyber tool may be logically correct but too slow for real logs, traffic or malware samples.”</div>
+</section>
+<section class="slide dark center" data-session="1" data-title="Session 7 Start">
+<div class="kicker">Session 7</div>
+<h1>Analysis Fundamentals</h1>
+<p class="lead">Input size · basic operation · running time · space complexity · counting operations</p>
+<div class="pills"><span class="pill">What to count?</span><span class="pill">How to count?</span><span class="pill">Why it matters?</span></div>
+</section>
+<section class="slide" data-session="1" data-title="What is Algorithm Analysis?">
+<div class="kicker">Concept</div>
+<h2>Algorithm analysis estimates resource growth</h2>
+<div class="split">
+<div class="card">
+<h3>Instead of asking only:</h3>
+<p class="lead">“How many seconds did it take on my laptop?”</p>
+<div class="callout warn"><p style="margin:0">Wall-clock time changes with hardware, compiler, language, and system load.</p></div>
+</div>
+<div class="card">
+<h3>We ask:</h3>
+<p class="lead">“How does the work grow as <b>n</b> grows?”</p>
+<div class="callout good"><p style="margin:0">This gives a machine-independent way to reason about scalability.</p></div>
+</div>
+</div>
+</section>
+<section class="slide" data-session="1" data-title="Analysis Workflow">
+<div class="kicker">Visual model</div>
+<h2>The analysis workflow</h2>
+<div class="flow">
+<div class="flow-node"><b>1. Define input size</b><span>What does n represent?</span></div>
+<div class="flow-node"><b>2. Choose operation</b><span>What basic step dominates?</span></div>
+<div class="flow-node"><b>3. Count work</b><span>How often does it execute?</span></div>
+<div class="flow-node"><b>4. Express function</b><span>T(n), S(n)</span></div>
+<div class="flow-node"><b>5. Simplify growth</b><span>Focus on dominant behavior</span></div>
+</div>
+<div class="note">Use the repeated structure across the week. Students should apply these five questions to every code fragment.</div>
+</section><section class="slide" data-session="1" data-title="Analysis Cheat Sheet">
+<div class="kicker">Instructor + student guide</div>
+<h2>The five questions students should always ask</h2>
+<div class="grid2">
+<div class="card">
+<h3>Before writing T(n)</h3>
+<ul>
+<li>What is the input?</li>
+<li>What does <b>n</b> measure?</li>
+<li>Which operation dominates?</li>
+<li>How many times does it execute?</li>
+<li>What extra memory is used?</li>
+</ul>
+</div>
+<div class="card">
+<h3>Mini example</h3>
+<p><b>Problem:</b> scan log entries for a suspicious IP.</p>
+<p><b>Input size:</b> n = number of log entries.</p>
+<p><b>Basic operation:</b> compare current IP with suspicious IP.</p>
+<p><b>Cost:</b> one comparison per log → Θ(n).</p>
+</div>
+</div>
+<div class="callout good" style="margin-top:18px"><p style="margin:0"><b>Teaching tip:</b> Never allow students to jump directly to Big-O. First force them to identify n and the basic operation.</p></div>
+</section>
+<section class="slide" data-session="1" data-title="Input Size">
+<div class="kicker">Nature and size of input</div>
+<h2>What does <span class="accent">n</span> mean?</h2>
+<div class="grid3">
+<div class="card"><div class="icon">📄</div><h3>Array / List</h3><p>n = number of elements</p></div>
+<div class="card"><div class="icon">🧾</div><h3>Logs</h3><p>n = number of log entries</p></div>
+<div class="card"><div class="icon">📦</div><h3>Files</h3><p>n = number of files or total bytes</p></div>
+<div class="card"><div class="icon">🌐</div><h3>Graph</h3><p>n may be vertices, edges, or both</p></div>
+<div class="card"><div class="icon">🔡</div><h3>String</h3><p>n = number of characters</p></div>
+<div class="card"><div class="icon">🔐</div><h3>Key Space</h3><p>n may represent candidate passwords or keys</p></div>
+</div>
+</section><section class="slide" data-session="1" data-title="Input Size Builder">
+<div class="kicker">Interactive activity</div>
+<h2>Build the input-size statement</h2>
+<p class="lead">Choose the scenario, then identify what <b>n</b> should mean.</p>
+<div class="grid2">
+<div class="card">
+<div class="controls">
+<select id="nScenario">
+<option value="logs">SOC scans security logs</option>
+<option value="packets">Firewall inspects packets</option>
+<option value="malware">Antivirus scans files</option>
+<option value="graph">Attack graph analysis</option>
+<option value="string">Signature matching in a string</option>
+</select>
+<button class="action cyan" id="nScenarioBtn" type="button">Explain n</button>
+</div>
+<div class="status" id="nScenarioStatus" style="margin-top:16px">Select a scenario to see a clear input-size definition.</div>
+</div>
+<div class="card">
+<h3>Why this matters</h3>
+<p>If n is unclear, then T(n) is unclear.</p>
+<div class="callout warn"><p style="margin:0">For graph algorithms, one input-size variable is often not enough. We commonly use <b>V</b> for vertices and <b>E</b> for edges.</p></div>
+</div>
+</div>
+</section>
+<section class="slide" data-session="1" data-title="Cyber Input Size Activity">
+<div class="kicker">Interactive activity</div>
+<h2>Choose the right input size</h2>
+<div class="choice-grid" id="inputSizeQuiz">
+<button class="choice" data-good="false" type="button"><b>A.</b> For scanning 1 million log records, n is the number of CPU cores.</button>
+<button class="choice" data-good="true" type="button"><b>B.</b> For scanning 1 million log records, n is the number of log records.</button>
+<button class="choice" data-good="false" type="button"><b>C.</b> For string matching, n is always the number of users.</button>
+<button class="choice" data-good="true" type="button"><b>D.</b> For a graph, input size may involve both vertices and edges.</button>
+</div>
+<div class="status" id="inputSizeStatus">Ask students to select valid interpretations of input size.</div>
+</section>
+<section class="slide" data-session="1" data-title="Basic Operation">
+<div class="kicker">Basic operation</div>
+<h2>What operation should we count?</h2>
+<div class="grid2">
+<div class="card">
+<h3>Definition</h3>
+<p>A <b>basic operation</b> is the dominant operation whose frequency best represents the running time.</p>
+<div class="callout"><p style="margin:0">Examples: comparisons, assignments, hash lookups, relaxations, character comparisons.</p></div>
+</div>
+<div class="card">
+<h3>Cybersecurity example</h3>
+<p>In malware signature matching, the basic operation may be a <b>pattern comparison</b> or <b>hash lookup</b>.</p>
+<p>In graph attack-path analysis, it may be examining an <b>edge</b>.</p>
+</div>
+</div>
+</section><section class="slide" data-session="1" data-title="Basic Operation Detective">
+<div class="kicker">Interactive activity</div>
+<h2>Detect the basic operation</h2>
+<div class="choice-grid" id="basicOpQuiz">
+<button class="choice" data-msg="Correct: in Linear Search, the dominant operation is usually comparing the current element with the target." type="button"><b>A.</b> Linear Search → element comparison</button>
+<button class="choice" data-msg="Correct: in sorting by comparisons, the comparison between two keys is often the basic operation." type="button"><b>B.</b> Comparison sorting → key comparison</button>
+<button class="choice" data-msg="Correct: in graph traversal, examining an edge is a natural operation to count." type="button"><b>C.</b> Graph traversal → edge examination</button>
+<button class="choice" data-msg="Review: variable names are not operations; they do not dominate running time." type="button"><b>D.</b> Any algorithm → count variable names</button>
+</div>
+<div class="status" id="basicOpStatus">Select a statement to reveal whether it is a useful basic operation.</div>
+</section>
+<section class="slide" data-session="1" data-title="Counting Single Loop">
+<div class="kicker">Counting operations</div>
+<h2>Single loop: linear growth</h2>
+<div class="grid2">
+<div class="code"><span class="code-line active">count = 0</span>
+<span class="code-line active">for each log in logs:</span>
+<span class="code-line active">    if suspicious(log):</span>
+<span class="code-line active">        count = count + 1</span></div>
+<div class="card">
+<h3>Counting idea</h3>
+<p>If there are <b>n logs</b>, the suspicious check executes <b>n</b> times.</p>
+<div class="metric">T(n) = an + b <small>Growth: Θ(n)</small></div>
+</div>
+</div>
+</section>
+<section class="slide" data-session="1" data-title="Counting Nested Loops">
+<div class="kicker">Counting operations</div>
+<h2>Nested loops: quadratic growth</h2>
+<div class="grid2">
+<div class="code"><span class="code-line active">for each alert in alerts:</span>
+<span class="code-line active">    for each rule in rules:</span>
+<span class="code-line active">        compare(alert, rule)</span></div>
+<div class="card">
+<h3>Counting idea</h3>
+<p>If alerts = n and rules = n, the comparison may execute:</p>
+<div class="metric">n × n = n² <small>Growth: Θ(n²)</small></div>
+<div class="callout warn"><p style="margin:0">If alerts and rules are different sizes, use m × n.</p></div>
+</div>
+</div>
+</section><section class="slide" data-session="1" data-title="Counting Lab">
+<div class="kicker">Interactive counting lab</div>
+<h2>See how loop counts change</h2>
+<div class="grid2">
+<div class="card">
+<div class="controls">
+<label><b>n:</b></label><input id="countN" max="50" min="2" type="range" value="10"/>
+<b id="countNText">10</b>
+</div>
+<div class="grid3" style="margin-top:18px">
+<div class="card class-card"><div class="formula">n</div><p id="singleLoopCount">10</p><p>single loop</p></div>
+<div class="card class-card"><div class="formula">2n</div><p id="twoLoopCount">20</p><p>two consecutive loops</p></div>
+<div class="card class-card"><div class="formula">n²</div><p id="nestedLoopCount">100</p><p>nested loops</p></div>
+</div>
+</div>
+<div class="card">
+<h3>What students should observe</h3>
+<p>Two consecutive loops still grow linearly.</p>
+<p>Nested loops grow much faster because the inner loop repeats for each outer iteration.</p>
+<div class="callout good"><p style="margin:0"><b>Rule:</b> sequential work is added; nested work is multiplied.</p></div>
+</div>
+</div>
+</section>
+<section class="slide" data-session="1" data-title="Code Pattern Analyzer">
+<div class="kicker">Interactive code analyzer</div>
+<h2>Choose a code pattern and analyze it</h2>
+<div class="grid2">
+<div class="card">
+<div class="controls">
+<select id="codePattern">
+<option value="single">Single loop over logs</option>
+<option value="nested">Nested alert-rule comparison</option>
+<option value="binary">Halving search space</option>
+<option value="consecutive">Two consecutive loops</option>
+</select>
+<button class="action cyan" id="analyzePattern" type="button">Analyze</button>
+</div>
+<div class="code" id="patternCode" style="margin-top:16px"></div>
+</div>
+<div class="card">
+<h3>Analysis result</h3>
+<div class="status" id="patternStatus">Select a pattern and press Analyze.</div>
+</div>
+</div>
+</section>
+<section class="slide" data-session="1" data-title="Space Complexity">
+<div class="kicker">Time and space complexity</div>
+<h2>Running time is not the only resource</h2>
+<div class="grid3">
+<div class="card"><div class="icon">⏱️</div><h3>Time</h3><p>How many basic operations are needed?</p></div>
+<div class="card"><div class="icon">🧠</div><h3>Auxiliary Space</h3><p>How much extra memory is used beyond the input?</p></div>
+<div class="card"><div class="icon">⚖️</div><h3>Trade-off</h3><p>Sometimes extra memory reduces repeated work.</p></div>
+</div>
+<div class="callout" style="margin-top:18px"><p style="margin:0"><b>Important distinction:</b> the input itself may require Θ(n) storage, but auxiliary space asks about extra working memory.</p></div>
+</section><section class="slide" data-session="1" data-title="Time vs Space Classifier">
+<div class="kicker">Interactive classification</div>
+<h2>Is it time cost or space cost?</h2>
+<div class="choice-grid" id="spaceQuiz">
+<button class="choice" data-type="time" type="button"><b>A.</b> Comparing each log entry with a suspicious IP</button>
+<button class="choice" data-type="space" type="button"><b>B.</b> Storing a hash table of known malicious IPs</button>
+<button class="choice" data-type="time" type="button"><b>C.</b> Running nested alert-rule comparisons</button>
+<button class="choice" data-type="space" type="button"><b>D.</b> Keeping an extra copy of the input array</button>
+</div>
+<div class="status" id="spaceQuizStatus">Select an item to classify the resource being discussed.</div>
+</section>
+<section class="slide" data-session="1" data-title="Session 7 Checkpoint">
+<div class="kicker">Checkpoint</div>
+<h2>Can you answer this?</h2>
+<div class="qwrap">
+<div class="qcard" role="button" tabindex="0">
+<div class="qface"><div class="qlabel">Ask Students</div><div class="qtext">Why do we count operations instead of only measuring seconds?</div><span class="flipcue">↻</span></div>
+<div class="qface qback"><div class="qlabel">Suggested Answer</div><div class="ans">Seconds depend on machine and environment. Operation counting reveals how the algorithm’s work grows with input size, which is more useful for comparing algorithms.</div><span class="flipcue">↻</span></div>
+</div>
+</div>
+</section>
+<section class="slide dark center" data-session="2" data-title="Session 8 Start">
+<div class="kicker">Session 8</div>
+<h1>Best, Worst, and Average Case</h1>
+<p class="lead">The same algorithm can behave very differently on different inputs of the same size.</p>
+</section>
+<section class="slide" data-session="2" data-title="Case Analysis Concept">
+<div class="kicker">Concept</div>
+<h2>Same n, different input arrangement</h2>
+<div class="grid3">
+<div class="card"><div class="icon">✅</div><h3>Best Case</h3><p>Input arrangement that gives the lowest cost.</p></div>
+<div class="card"><div class="icon">❌</div><h3>Worst Case</h3><p>Input arrangement that gives the highest cost.</p></div>
+<div class="card"><div class="icon">⚖️</div><h3>Average / Expected</h3><p>Expected cost over a distribution of inputs.</p></div>
+</div>
+<div class="callout warn" style="margin-top:18px"><p style="margin:0"><b>Key idea:</b> cases are not about small vs large n. They are about input arrangement or input condition for the same n.</p></div>
+</section>
+<section class="slide" data-session="2" data-title="Linear Search Cases">
+<div class="kicker">Searching example</div>
+<h2>Linear Search case analysis</h2>
+<div class="split">
+<div class="card">
+<h3>Interactive search</h3>
+<div class="array" id="searchArray"></div>
+<div class="controls">
+<select id="searchTarget">
+<option value="7">Best case: target at first position</option>
+<option value="30">Middle case: target in middle</option>
+<option value="99">Worst case: target absent</option>
+</select>
+<button class="action cyan" id="runSearch" type="button">Run Search</button>
+<button class="action" id="stepSearch" type="button">Next Step</button>
+</div>
+</div>
+<div class="card">
+<h3>Result</h3>
+<div class="status" id="searchStatus">Select a case and run the search.</div>
+<div class="callout" style="margin-top:16px"><p style="margin:0"><b>Linear Search:</b> best Θ(1), worst Θ(n), average Θ(n) if the target position is uniformly distributed.</p></div>
+</div>
+</div>
+</section><section class="slide" data-session="2" data-title="Linear Search Cost Calculator">
+<div class="kicker">Interactive calculator</div>
+<h2>Linear Search: estimate comparisons</h2>
+<div class="grid2">
+<div class="card">
+<div class="controls">
+<label><b>n:</b></label><input id="linN" max="100" min="5" type="range" value="20"/>
+<b id="linNText">20</b>
+</div>
+<div class="controls" style="margin-top:14px">
+<label><b>Case:</b></label>
+<select id="linCase">
+<option value="best">Best: target first</option>
+<option value="middle">Middle: target near center</option>
+<option value="worst">Worst: target absent / last</option>
+<option value="avg">Average if present uniformly</option>
+</select>
+<button class="action cyan" id="linCalc" type="button">Calculate</button>
+</div>
+</div>
+<div class="card">
+<h3>Estimated comparisons</h3>
+<div class="metric" id="linResult">1</div>
+<div class="status" id="linExplain">Best case: target found at the first position.</div>
+</div>
+</div>
+</section>
+<section class="slide" data-session="2" data-title="Insertion Sort Cases">
+<div class="kicker">Sorting example</div>
+<h2>Insertion Sort cases</h2>
+<div class="grid3">
+<div class="card"><h3>Already sorted</h3><div class="code">[1,2,3,4,5]</div><p>No shifts. Outer loop still checks each key.</p><div class="metric">Θ(n)</div></div>
+<div class="card"><h3>Typical unsorted</h3><div class="code">[3,1,5,2,4]</div><p>Some keys move across earlier elements.</p><div class="metric">Θ(n²)</div></div>
+<div class="card"><h3>Reverse sorted</h3><div class="code">[5,4,3,2,1]</div><p>Every key moves to the front.</p><div class="metric">Θ(n²)</div></div>
+</div>
+</section>
+<section class="slide" data-session="2" data-title="Case Classifier">
+<div class="kicker">Interactive classification</div>
+<h2>Classify the case</h2>
+<div class="choice-grid" id="caseClassifier">
+<button class="choice" data-msg="Best case for Linear Search: the target is the first element, so one comparison is enough." type="button"><b>A.</b> Linear Search, target is at index 0.</button>
+<button class="choice" data-msg="Worst case for Linear Search: the target is absent, so every element must be checked." type="button"><b>B.</b> Linear Search, target is absent.</button>
+<button class="choice" data-msg="Best case for Insertion Sort: already sorted input gives no shifts and linear time." type="button"><b>C.</b> Insertion Sort on already sorted data.</button>
+<button class="choice" data-msg="Worst case for Insertion Sort: reverse sorted data creates maximum shifts." type="button"><b>D.</b> Insertion Sort on reverse sorted data.</button>
+</div>
+<div class="status" id="caseStatus">Select a scenario to reveal the case explanation.</div>
+</section><section class="slide" data-session="2" data-title="Best-Worst-Average Sorting Lab">
+<div class="kicker">Interactive sorting case lab</div>
+<h2>Which input is easiest for Insertion Sort?</h2>
+<div class="grid3">
+<button class="choice sortCaseBtn" data-case="sorted" type="button"><b>A.</b> [1, 2, 3, 4, 5]</button>
+<button class="choice sortCaseBtn" data-case="nearly" type="button"><b>B.</b> [1, 2, 4, 3, 5]</button>
+<button class="choice sortCaseBtn" data-case="reverse" type="button"><b>C.</b> [5, 4, 3, 2, 1]</button>
+</div>
+<div class="status" id="sortCaseStatus" style="margin-top:18px">Select an array to explain the case.</div>
+<div class="callout" style="margin-top:18px"><p style="margin:0"><b>Key lesson:</b> cases depend on input arrangement, not only input size.</p></div>
+</section>
+<section class="slide" data-session="2" data-title="Average Case Warning">
+<div class="kicker">Common misconception</div>
+<h2>Average case is not “half of the worst case” automatically</h2>
+<div class="grid2">
+<div class="card">
+<h3>Average case requires a model</h3>
+<p>We need an assumption about how inputs are distributed.</p>
+<div class="callout warn"><p style="margin:0">For Linear Search, if target positions are equally likely, expected comparisons are roughly (n+1)/2 when present.</p></div>
+</div>
+<div class="card">
+<h3>Expected behavior</h3>
+<p>In many algorithm discussions, average case means <b>expected cost</b> over a defined input distribution.</p>
+<div class="callout good"><p style="margin:0">Always ask: average over what kind of input?</p></div>
+</div>
+</div>
+</section><section class="slide" data-session="2" data-title="Average Case Mini Simulator">
+<div class="kicker">Interactive average-case intuition</div>
+<h2>Average comparisons for successful Linear Search</h2>
+<div class="grid2">
+<div class="card">
+<p>If the target is equally likely to be at any position from 1 to n:</p>
+<div class="formula">Average = (1 + 2 + … + n) / n = (n + 1) / 2</div>
+<div class="controls" style="margin-top:18px">
+<label><b>n:</b></label><input id="avgN" max="100" min="2" type="range" value="20"/>
+<b id="avgNText">20</b>
+</div>
+</div>
+<div class="card">
+<h3>Result</h3>
+<div class="metric" id="avgResult">10.5</div>
+<p>expected comparisons when the target is present and uniformly distributed.</p>
+</div>
+</div>
+</section>
+<section class="slide" data-session="2" data-title="SOC Case Analysis">
+<div class="kicker">Cybersecurity application</div>
+<h2>Case analysis in SOC alert search</h2>
+<div class="grid3">
+<div class="card"><h3>Best Case</h3><p>The critical alert is first in the queue.</p><div class="metric">1 check</div></div>
+<div class="card"><h3>Worst Case</h3><p>The critical alert is last or absent.</p><div class="metric">n checks</div></div>
+<div class="card"><h3>Expected Case</h3><p>Depends on how alerts are ordered and how often true incidents occur.</p><div class="metric">model needed</div></div>
+</div>
+</section>
+<section class="slide" data-session="2" data-title="Session 8 Checkpoint">
+<div class="kicker">Checkpoint</div>
+<h2>Think before reveal</h2>
+<div class="qwrap">
+<div class="qcard" role="button" tabindex="0">
+<div class="qface"><div class="qlabel">Ask Students</div><div class="qtext">For the same n, why can one input be best case and another worst case?</div><span class="flipcue">↻</span></div>
+<div class="qface qback"><div class="qlabel">Suggested Answer</div><div class="ans">Because algorithms often make decisions based on input arrangement. The number of comparisons, shifts, recursive calls, or scans can change even when input size stays the same.</div><span class="flipcue">↻</span></div>
+</div>
+</div>
+</section>
+<section class="slide dark center" data-session="3" data-title="Session 9 Start">
+<div class="kicker">Session 9</div>
+<h1>Growth of Functions</h1>
+<p class="lead">From exact counts to complexity classes</p>
+<div class="pills"><span class="pill">O(1)</span><span class="pill">O(log n)</span><span class="pill">O(n)</span><span class="pill">O(n log n)</span><span class="pill">O(n²)</span><span class="pill">O(2ⁿ)</span></div>
+</section>
+<section class="slide" data-session="3" data-title="Why Growth Matters">
+<div class="kicker">Motivation</div>
+<h2>Small inputs hide bad growth</h2>
+<div class="grid2">
+<div class="card"><h3>At n = 10</h3><p>Many algorithms look acceptable.</p><div class="metric">10² = 100</div></div>
+<div class="card"><h3>At n = 1,000,000</h3><p>Growth rate dominates implementation details.</p><div class="metric">n² = 10¹²</div></div>
+</div>
+<div class="callout bad" style="margin-top:18px"><p style="margin:0"><b>Security scale:</b> a method that works for 100 log entries may fail for millions of events per hour.</p></div>
+</section>
+<section class="slide" data-session="3" data-title="Growth Rate Explorer">
+<div class="kicker">Interactive graph</div>
+<h2>Growth-rate explorer</h2>
+<div class="card">
+<div class="controls">
+<label><b>Input size n:</b></label>
+<input id="growthN" max="50" min="2" type="range" value="10"/>
+<b id="growthNText">10</b>
+</div>
+<div id="growthBars" style="margin-top:16px"></div>
+</div>
+<div class="callout" style="margin-top:18px"><p style="margin:0">Bars use a logarithmic visual scale so very large growth rates can still be compared on the same slide.</p></div>
+</section><section class="slide" data-session="3" data-title="Predict Before Seeing">
+<div class="kicker">Interactive prediction</div>
+<h2>Predict the fastest-growing function</h2>
+<div class="choice-grid" id="growthPredict">
+<button class="choice" data-good="false" type="button"><b>A.</b> n log n</button>
+<button class="choice" data-good="false" type="button"><b>B.</b> n²</button>
+<button class="choice" data-good="true" type="button"><b>C.</b> 2ⁿ</button>
+<button class="choice" data-good="false" type="button"><b>D.</b> n</button>
+</div>
+<div class="status" id="growthPredictStatus">Ask students to predict before using the graph.</div>
+</section>
+<section class="slide" data-session="3" data-title="Complexity Classes">
+<div class="kicker">Complexity classes</div>
+<h2>Common growth classes</h2>
+<div class="complexity-grid">
+<div class="card class-card"><div class="formula">O(1)</div><p>Constant</p></div>
+<div class="card class-card"><div class="formula">O(log n)</div><p>Halving / doubling</p></div>
+<div class="card class-card"><div class="formula">O(n)</div><p>Single pass</p></div>
+<div class="card class-card"><div class="formula">O(n log n)</div><p>Efficient divide + combine</p></div>
+<div class="card class-card"><div class="formula">O(n²)</div><p>Pairwise / nested loops</p></div>
+<div class="card class-card"><div class="formula">O(n³)</div><p>Triple nesting</p></div>
+<div class="card class-card"><div class="formula">O(2ⁿ)</div><p>Exponential choices</p></div>
+<div class="card class-card"><div class="formula">O(n!)</div><p>All permutations</p></div>
+</div>
+</section><section class="slide" data-session="3" data-title="Dominant Term Simplifier">
+<div class="kicker">Interactive simplification</div>
+<h2>Find the dominant term</h2>
+<div class="grid2">
+<div class="card">
+<div class="controls">
+<select id="dominantExpr">
+<option value="n2">3n² + 20n + 10</option>
+<option value="nlogn">5n log n + 100n</option>
+<option value="n3">n³ + 50n² + 1000</option>
+<option value="constant">7</option>
+</select>
+<button class="action cyan" id="dominantBtn" type="button">Simplify</button>
+</div>
+</div>
+<div class="card">
+<h3>Growth class</h3>
+<div class="status" id="dominantStatus">Select an expression to simplify.</div>
+</div>
+</div>
+<div class="callout warn" style="margin-top:18px"><p style="margin:0"><b>Rule:</b> ignore constants and lower-order terms for asymptotic growth.</p></div>
+</section>
+<section class="slide" data-session="3" data-title="Complexity Matching Activity">
+<div class="kicker">Interactive matching</div>
+<h2>Match pattern to growth</h2>
+<div class="choice-grid" id="growthMatch">
+<button class="choice" data-msg="O(1): Direct array access uses a fixed number of operations independent of n." type="button"><b>A.</b> Access A[5]</button>
+<button class="choice" data-msg="O(log n): Binary Search repeatedly halves the remaining search space." type="button"><b>B.</b> Binary Search</button>
+<button class="choice" data-msg="O(n): Scanning all logs once is a linear pass." type="button"><b>C.</b> Scan all logs once</button>
+<button class="choice" data-msg="O(n²): Comparing every pair creates nested growth." type="button"><b>D.</b> Compare every pair of alerts</button>
+</div>
+<div class="status" id="growthMatchStatus">Select a pattern to reveal its growth class.</div>
+</section><section class="slide" data-session="3" data-title="Complexity Ordering Activity">
+<div class="kicker">Interactive ordering</div>
+<h2>Order these from slowest growth to fastest growth</h2>
+<div class="grid2">
+<div class="card">
+<p class="lead">Correct order:</p>
+<p>O(1), O(log n), O(n), O(n log n), O(n²), O(2ⁿ)</p>
+<button class="action cyan" id="orderReveal" type="button">Reveal explanation</button>
+</div>
+<div class="card">
+<h3>Explanation</h3>
+<div class="status" id="orderStatus">Let students attempt the order first, then reveal.</div>
+</div>
+</div>
+</section>
+<section class="slide" data-session="3" data-title="Growth Table">
+<div class="kicker">Comparison table</div>
+<h2>Operation counts at different n</h2>
+<div class="table-wrap card">
+<table>
+<thead><tr><th>Growth</th><th>n = 10</th><th>n = 100</th><th>n = 1,000</th><th>Interpretation</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>1</td><td>1</td><td>1</td><td>Constant access / fixed work</td></tr>
+<tr><td>log₂ n</td><td>≈ 3</td><td>≈ 7</td><td>≈ 10</td><td>Repeated halving</td></tr>
+<tr><td>n</td><td>10</td><td>100</td><td>1,000</td><td>One pass</td></tr>
+<tr><td>n log₂ n</td><td>≈ 33</td><td>≈ 664</td><td>≈ 9,966</td><td>Efficient sorting family</td></tr>
+<tr><td>n²</td><td>100</td><td>10,000</td><td>1,000,000</td><td>Pairwise or nested loops</td></tr>
+<tr><td>2ⁿ</td><td>1,024</td><td>huge</td><td>impossible</td><td>Exponential search space</td></tr>
+</tbody>
+</table>
+</div>
+</section><section class="slide" data-session="3" data-title="Feasibility at Scale">
+<div class="kicker">Interactive scale check</div>
+<h2>Can this run at security scale?</h2>
+<div class="grid2">
+<div class="card">
+<div class="controls">
+<label><b>n:</b></label>
+<select id="scaleN">
+<option value="1000">1,000</option>
+<option value="1000000">1,000,000</option>
+<option value="10000000">10,000,000</option>
+</select>
+<label><b>growth:</b></label>
+<select id="scaleGrowth">
+<option value="n">n</option>
+<option value="nlogn">n log n</option>
+<option value="n2">n²</option>
+</select>
+<button class="action cyan" id="scaleBtn" type="button">Estimate</button>
+</div>
+</div>
+<div class="card">
+<h3>Approximate operations</h3>
+<div class="metric" id="scaleResult">1,000</div>
+<div class="status" id="scaleStatus">Linear work is often feasible; quadratic work becomes dangerous at large n.</div>
+</div>
+</div>
+</section>
+<section class="slide" data-session="3" data-title="Assignment 1 Launch">
+<div class="kicker">Assignment 1 issued</div>
+<h2>Assignment 1 should target Week 1–3 foundations</h2>
+<div class="grid3">
+<div class="card"><h3>Correctness</h3><p>Pre/post-conditions and loop-invariant style reasoning.</p></div>
+<div class="card"><h3>Analysis</h3><p>Input size, basic operation, time/space complexity, counting operations.</p></div>
+<div class="card"><h3>Cases &amp; Growth</h3><p>Best/worst/average behavior and growth-rate comparison.</p></div>
+</div>
+<div class="callout warn" style="margin-top:18px"><p style="margin:0"><b>Instructor cue:</b> Assignment 1 is issued in Week 3 Session 9 and due later according to the course guide. Use this slide to explain expected reasoning quality.</p></div>
+</section>
+<section class="slide" data-session="3" data-title="Week 3 Exit Check">
+<div class="kicker">Exit check</div>
+<h2>Final self-check questions</h2>
+<div class="grid2">
+<div class="qwrap"><div class="qcard" role="button" tabindex="0"><div class="qface"><div class="qlabel">Q1</div><div class="qtext">What is the difference between input size and basic operation?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans">Input size defines the scale of the problem. Basic operation is the dominant action we count to estimate running time.</div><span class="flipcue">↻</span></div></div></div>
+<div class="qwrap"><div class="qcard" role="button" tabindex="0"><div class="qface"><div class="qlabel">Q2</div><div class="qtext">Why is worst-case analysis useful in cyber security?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans">Security systems must remain reliable under difficult inputs, attacks, heavy traffic, and adversarial conditions.</div><span class="flipcue">↻</span></div></div></div>
+<div class="qwrap"><div class="qcard" role="button" tabindex="0"><div class="qface"><div class="qlabel">Q3</div><div class="qtext">Why is O(log n) usually better than O(n)?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans">Logarithmic growth increases very slowly because each step greatly reduces the remaining search space.</div><span class="flipcue">↻</span></div></div></div>
+<div class="qwrap"><div class="qcard" role="button" tabindex="0"><div class="qface"><div class="qlabel">Q4</div><div class="qtext">Why does n² become dangerous at large scale?</div><span class="flipcue">↻</span></div><div class="qface qback"><div class="qlabel">Answer</div><div class="ans">Doubling n roughly quadruples the work. At millions of inputs, pairwise comparison can become operationally infeasible.</div><span class="flipcue">↻</span></div></div></div>
+</div>
+</section>
+<section class="slide dark center" data-session="3" data-title="Thank You">
+<div class="kicker">Week 3 complete</div>
+<h1>Thank You</h1>
+<p class="lead"><b>Any Questions?</b></p>
+<div class="grid3" style="width:100%;margin-top:20px">
+<div class="card"><h3>Input size</h3><p>Define n clearly.</p></div>
+<div class="card"><h3>Counting</h3><p>Count the basic operation.</p></div>
+<div class="card"><h3>Growth</h3><p>Compare how algorithms scale.</p></div>
+</div>
+<p class="small muted" style="margin-top:22px"><b>Dr. Zakir Khan · Assistant Professor</b><br/>Department of Computer Science · Air University Aerospace &amp; Aviation Campus, Kamra</p>
+</section>
+<div class="footer">
+<span id="footerSession">CS-332 · Week 3</span>
+<span class="current-clock" id="currentClock">--:--</span>
+<span class="footer-right"><span id="counter">1 / 1</span><span class="build-state" id="buildState"></span></span>
+</div>
+<div class="note" id="globalNote"></div>
+</main>
+</div>
+<div class="controls-ui">
+<button class="ctrl" id="timerBtn" title="Timer (T)">⏱</button>
+<button class="ctrl" id="overviewBtn" title="Overview (O)">▦</button>
+<button class="ctrl" id="fullBtn" title="Full screen (F)">⛶</button>
+<button class="ctrl" id="helpBtn" title="Help (?)">?</button>
+</div>
+<div class="progress"><div id="progressFill"></div></div>
+<div class="timer-panel" id="timerPanel">
+<div class="timer-display" id="timerDisplay">05:00</div>
+<div class="timer-buttons">
+<button class="action" data-min="2">2m</button><button class="action" data-min="5">5m</button>
+<button class="action" data-min="10">10m</button><button class="action" data-min="15">15m</button>
+<button class="action green" id="timerStart">Start</button><button class="action" id="timerReset">Reset</button>
+</div>
+</div>
+<div class="overlay" id="overview">
+<div class="overlay-inner">
+<button class="closebtn" id="overviewClose">Close</button>
+<h2>Slide Overview</h2>
+<div class="overview-grid" id="overviewGrid"></div>
+</div>
+</div>
+<div class="overlay" id="help">
+<div class="overlay-inner">
+<button class="closebtn" id="helpClose">Close</button>
+<h2>Controls</h2>
+<div class="helpgrid">
+<kbd>→ / ↓ / Space / Enter / Page Down</kbd><span>Reveal next item; then move to next slide</span>
+<kbd>← / ↑ / Page Up / Backspace</kbd><span>Previous slide</span>
+<kbd>A</kbd><span>Reveal all on current slide</span>
+<kbd>S</kbd><span>Next session</span>
+<kbd>Shift + S</kbd><span>Previous session</span>
+<kbd>I</kbd><span>Instructor cue</span>
+<kbd>T</kbd><span>Timer</span>
+<kbd>O</kbd><span>Overview</span>
+<kbd>F</kbd><span>Full screen</span>
+<kbd>Esc</kbd><span>Close overlay</span>
+</div>
+</div>
+</div>
+<script>
+(function(){
+const stage=document.getElementById('stage'),slides=[...document.querySelectorAll('.slide')];
+const counter=document.getElementById('counter'),progressFill=document.getElementById('progressFill'),footerSession=document.getElementById('footerSession'),globalNote=document.getElementById('globalNote'),buildState=document.getElementById('buildState');
+let current=0;
+const sessionStarts={1:slides.findIndex(s=>s.dataset.session==='1'),2:slides.findIndex(s=>s.dataset.session==='2'),3:slides.findIndex(s=>s.dataset.session==='3')};
+function labelSession(s){return s==='1'?'Session 7 · Analysis Fundamentals':s==='2'?'Session 8 · Case Analysis':s==='3'?'Session 9 · Growth of Functions':'CS-332 · Week 3'}
+function getSteps(slide=slides[current]){return [...slide.querySelectorAll('.reveal-step')]}
+function updateBuildState(){const steps=getSteps();if(!steps.length){buildState.textContent='';return}const done=steps.filter(x=>x.classList.contains('revealed')).length;buildState.innerHTML='<span class="build-dot '+(done<steps.length?'on':'')+'"></span>'+done+'/'+steps.length}
+function markRevealSteps(){slides.forEach(slide=>{const chosen=[];const add=el=>{if(!el||chosen.includes(el)||el.classList.contains('note'))return;if(el.closest('.qback'))return;chosen.push(el)};
+['.grid2','.grid3','.grid4','.split','.flow','.choice-grid','.complexity-grid'].forEach(sel=>slide.querySelectorAll(sel).forEach(g=>[...g.children].forEach(add)));
+[...slide.children].forEach(el=>{if(el.matches('.callout,.status,.code,.table-wrap,.qwrap,.card:not(.qface)'))add(el)});
+chosen.slice(0,8).forEach((el,i)=>{el.classList.add('reveal-step');el.dataset.revealIndex=i})})}
+function show(i){current=Math.max(0,Math.min(slides.length-1,i));slides.forEach((s,k)=>s.classList.toggle('active',k===current));counter.textContent=(current+1)+' / '+slides.length;progressFill.style.width=((current+1)/slides.length*100)+'%';footerSession.textContent=labelSession(slides[current].dataset.session);globalNote.classList.remove('show');globalNote.textContent='';updateBuildState();stage.focus({preventScroll:true})}
+function revealNext(){const next=getSteps().find(x=>!x.classList.contains('revealed'));if(!next)return false;next.classList.add('revealed');updateBuildState();return true}
+function revealAll(){getSteps().forEach(x=>x.classList.add('revealed'));updateBuildState()}
+function next(){if(!revealNext())show(current+1)}
+function prev(){show(current-1)}
+function switchSession(dir=1){const s=Number(slides[current].dataset.session||0);let t;if(s===0)t=dir<0?3:1;else t=dir>0?(s===3?1:s+1):(s===1?3:s-1);show(sessionStarts[t])}
+function toggleNote(){const n=slides[current].querySelector('.note');if(n){globalNote.textContent=n.textContent;globalNote.classList.toggle('show')}}
+
+// clock
+const clock=document.getElementById('currentClock');function updateClock(){clock.textContent=new Intl.DateTimeFormat(undefined,{hour:'2-digit',minute:'2-digit',hour12:true}).format(new Date())}updateClock();setInterval(updateClock,15000);
+
+// overlays
+const overview=document.getElementById('overview'),help=document.getElementById('help'),timerPanel=document.getElementById('timerPanel');
+document.getElementById('overviewBtn').onclick=()=>overview.classList.add('open');document.getElementById('overviewClose').onclick=()=>overview.classList.remove('open');
+document.getElementById('helpBtn').onclick=()=>help.classList.add('open');document.getElementById('helpClose').onclick=()=>help.classList.remove('open');
+document.getElementById('timerBtn').onclick=()=>timerPanel.classList.toggle('open');
+document.getElementById('fullBtn').onclick=()=>{if(!document.fullscreenElement)document.documentElement.requestFullscreen();else document.exitFullscreen()};
+
+// overview
+const ovGrid=document.getElementById('overviewGrid');slides.forEach((s,i)=>{const b=document.createElement('button');b.className='ov';b.innerHTML='<small>Slide '+(i+1)+'</small>'+s.dataset.title;b.onclick=()=>{show(i);overview.classList.remove('open')};ovGrid.appendChild(b)});
+
+// timer
+let timerSeconds=300,timerDefault=300,timerInt=null;const timerDisplay=document.getElementById('timerDisplay');
+function drawTimer(){const m=String(Math.floor(timerSeconds/60)).padStart(2,'0'),s=String(timerSeconds%60).padStart(2,'0');timerDisplay.textContent=m+':'+s}
+document.querySelectorAll('[data-min]').forEach(b=>b.onclick=()=>{timerDefault=timerSeconds=Number(b.dataset.min)*60;drawTimer()});
+document.getElementById('timerStart').onclick=()=>{if(timerInt){clearInterval(timerInt);timerInt=null;document.getElementById('timerStart').textContent='Start';return}document.getElementById('timerStart').textContent='Pause';timerInt=setInterval(()=>{if(timerSeconds>0){timerSeconds--;drawTimer()}else{clearInterval(timerInt);timerInt=null;document.getElementById('timerStart').textContent='Start'}},1000)};
+document.getElementById('timerReset').onclick=()=>{timerSeconds=timerDefault;drawTimer()};drawTimer();
+
+// flip cards
+document.querySelectorAll('.qcard').forEach(c=>{c.addEventListener('click',e=>{e.stopPropagation();c.classList.toggle('flipped')});c.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();c.classList.toggle('flipped')}})});
+
+// input-size quiz
+const inputStatus=document.getElementById('inputSizeStatus');document.querySelectorAll('#inputSizeQuiz .choice').forEach(b=>b.onclick=()=>{const ok=b.dataset.good==='true';b.classList.add(ok?'correct':'wrong');inputStatus.innerHTML=ok?'<b>Correct.</b> Input size must describe the actual scale of the data structure/problem.':'<b>Review.</b> This does not identify the problem size being processed.'});
+
+// code analyzer
+const patterns={
+single:{code:'for each log in logs:\\n    check(log)',msg:'One check per log. If there are n logs, the basic operation runs n times. Growth: Θ(n).'},
+nested:{code:'for each alert in alerts:\\n    for each rule in rules:\\n        compare(alert, rule)',msg:'Every alert may be compared with every rule. If both are size n, growth is Θ(n²). If sizes differ, use Θ(mn).'},
+binary:{code:'while low <= high:\\n    mid = (low+high)/2\\n    discard half',msg:'Each step halves the remaining data. Number of steps grows logarithmically. Growth: Θ(log n).'},
+consecutive:{code:'for each log in logs:\\n    parse(log)\\nfor each log in logs:\\n    score(log)',msg:'Two consecutive linear loops give n + n = 2n. Constants are ignored in growth analysis. Growth: Θ(n).'}
+};
+document.getElementById('analyzePattern').onclick=()=>{const p=patterns[document.getElementById('codePattern').value];document.getElementById('patternCode').textContent=p.code;document.getElementById('patternStatus').innerHTML=p.msg};
+
+// linear search sim
+const vals=[7,12,18,24,30,36,42,50];let searchSteps=[],searchIdx=0;const searchArray=document.getElementById('searchArray'),searchStatus=document.getElementById('searchStatus');
+function drawSearch(active=-1,found=false){searchArray.innerHTML='';vals.forEach((v,i)=>{const d=document.createElement('div');d.className='cell';d.textContent=v;if(i<active)d.classList.add('discard');if(i===active)d.classList.add(found?'found':'active');const ix=document.createElement('span');ix.className='idx';ix.textContent=i;d.appendChild(ix);searchArray.appendChild(d)})}
+function setupSearch(){const target=Number(document.getElementById('searchTarget').value);searchSteps=[];searchIdx=0;for(let i=0;i<vals.length;i++){searchSteps.push({i,found:vals[i]===target,target});if(vals[i]===target)break}if(!vals.includes(target))searchSteps.push({i:vals.length,found:false,target,absent:true});drawSearch();searchStatus.textContent='Ready. Press Next Step.'}
+function stepSearch(){if(!searchSteps.length)setupSearch();if(searchIdx>=searchSteps.length){searchStatus.textContent+=' Search complete.';return}const s=searchSteps[searchIdx++];if(s.absent){drawSearch(vals.length);searchStatus.innerHTML='Target '+s.target+' is absent after checking all '+vals.length+' elements. Worst case Θ(n).';return}drawSearch(s.i,s.found);searchStatus.innerHTML=s.found?'Found target '+s.target+' at index '+s.i+' after '+searchIdx+' comparison(s).':'Compare target '+s.target+' with '+vals[s.i]+'. Not equal, continue.'}
+document.getElementById('runSearch').onclick=setupSearch;document.getElementById('stepSearch').onclick=stepSearch;setupSearch();
+
+// case classifier
+const caseStatus=document.getElementById('caseStatus');document.querySelectorAll('#caseClassifier .choice').forEach(b=>b.onclick=()=>{caseStatus.innerHTML=b.dataset.msg;b.classList.add('correct')});
+
+// growth explorer
+const fns=[['O(1)',n=>1],['O(log n)',n=>Math.log2(n)],['O(n)',n=>n],['O(n log n)',n=>n*Math.log2(n)],['O(n²)',n=>n*n],['O(2ⁿ)',n=>Math.pow(2,n)]];
+function fmt(v){return v>1e7?v.toExponential(1):Math.round(v).toLocaleString()}
+function renderGrowth(){const n=Number(document.getElementById('growthN').value);document.getElementById('growthNText').textContent=n;const vals=fns.map(x=>x[1](n));const logs=vals.map(v=>Math.log10(v+1));const max=Math.max(...logs);const box=document.getElementById('growthBars');box.innerHTML='';fns.forEach((f,i)=>{const row=document.createElement('div');row.className='bar-row';row.innerHTML='<b>'+f[0]+'</b><div class="track"><div class="fill" style="width:'+Math.max(2,logs[i]/max*100)+'%"></div></div><span>≈ '+fmt(vals[i])+'</span>';box.appendChild(row)})}
+document.getElementById('growthN').oninput=renderGrowth;renderGrowth();
+
+// growth match
+const gm=document.getElementById('growthMatchStatus');document.querySelectorAll('#growthMatch .choice').forEach(b=>b.onclick=()=>{gm.innerHTML=b.dataset.msg;b.classList.add('correct')});
+
+
+// v2 additional interactions
+const nScenarioText={
+  logs:'n = number of log records processed. The basic operation may be parsing or checking each record.',
+  packets:'n = number of packets inspected. If each packet is checked once, time often grows linearly with packet count.',
+  malware:'n = number of files, or total bytes scanned, depending on what the algorithm processes.',
+  graph:'Use V = number of vertices and E = number of edges. Many graph algorithms depend on both.',
+  string:'n = length of the text/string; m may represent the pattern length in string matching.'
+};
+document.getElementById('nScenarioBtn').onclick=()=>{
+  const v=document.getElementById('nScenario').value;
+  document.getElementById('nScenarioStatus').innerHTML=nScenarioText[v];
+};
+
+const basicOpStatus=document.getElementById('basicOpStatus');
+document.querySelectorAll('#basicOpQuiz .choice').forEach(b=>b.onclick=()=>{
+  b.classList.add(b.textContent.includes('variable')?'wrong':'correct');
+  basicOpStatus.innerHTML=b.dataset.msg;
+});
+
+function updateCountingLab(){
+  const n=Number(document.getElementById('countN').value);
+  document.getElementById('countNText').textContent=n;
+  document.getElementById('singleLoopCount').textContent=n.toLocaleString();
+  document.getElementById('twoLoopCount').textContent=(2*n).toLocaleString();
+  document.getElementById('nestedLoopCount').textContent=(n*n).toLocaleString();
+}
+if(document.getElementById('countN')){
+  document.getElementById('countN').oninput=updateCountingLab;
+  updateCountingLab();
+}
+
+const spaceQuizStatus=document.getElementById('spaceQuizStatus');
+document.querySelectorAll('#spaceQuiz .choice').forEach(b=>b.onclick=()=>{
+  const type=b.dataset.type;
+  b.classList.add(type==='time'?'correct':'correct');
+  spaceQuizStatus.innerHTML=type==='time'
+    ?'<b>Time cost.</b> This describes operations executed by the algorithm.'
+    :'<b>Space cost.</b> This describes extra memory used by the algorithm.';
+});
+
+function updateLinCalc(){
+  const n=Number(document.getElementById('linN').value);
+  const c=document.getElementById('linCase').value;
+  document.getElementById('linNText').textContent=n;
+  let val, msg;
+  if(c==='best'){val=1;msg='Best case: target is first, so only one comparison is needed.'}
+  else if(c==='middle'){val=Math.ceil(n/2);msg='Middle case: target is around the center, so about n/2 comparisons are needed.'}
+  else if(c==='worst'){val=n;msg='Worst case: target is last or absent, so all n elements are checked.'}
+  else{val=(n+1)/2;msg='Average successful search under uniform target position: (n+1)/2 comparisons.'}
+  document.getElementById('linResult').textContent=Number.isInteger(val)?val:val.toFixed(1);
+  document.getElementById('linExplain').textContent=msg;
+}
+if(document.getElementById('linCalc')){
+  document.getElementById('linCalc').onclick=updateLinCalc;
+  document.getElementById('linN').oninput=updateLinCalc;
+  document.getElementById('linCase').onchange=updateLinCalc;
+  updateLinCalc();
+}
+
+const sortCaseStatus=document.getElementById('sortCaseStatus');
+document.querySelectorAll('.sortCaseBtn').forEach(b=>b.onclick=()=>{
+  const c=b.dataset.case;
+  b.classList.add(c==='reverse'?'wrong':'correct');
+  sortCaseStatus.innerHTML=c==='sorted'
+    ?'<b>Best case:</b> already sorted input gives no shifts and Θ(n) time.'
+    :c==='nearly'
+    ?'<b>Nearly sorted:</b> usually efficient because only a few elements need shifting.'
+    :'<b>Worst case:</b> reverse order creates maximum shifting and Θ(n²) time.';
+});
+
+function updateAvg(){
+  const n=Number(document.getElementById('avgN').value);
+  document.getElementById('avgNText').textContent=n;
+  document.getElementById('avgResult').textContent=((n+1)/2).toFixed(1);
+}
+if(document.getElementById('avgN')){
+  document.getElementById('avgN').oninput=updateAvg;
+  updateAvg();
+}
+
+const growthPredictStatus=document.getElementById('growthPredictStatus');
+document.querySelectorAll('#growthPredict .choice').forEach(b=>b.onclick=()=>{
+  const ok=b.dataset.good==='true';
+  b.classList.add(ok?'correct':'wrong');
+  growthPredictStatus.innerHTML=ok
+    ?'<b>Correct.</b> Exponential growth eventually dominates polynomial and linearithmic growth.'
+    :'<b>Review.</b> 2ⁿ grows faster than these choices as n becomes large.';
+});
+
+const domInfo={
+  n2:'Dominant term is n². Growth class: O(n²). Constants and lower-order terms are ignored.',
+  nlogn:'Dominant term is n log n. Growth class: O(n log n). It grows faster than n but slower than n².',
+  n3:'Dominant term is n³. Growth class: O(n³).',
+  constant:'No n appears. Growth class: O(1).'
+};
+document.getElementById('dominantBtn').onclick=()=>{
+  const v=document.getElementById('dominantExpr').value;
+  document.getElementById('dominantStatus').innerHTML=domInfo[v];
+};
+
+document.getElementById('orderReveal').onclick=()=>{
+  document.getElementById('orderStatus').innerHTML='<b>Reason:</b> constant work does not grow; logarithmic work grows very slowly; linear is one pass; n log n is common in efficient sorting; n² comes from pairwise/nested behavior; 2ⁿ grows explosively.';
+};
+
+function fmtOps(x){
+  if(x>1e12)return x.toExponential(2);
+  return Math.round(x).toLocaleString();
+}
+function updateScale(){
+  const n=Number(document.getElementById('scaleN').value);
+  const g=document.getElementById('scaleGrowth').value;
+  let ops = g==='n'?n:g==='nlogn'?n*Math.log2(n):n*n;
+  document.getElementById('scaleResult').textContent=fmtOps(ops);
+  document.getElementById('scaleStatus').innerHTML=g==='n2' && n>=1000000
+    ?'<b>Warning:</b> quadratic work is usually infeasible at this scale.'
+    :g==='nlogn'
+    ?'<b>Moderate growth:</b> often acceptable for large data when implementation is efficient.'
+    :'<b>Linear growth:</b> one pass through data is often manageable compared with higher growth classes.';
+}
+document.getElementById('scaleBtn').onclick=updateScale;
+updateScale();
+
+// keyboard/clicker
+function closeOverlays(){overview.classList.remove('open');help.classList.remove('open');timerPanel.classList.remove('open')}
+document.addEventListener('keydown',e=>{const tag=(e.target.tagName||'').toUpperCase();if(['INPUT','TEXTAREA','SELECT'].includes(tag))return;const k=e.key;if(['ArrowRight','ArrowDown','PageDown','Enter',' '].includes(k)){e.preventDefault();next()}else if(['ArrowLeft','ArrowUp','PageUp','Backspace'].includes(k)){e.preventDefault();prev()}else if(k==='Home')show(0);else if(k==='End')show(slides.length-1);else if(k.toLowerCase()==='a')revealAll();else if(k.toLowerCase()==='s')switchSession(e.shiftKey?-1:1);else if(k.toLowerCase()==='i')toggleNote();else if(k.toLowerCase()==='t')timerPanel.classList.toggle('open');else if(k.toLowerCase()==='o')overview.classList.toggle('open');else if(k.toLowerCase()==='f'){if(!document.fullscreenElement)document.documentElement.requestFullscreen();else document.exitFullscreen()}else if(k==='?')help.classList.add('open');else if(k==='Escape')closeOverlays()});
+stage.addEventListener('click',e=>{if(e.target.closest('button,a,input,select,textarea,.qcard,.ctrl,.timer-panel'))return;next()});
+
+markRevealSteps();show(0);
+})();
+</script>
+</body>
+</html>
