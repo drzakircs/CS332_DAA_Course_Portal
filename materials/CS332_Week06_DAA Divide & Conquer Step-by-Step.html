@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CS332 Divide & Conquer — Step-by-Step Array Activity</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;font-family:Segoe UI,Arial,sans-serif;background:#eef4f7;color:#173247}
+body{display:grid;grid-template-rows:58px 1fr;overflow:hidden}
+header{background:#062f4d;color:#fff;padding:0 18px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+header h1{margin:0;font-size:clamp(19px,2vw,30px)}header small{color:#c3e2ed;font-size:12px}
+.app{min-height:0;display:grid;grid-template-columns:245px 1fr 280px;gap:9px;padding:9px}
+.panel{background:#fff;border:1px solid #d4e2e9;border-radius:12px;min-height:0;padding:11px;overflow:hidden}
+h2{font-size:14px;margin:0 0 7px;color:#073c5c}p{font-size:11.5px;line-height:1.4;margin:6px 0}
+label{display:block;font-size:11px;font-weight:800;margin:7px 0 4px}
+input,select{width:100%;padding:8px;border:1px solid #b9cdd7;border-radius:7px;font:inherit}
+button{font:inherit;border:0;border-radius:8px;padding:9px 10px;font-weight:800;cursor:pointer;background:#0c6b93;color:#fff}
+button.secondary{background:#eaf3f6;color:#17455c;border:1px solid #cadae2}
+button.warn{background:#d68c1a}button:disabled{opacity:.4;cursor:not-allowed}
+.btnrow{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:7px}
+.stage{display:grid;grid-template-rows:auto auto 1fr auto;gap:7px}
+.phasebar{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.phase{padding:7px;text-align:center;border-radius:8px;background:#e8f0f4;color:#657987;font-size:11px;font-weight:850}
+.phase.on{background:#0c6b93;color:#fff}.phase.done{background:#dff0e6;color:#2d7249}
+.prompt{border:1px solid #ccdde5;background:#f7fbfc;border-radius:9px;padding:8px 10px;font-size:12px;min-height:48px}
+.visual{overflow:auto;border:1px solid #dbe7ec;border-radius:10px;background:#fbfdfe;padding:10px}
+.levelBlock{margin:3px 0 8px}.levelTitle{font-size:10px;font-weight:900;color:#69808e;text-align:center;margin-bottom:4px}
+.level{display:flex;justify-content:center;gap:11px;flex-wrap:wrap}
+.groupWrap{text-align:center}.group{display:flex;gap:3px;padding:5px;border:2px solid #bfd2dc;border-radius:8px;background:#fff;transition:.25s}
+.cell{width:36px;height:36px;border-radius:6px;display:grid;place-items:center;background:#dceaf0;font-weight:850;font-size:15px}
+.group.active{border-color:#e28f1d;background:#fff7e5;transform:scale(1.03)}
+.group.new{border-color:#0c6b93;background:#edf7fa}.group.solved{border-color:#359460;background:#eaf7ef}
+.group.mergeA{border-color:#7a56aa;background:#f3eef9}.group.mergeB{border-color:#7a56aa;background:#f3eef9}
+.group.result{border-color:#a34d8d;background:#f9edf5}.caption{font-size:9.5px;color:#687d89;margin-top:2px}
+.arrow{text-align:center;color:#6c7f8a;font-weight:900;font-size:14px;margin:2px}
+.bottom{display:flex;align-items:center;justify-content:center;gap:7px}
+.status{background:#fff6d8;border:1px solid #ead47f;border-radius:8px;padding:8px;font-size:11.5px;line-height:1.4}
+.legend{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:7px}.key{font-size:10px;border-radius:6px;padding:5px;background:#f1f5f7}
+.dot{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:4px}.orange{background:#e28f1d}.green{background:#359460}.blue{background:#0c6b93}.purple{background:#7a56aa}
+.counter{font-size:26px;font-weight:900;color:#0b6288}.micro{font-size:10px;color:#6d7f8a}
+.log{height:150px;overflow:auto;border:1px solid #d7e4ea;border-radius:8px;padding:6px;background:#fbfdfe;font-size:10.5px;line-height:1.4}
+.log div{padding:3px 4px;border-bottom:1px solid #edf2f4}.log b{color:#0b6288}
+@media(max-width:980px){.app{grid-template-columns:210px 1fr}.right{display:none}}
+</style></head>
+<body>
+<header><h1>Divide & Conquer — Step-by-Step Array Activity</h1><small>CS332 · Session 16 · Split level-by-level, then combine step-by-step</small></header>
+<div class="app">
+<aside class="panel">
+<h2>Setup</h2>
+<label>Array</label><input id="arr" value="8, 3, 6, 2, 7, 1, 5, 4">
+<label>Goal</label><select id="goal"><option value="sort">Sort the array</option><option value="max">Find maximum</option></select>
+<div class="btnrow"><button id="load">Load</button><button id="random" class="secondary">Random</button></div>
+<p><b>How to use:</b> Ask students to predict the next action, then click <b>Next Micro-Step</b>.</p>
+<div class="legend">
+<div class="key"><span class="dot orange"></span>Active</div>
+<div class="key"><span class="dot blue"></span>New split</div>
+<div class="key"><span class="dot green"></span>Base case</div>
+<div class="key"><span class="dot purple"></span>Merging</div>
+</div>
+<h2 style="margin-top:10px">Core Strategy</h2>
+<p><b>Divide:</b> split one subarray at a time.</p>
+<p><b>Conquer:</b> recognize base cases.</p>
+<p><b>Combine:</b> merge one pair at a time, level by level.</p>
+<button id="restart" class="secondary" style="width:100%;margin-top:7px">↻ Restart</button>
+</aside>
+
+<main class="panel stage">
+<div class="phasebar">
+<div class="phase on" data-p="problem">1 · Problem</div>
+<div class="phase" data-p="divide">2 · Divide</div>
+<div class="phase" data-p="conquer">3 · Conquer</div>
+<div class="phase" data-p="combine">4 · Combine</div>
+</div>
+<div class="prompt" id="prompt"></div>
+<div class="visual" id="visual"></div>
+<div class="bottom">
+<button id="prev" class="secondary">← Previous</button>
+<button id="next">Next Micro-Step →</button>
+<button id="auto" class="warn">▶ Auto</button>
+</div>
+</main>
+
+<aside class="panel right">
+<h2>Current Step</h2>
+<div class="status" id="explain"></div>
+<h2 style="margin-top:10px">Micro-step</h2>
+<div class="counter"><span id="stepNo">0</span></div>
+<div class="micro" id="microLabel"></div>
+<h2 style="margin-top:10px">Action Log</h2>
+<div class="log" id="log"></div>
+</aside>
+</div>
+
+<script>
+(()=>{
+const $=s=>document.querySelector(s);
+let A=[],goal="sort",actions=[],pos=0,autoTimer=null;
+
+function parseArray(){
+ let x=$("#arr").value.split(",").map(v=>Number(v.trim())).filter(Number.isFinite);
+ if(x.length<2)x=[8,3,6,2,7,1,5,4];
+ if(x.length>16)x=x.slice(0,16);
+ return x;
+}
+function mergeSorted(a,b){
+ let i=0,j=0,r=[];while(i<a.length&&j<b.length)r.push(a[i]<=b[j]?a[i++]:b[j++]);
+ return r.concat(a.slice(i),b.slice(j));
+}
+function buildActions(arr,goal){
+ let acts=[{type:"problem",levels:[[arr.slice()]],text:`Start with one problem of size ${arr.length}.`}];
+ let levels=[[arr.slice()]],current=[arr.slice()],levelIndex=0;
+ while(current.some(g=>g.length>1)){
+   let next=[],work=current.map(g=>g.slice());
+   for(let gi=0;gi<current.length;gi++){
+     let g=current[gi];
+     if(g.length<=1){next.push(g.slice());continue}
+     let m=Math.ceil(g.length/2),L=g.slice(0,m),R=g.slice(m);
+     next.push(L,R);
+     acts.push({type:"divide",level:levelIndex,group:gi,source:g.slice(),left:L,right:R,
+       levelsBefore:levels.map(l=>l.map(x=>x.slice())),
+       partialNext:next.map(x=>x.slice()),
+       text:`Divide [${g.join(", ")}] into [${L.join(", ")}] and [${R.join(", ")}].`});
+   }
+   levels.push(next.map(x=>x.slice()));current=next;levelIndex++;
+ }
+ acts.push({type:"conquer",levels:levels.map(l=>l.map(x=>x.slice())),
+   text:goal==="sort"?"Every 1-element subarray is already sorted: base cases solved."
+                    :"Each 1-element subarray is solved: its maximum is the element itself."});
+
+ // combine levels upward
+ let work=current.map(x=>x.slice());
+ for(let li=levels.length-2;li>=0;li--){
+   let targetCount=levels[li].length,newWork=[];
+   let idx=0;
+   while(idx<work.length){
+     if(idx===work.length-1){newWork.push(work[idx].slice());idx++;continue}
+     let a=work[idx],b=work[idx+1],res;
+     if(goal==="sort")res=mergeSorted(a,b);
+     else res=[Math.max(...a,...b)];
+     acts.push({type:"combine",combineLevel:li,left:a.slice(),right:b.slice(),result:res.slice(),
+       currentWork:work.map(x=>x.slice()),built:newWork.map(x=>x.slice()),
+       text:goal==="sort"
+        ?`Merge [${a.join(", ")}] and [${b.join(", ")}] → [${res.join(", ")}].`
+        :`Compare partial maxima ${Math.max(...a)} and ${Math.max(...b)} → keep ${res[0]}.`});
+     newWork.push(res);idx+=2;
+   }
+   work=newWork.map(x=>x.slice());
+ }
+ acts.push({type:"done",result:work[0].slice(),text:goal==="sort"
+   ?`Final sorted array: [${work[0].join(", ")}].`
+   :`Global maximum: ${work[0][0]}.`});
+ return acts;
+}
+function ghtml(a,cls="",cap=""){
+ return `<div class="groupWrap"><div class="group ${cls}">${a.map(v=>`<span class="cell">${v}</span>`).join("")}</div>${cap?`<div class="caption">${cap}</div>`:""}</div>`;
+}
+function renderLevels(levels,activeInfo){
+ return levels.map((lev,li)=>{
+   let groups=lev.map((g,gi)=>{
+     let cls="",cap=`L${li}`;
+     if(activeInfo&&activeInfo.level===li&&activeInfo.group===gi)cls="active";
+     if(g.length===1)cls=cls?cls+" solved":"solved";
+     return ghtml(g,cls,cap);
+   }).join("");
+   return `<div class="levelBlock"><div class="levelTitle">LEVEL ${li}</div><div class="level">${groups}</div>${li<levels.length-1?'<div class="arrow">↓</div>':''}</div>`;
+ }).join("");
+}
+function phaseFor(a){
+ if(a.type==="problem")return "problem";
+ if(a.type==="divide")return "divide";
+ if(a.type==="conquer")return "conquer";
+ return "combine";
+}
+function render(){
+ let a=actions[pos],phase=phaseFor(a);
+ document.querySelectorAll(".phase").forEach(x=>{
+   let order=["problem","divide","conquer","combine"],cur=order.indexOf(phase),me=order.indexOf(x.dataset.p);
+   x.classList.toggle("on",me===cur);x.classList.toggle("done",me<cur);
+ });
+ let v="";
+ if(a.type==="problem"){
+   v=renderLevels(a.levels);
+   $("#prompt").innerHTML="<b>Predict:</b> Which subarray should be split first, and where should it be divided?";
+   $("#explain").innerHTML=`We have one original problem. The next action begins the <b>Divide</b> phase.`;
+ }else if(a.type==="divide"){
+   let levels=a.levelsBefore.map(l=>l.map(x=>x.slice()));
+   // ensure current level visible and show partial next level built so far
+   if(a.partialNext.length) levels.push(a.partialNext.map(x=>x.slice()));
+   v=renderLevels(levels,{level:a.level,group:a.group});
+   $("#prompt").innerHTML=`<b>DIVIDE:</b> ${a.text}<br><span class="micro">Ask students: what should be split next?</span>`;
+   $("#explain").innerHTML=`One split is performed per click. This makes the recursion tree grow <b>step by step</b>.`;
+ }else if(a.type==="conquer"){
+   v=renderLevels(a.levels);
+   $("#prompt").innerHTML=`<b>CONQUER:</b> ${a.text}`;
+   $("#explain").innerHTML=`The recursion has reached the <b>base cases</b>. No further splitting is needed.`;
+ }else if(a.type==="combine"){
+   v=`<div class="levelBlock"><div class="levelTitle">CURRENT PARTIAL SOLUTIONS</div><div class="level">${
+     a.currentWork.map(x=>{
+       let cls=(JSON.stringify(x)===JSON.stringify(a.left)||JSON.stringify(x)===JSON.stringify(a.right))?"mergeA":"";
+       return ghtml(x,cls,"ready");
+     }).join("")
+   }</div></div><div class="arrow">↓ combine one pair ↓</div><div class="level">${
+     ghtml(a.left,"mergeA","left")+ghtml(a.right,"mergeB","right")
+   }</div><div class="arrow">↓</div><div class="level">${ghtml(a.result,"result","new partial result")}</div>`;
+   $("#prompt").innerHTML=`<b>COMBINE:</b> ${a.text}<br><span class="micro">Only one merge/comparison happens on this click.</span>`;
+   $("#explain").innerHTML=`We are now moving <b>upward</b> through the recursion structure. Partial solutions are combined level by level.`;
+ }else{
+   v=`<div class="level">${ghtml(a.result,"result","FINAL ANSWER")}</div>`;
+   $("#prompt").innerHTML=`<b>Completed:</b> ${a.text}`;
+   $("#explain").innerHTML=`Divide-and-Conquer finished: <b>Divide → Conquer → Combine</b>.`;
+ }
+ $("#visual").innerHTML=v;
+ $("#stepNo").textContent=pos;
+ $("#microLabel").textContent=`${pos+1} of ${actions.length} states`;
+ $("#prev").disabled=pos===0;$("#next").disabled=pos===actions.length-1;
+ let logs=actions.slice(0,pos+1).map((x,i)=>`<div><b>${i}.</b> ${x.text}</div>`).join("");
+ $("#log").innerHTML=logs;$("#log").scrollTop=$("#log").scrollHeight;
+}
+function load(){
+ stopAuto();A=parseArray();goal=$("#goal").value;actions=buildActions(A,goal);pos=0;render();
+}
+function stopAuto(){if(autoTimer){clearInterval(autoTimer);autoTimer=null;$("#auto").textContent="▶ Auto"}}
+$("#load").onclick=load;$("#restart").onclick=load;
+$("#random").onclick=()=>{$("#arr").value=Array.from({length:8},()=>1+Math.floor(Math.random()*20)).join(", ");load()};
+$("#goal").onchange=load;
+$("#next").onclick=()=>{if(pos<actions.length-1){pos++;render()}};
+$("#prev").onclick=()=>{if(pos>0){pos--;render()}};
+$("#auto").onclick=()=>{
+ if(autoTimer){stopAuto();return}
+ $("#auto").textContent="⏸ Pause";
+ autoTimer=setInterval(()=>{if(pos<actions.length-1){pos++;render()}else stopAuto()},900);
+};
+load();
+})();
+</script>
+</body></html>
