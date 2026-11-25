@@ -1,0 +1,817 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#090e21">
+<title>CS332 Week 10 | Trees, Binary Trees &amp; AVL Trees</title>
+<style>
+:root{color-scheme:dark;--bg:#080f24;--panel:#121d38;--panel2:#172440;--line:#344563;--ink:#eef6ff;--muted:#abc1d7;--teal:#45e3c2;--amber:#ffcc77;--pink:#ff8fa8;--purple:#b7a0ff;--blue:#7eb4ff}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#030814;color:var(--ink);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;display:grid;place-items:center;overflow:hidden}button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.35;cursor:not-allowed}
+#deck{width:1600px;height:900px;position:relative;overflow:hidden;transform-origin:center center;background:radial-gradient(ellipse 950px 620px at 92% -10%,#1d315d 0%,transparent 65%),radial-gradient(ellipse 700px 480px at 0% 100%,#133243 0%,transparent 60%),var(--bg);box-shadow:0 24px 90px #0009;border:1px solid #29354c}
+#deck:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.16;background-image:radial-gradient(#6383a5 1px,transparent 1px);background-size:28px 28px;mask-image:linear-gradient(90deg,transparent,#000 30%,transparent)}
+.topbar{position:absolute;top:0;left:0;right:0;height:84px;padding:0 40px 0 50px;display:flex;align-items:center;gap:16px;border-bottom:1px solid #ffffff20;background:#071126b5;z-index:3}
+.brand{width:47px;height:47px;border-radius:13px;background:linear-gradient(135deg,#3be6c4,#6ca5fd);color:#041729;display:grid;place-items:center;font-weight:1000;font-size:19px;letter-spacing:-1px}.course{font-size:18px;font-weight:900;letter-spacing:.06em}.course-sub{font-size:13px;color:var(--muted);margin-top:2px}.top-mid{display:flex;align-items:center;gap:7px;margin-left:auto}.chip{border:1px solid #ffffff33;background:#1c2946;border-radius:100px;padding:9px 14px;font-size:14px;font-weight:800;color:#d5e2f7}.chip.active{background:#234c50;border-color:#4bceb0;color:#bcfff2}.small-btn{border:1px solid #5a708c;background:#172541;border-radius:10px;color:var(--ink);font-size:16px;font-weight:850;padding:11px 16px;min-height:42px}.small-btn:hover{border-color:var(--teal);background:#26395a}.small-btn.primary{background:#29bca3;border-color:#29bca3;color:#05142c}.small-btn.warning{border-color:#c38b59;color:#ffda9b}.small-btn:focus-visible,.choice:focus-visible,.tab:focus-visible{outline:4px solid var(--amber);outline-offset:2px}
+#timerBtn{font-variant-numeric:tabular-nums;min-width:96px}#timerBtn.running{border-color:var(--amber);color:var(--amber)}
+#slide{position:absolute;inset:101px 62px 94px;display:flex;flex-direction:column;min-height:0;z-index:1}#slide>*{animation:rise .35s ease both}#slide>.slide-body{animation-delay:.06s}@keyframes rise{from{transform:translateY(12px)}}
+.kicker{display:inline-flex;align-items:center;gap:11px;color:var(--teal);font-weight:900;font-size:16px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:8px}.kicker .dot{width:10px;height:10px;border-radius:100%;background:var(--teal);box-shadow:0 0 0 5px #45e3c21a}.kicker .time{color:var(--amber);letter-spacing:.08em}.slide-title{font-size:50px;line-height:1.07;font-weight:930;letter-spacing:-1.5px;margin:0 0 9px}.slide-sub{color:#c2d1e7;font-size:21px;line-height:1.38;margin:0 0 20px;max-width:1360px}.slide-body{flex:1;min-height:0;display:flex;flex-direction:column;gap:16px;overflow:hidden}
+.grid{display:grid;gap:20px;min-height:0}.grid.two{grid-template-columns:1fr 1fr}.grid.two-wide{grid-template-columns:1.15fr .85fr}.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}.grid.four{grid-template-columns:repeat(4,minmax(0,1fr))}.grid.five{grid-template-columns:repeat(5,minmax(0,1fr))}.fill{flex:1;min-height:0}.panel{border:1px solid #ffffff26;background:linear-gradient(152deg,#192842e6,#101b34eb);border-radius:24px;padding:22px 26px;min-height:0;position:relative;overflow:hidden}.panel.teal{border-color:#2ca69288}.panel.purple{border-color:#8e7de088}.panel.amber{border-color:#dfa95b88}.panel.pink{border-color:#d76b8b88}.panel h3,.panel h4{margin:0 0 12px;font-weight:900}.panel h3{font-size:27px}.panel h4{font-size:22px}.panel p{font-size:20px;color:#d1dded;line-height:1.48;margin:9px 0}.panel strong{color:#fff}.panel ul{margin:9px 0;padding-left:24px;color:#c9dcf0;font-size:20px;line-height:1.54}.panel li{margin:8px 0}.col{display:flex;flex-direction:column}
+.lead{font-size:28px!important;line-height:1.3!important;font-weight:800;color:var(--ink)!important}.mini{font-size:16px!important;color:var(--muted)!important}.big{font-size:46px;font-weight:1000;letter-spacing:-1.5px}.callout{display:block;border:1px solid #62c8bb79;border-left:6px solid var(--teal);border-radius:15px;padding:14px 22px;background:#1538459d;font-size:21px;line-height:1.4;color:#e0fff8}.callout.amber{border-color:#ffcd76;border-left-color:var(--amber);background:#3d312693}.callout.pink{border-color:#f487a0;border-left-color:var(--pink);background:#402d3f82}.callout.purple{border-color:#a48fe2;border-left-color:var(--purple);background:#2c264a8a}.tag{display:inline-block;font-weight:900;font-size:16px;letter-spacing:.06em;text-transform:uppercase;border-radius:9px;padding:8px 12px;background:#304465;color:#d6ebff}.tag.teal{color:#7cffe5;background:#205448}.tag.amber{color:#ffd58d;background:#58402a}.tag.pink{color:#ffacc1;background:#5b3348}.tag.purple{color:#c8b8ff;background:#403569}.line{height:1px;background:#ffffff24;margin:12px 0}.subtle{color:var(--muted)}.teal-text{color:var(--teal)}.amber-text{color:var(--amber)}.pink-text{color:var(--pink)}.purple-text{color:var(--purple)}.center{text-align:center}.icon-circle{width:64px;height:64px;display:grid;place-items:center;border-radius:18px;background:#18384f;border:1px solid #3e8592;color:var(--teal);font-size:32px;font-weight:850;margin-bottom:12px}
+.viz-space{height:330px;min-height:0;width:100%;display:grid;place-items:center}.viz-space svg{width:100%;height:100%;max-width:900px}.flow{display:flex;align-items:center;justify-content:space-around;gap:12px}.flow-box{padding:18px 18px;border:2px solid #3a6780;border-radius:18px;background:#213550;flex:1;text-align:center;font-size:20px;font-weight:850}.flow-arrow{color:var(--teal);font-size:34px;font-weight:800}.equation{font-size:36px;font-weight:850;text-align:center;white-space:nowrap}.summary-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.summary-row span{border:1px solid #50657e;background:#1e314d;border-radius:10px;padding:7px 13px;font-size:18px;font-weight:800}.summary-row span b{color:var(--teal)}
+.controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.status{font-size:18px;color:#bad1e7}.feature-line{display:block;position:relative;font-size:21px;font-weight:760;line-height:1.4;padding:8px 0 8px 44px;min-height:46px}.feature-line .marker{position:absolute;left:0;top:7px;width:30px;height:30px;display:grid;place-items:center;border-radius:9px;background:#285d5c;color:#a6ffeb;font-size:17px}
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.choice{border:1px solid #65809b;background:#203250;color:var(--ink);border-radius:14px;min-height:62px;padding:12px 18px;font-size:22px;font-weight:900;text-align:left}.choice:hover{background:#2d4767;border-color:var(--teal)}.choice.selected{border-color:var(--teal);background:#1a5b57}.choice.bad{border-color:var(--pink);background:#643247}.feedback{border-radius:16px;border:1px solid #476984;background:#172c46;padding:13px 19px;font-size:20px;line-height:1.45;color:#e4f1ff;min-height:56px}.feedback.ok{border-color:var(--teal);background:#143c3d}.feedback.no{border-color:var(--pink);background:#3b273b}.feedback strong,.feedback b{color:#fff}
+input[type=range]{accent-color:var(--teal);width:100%;margin:4px 0;height:28px;cursor:pointer}input[type=text],select{background:#101d32;border:1px solid #70819e;color:#e6f6ff;padding:9px 14px;border-radius:11px;min-height:46px;font-size:20px}input[type=text]{width:100%}.range-line{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:18px;color:var(--muted)}.range-line strong{font-size:30px;color:var(--teal)}
+.codebox{font-family:"Cascadia Code",Consolas,monospace;font-size:18px;line-height:1.55;background:#081326;border:1px solid #43536d;border-radius:16px;padding:16px 20px;white-space:pre;color:#d9f1ff;overflow:hidden}.codebox .c{color:#88aac7}.codebox .k{color:#7effde;font-weight:800}.codebox .h{color:#ffca79}
+.stat{border:1px solid #405773;background:#192a43;border-radius:15px;padding:14px;min-width:0}.stat b{font-size:18px;display:block;margin-bottom:6px;color:var(--muted)}.stat .big{font-size:40px}.table{border-collapse:collapse;width:100%;font-size:21px}.table th,.table td{padding:11px 16px;border-bottom:1px solid #40536e;text-align:left}.table th{font-size:17px;color:#92ffe4;font-weight:900;background:#1b3448}.table tr:last-child td{border-bottom:0}.table td{color:#d7e5f3}.table tr.win td{background:#174a45;color:#fff;font-weight:800}.table td.bad{color:var(--pink);font-weight:800}.table td.good{color:var(--teal);font-weight:800}
+.board{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center}.token{width:70px;height:70px;display:grid;place-items:center;border:2px solid #4ba7b2;border-radius:16px;background:#1b4960;color:#d4fff8;font-weight:950;font-size:27px;transition:all .25s}.token.accent{border-color:var(--amber);color:var(--amber);background:#473b2a}.token.success{border-color:var(--teal);background:#195a4d}.token.kid{border-color:var(--purple);background:#2e2b53;color:#ded4ff}.token.ghost{opacity:.32}.token.empty{border-style:dashed;opacity:.4;background:transparent;color:#7f95ad}button.token{font-family:inherit}
+.arr{display:flex;gap:7px;justify-content:center}.cell{text-align:center}.cell small{display:block;color:var(--muted);font-size:14px;margin-top:4px;font-weight:700}.cell .token{width:60px;height:60px;font-size:23px}
+.tabs{display:flex;gap:7px;flex-wrap:wrap}.tab{border:1px solid #5a708c;background:#172541;border-radius:10px;color:var(--ink);font-size:16px;font-weight:850;padding:8px 13px}.tab:hover{border-color:var(--teal)}.tab.on{background:#29bca3;border-color:#29bca3;color:#05142c}
+.hb{display:grid;grid-template-columns:70px minmax(0,1fr) 140px;align-items:center;gap:14px;margin:10px 0;font-size:18px;font-weight:800}.hb-track{height:36px;background:#0f1c33;border-radius:9px;overflow:hidden;border:1px solid #33496a}.hb-fill{height:100%;border-radius:8px;transition:width .45s ease}.hb .val{font-size:24px;text-align:right;font-variant-numeric:tabular-nums}
+.flip{cursor:pointer;display:flex;flex-direction:column;gap:6px;transition:border-color .2s}.flip:hover{border-color:var(--teal)}.flip .back{display:none}.flip.flipped .front{display:none}.flip.flipped .back{display:block}.flip.flipped{background:linear-gradient(152deg,#18403f,#112a33)}.flip h3{font-size:25px;margin:0}.flip .hint{margin-top:auto;font-size:15px;color:var(--muted);font-weight:800;letter-spacing:.05em;text-transform:uppercase}.flip .back p{font-size:19px}
+.road{display:flex;flex-direction:column;gap:10px}.road .tag{align-self:start}.road h3{font-size:25px;margin:6px 0 0}.road p{font-size:18px!important}
+svg .nd{transition:opacity .2s}svg [data-act]{cursor:pointer}svg [data-act]:hover circle{stroke-width:7}
+.footer{position:absolute;bottom:0;left:0;right:0;height:77px;padding:0 57px;display:flex;align-items:center;gap:15px;border-top:1px solid #ffffff27;background:#071126e8;z-index:3}.foot-hint{color:#9bb3cb;font-size:15px;margin-right:auto}.page-count{color:#d5ebfa;font-size:17px;font-weight:850;min-width:98px;text-align:center}.progress-track{height:7px;background:#39516d;border-radius:9px;width:172px;overflow:hidden}.progress-fill{height:100%;background:linear-gradient(90deg,#39dfbd,#80adff);border-radius:9px;transition:width .3s}.nav-button{height:49px;min-width:116px;font-size:17px;font-weight:850;border-radius:12px;color:var(--ink);border:1px solid #617c9d;background:#1a2d4d}.nav-button:hover{border-color:var(--teal);background:#294664}.nav-button.next{color:#092232;background:#50dfc2;border-color:#50dfc2}.nav-button:disabled{opacity:.35}.fullsize{font-size:78px;font-weight:1000;line-height:1.03;letter-spacing:-2.6px}.cover-sub{font-size:28px;color:#c5d7e9;line-height:1.4;margin:0}
+.overlay{position:absolute;inset:0;background:#030a19e9;z-index:10;display:none;align-items:center;justify-content:center;padding:72px}.overlay.open{display:flex}.overlay-panel{width:100%;height:100%;background:#15213a;border:1px solid #7b9db2;border-radius:25px;padding:35px 45px;overflow:hidden;display:flex;flex-direction:column;gap:18px}.overlay-head{display:flex;align-items:center;gap:22px}.overlay-head h2{font-size:35px;margin:0}.overlay-list{overflow:auto;display:grid;grid-template-columns:repeat(3,1fr);align-content:start;gap:10px;padding-right:10px}.map-item{padding:11px 14px;min-height:66px;background:#20314d;border:1px solid #49647c;border-radius:12px;color:#e7f4ff;text-align:left;font-size:18px;line-height:1.25;cursor:pointer}.map-item:hover,.map-item.current{border-color:var(--teal);background:#1c4d4d}.map-item small{font-size:13px;display:block;color:#a7c0d9;margin-bottom:4px}.notes-content{font-size:25px;line-height:1.58;white-space:pre-line;color:#dbeaf9;overflow:auto}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="deck" role="application" aria-label="Week 10 interactive lecture: Trees, Binary Trees and AVL Trees">
+  <header class="topbar"><div class="brand">CS</div><div><div class="course">CS332 · DESIGN &amp; ANALYSIS OF ALGORITHMS</div><div class="course-sub">Air University · Week 10 · Trees → Binary Trees → AVL · 50-minute interactive lecture</div></div><div class="top-mid" id="partChips"></div><button class="small-btn" id="timerBtn" data-act="timer" title="Start / pause the lecture clock">⏱ 00:00</button><button class="small-btn" data-act="map" title="Open slide menu (M)">☷ Slides</button><button class="small-btn" data-act="notes" title="Instructor notes Ctrl+Shift+P">☼ Notes</button><button class="small-btn" data-act="full" title="Full screen (F)">⛶</button></header>
+  <main id="slide" aria-live="polite"></main>
+  <footer class="footer"><div class="foot-hint">← → navigate &nbsp;·&nbsp; Space = next &nbsp;·&nbsp; M = overview &nbsp;·&nbsp; Ctrl + Shift + P = tutor notes</div><div class="progress-track"><div class="progress-fill" id="progressFill"></div></div><div class="page-count" id="pageCount">01 / 01</div><button class="nav-button" id="prevButton" data-act="prev">← Back</button><button class="nav-button next" id="nextButton" data-act="next">Next →</button></footer>
+  <div id="menuOverlay" class="overlay" aria-hidden="true"><div class="overlay-panel"><div class="overlay-head"><h2>Jump to a slide</h2><div style="margin-left:auto" class="status">Week 10 · five parts · 50 minutes</div><button class="small-btn" data-act="close">✕ Close</button></div><div id="menuList" class="overlay-list"></div></div></div>
+  <div id="notesOverlay" class="overlay" aria-hidden="true"><div class="overlay-panel"><div class="overlay-head"><h2>Instructor notes</h2><span class="tag teal">Ctrl + Shift + P</span><div style="margin-left:auto" class="status" id="notesPosition"></div><button class="small-btn" data-act="close">✕ Close</button></div><div id="notesContent" class="notes-content"></div></div></div>
+</div>
+<script>
+'use strict';
+const PARTS={1:['Trees','00–12 min','1 · Trees'],2:['Binary Trees','12–27 min','2 · Binary'],3:['Problems & Fixes','27–35 min','3 · Fixes'],4:['AVL Trees','35–47 min','4 · AVL'],5:['Wrap-up','47–50 min','5 · Close']};
+const slides=[];
+function add(part,title,sub,content,notes){slides.push({part,title,sub,content,notes});}
+
+/* ============ PART 1 · TREES ============ */
+add(1,'Trees: data that branches','Week 10 · What trees are, why we use them, binary trees, their problems, and the AVL fix.',`
+<div class="grid two-wide fill" style="align-items:stretch">
+ <div class="panel col" style="justify-content:center;gap:20px;border-color:#54a6a966;background:linear-gradient(140deg,#183b4a,#151c37)">
+  <span class="tag teal" style="align-self:start">CS332 · Week 10 · 50 minutes</span>
+  <div class="fullsize">Not a line.<br><span class="teal-text">A tree.</span></div>
+  <p class="cover-sub">From folders and family trees to self-balancing search trees. Watch it, try it, then explain it.</p>
+  <div class="summary-row"><span>① Trees</span><span>② Binary trees</span><span>③ Problems &amp; fixes</span><span>④ AVL trees</span></div>
+ </div>
+ <div class="panel teal col" style="gap:12px;justify-content:center">
+  <div class="center"><div class="tag teal">One root · many branches · fast answers</div></div>
+  <div class="viz-space" data-tree="cover" style="height:380px"></div>
+  <div class="callout" style="font-size:18px">Click <b>Next</b> or use the arrow keys. <b>M</b> = slide map, <b>Ctrl + Shift + P</b> = tutor notes, <b>⏱</b> = lecture clock.</div>
+ </div>
+</div>`,`(1 min) Start the ⏱ clock in the top bar.
+Hook: "Last week we used a heap, which is a tree stored in an array. Today we ask: what IS a tree, and why does its shape matter so much?"
+ASK: Name something in your life that is organised like a tree. (Folders, family, org chart, tournament bracket.)`);
+
+add(1,'Today\'s map: five stops in 50 minutes','Every part ends with something you try yourself. Rule for today: predict, click, explain.',`
+<div class="grid five fill">
+ <div class="panel teal road"><span class="tag teal">12 min</span><div class="icon-circle">🌳</div><h3>Trees</h3><p>What is a tree? Why use one? Which types exist, and how do they connect to the heap?</p></div>
+ <div class="panel purple road"><span class="tag purple">15 min</span><div class="icon-circle" style="color:var(--purple);background:#2e2b53">⑂</div><h3>Binary trees</h3><p>How do we build, store and walk a binary tree? Then add the BST ordering rule.</p></div>
+ <div class="panel pink road"><span class="tag pink">8 min</span><div class="icon-circle" style="color:var(--pink);background:#4a2a3a">⚠</div><h3>Problems &amp; fixes</h3><p>Why can a BST become as slow as a list, and how can we stop that?</p></div>
+ <div class="panel amber road"><span class="tag amber">12 min</span><div class="icon-circle" style="color:var(--amber);background:#4a3924">⚖</div><h3>AVL trees</h3><p>Balance factors and four rotations that keep the height at O(log n).</p></div>
+ <div class="panel road"><span class="tag">3 min</span><div class="icon-circle" style="color:#d6ebff;background:#26385a">✓</div><h3>Wrap-up</h3><p>Exit ticket, a cost comparison, and practice problems.</p></div>
+</div>
+<div class="callout amber">Each lab asks you to <b>predict before you click</b>. Say your guess out loud, then check it.</div>`,`(1 min) Show the time budget. The part chips in the top bar jump straight to each part if you are running late.
+Set the norm: students call out a prediction before anyone clicks.`);
+
+add(1,'What is a tree?','A hierarchy of nodes connected by edges. Click any node to see its vocabulary.',`
+<div class="grid two-wide fill">
+ <div class="panel teal col"><div id="vocabLab" class="col" style="flex:1;min-height:0"></div></div>
+ <div class="panel col">
+  <h3>Definition</h3>
+  <p class="lead" style="font-size:24px!important">A <span class="teal-text">tree</span> is a set of nodes with one <b>root</b>. Every other node has <b>exactly one parent</b>, and there are <b>no cycles</b>.</p>
+  <div class="line"></div>
+  <div class="feature-line"><span class="marker">R</span><b>Root:</b>&nbsp;the top node, with no parent</div>
+  <div class="feature-line"><span class="marker">P</span><b>Parent / child:</b>&nbsp;a node and the nodes directly below it</div>
+  <div class="feature-line"><span class="marker">L</span><b>Leaf:</b>&nbsp;a node with no children</div>
+  <div class="feature-line"><span class="marker">S</span><b>Subtree:</b>&nbsp;a node plus everything below it</div>
+  <div class="callout" style="margin-top:auto;font-size:19px">A tree with <b>n</b> nodes always has <b>n − 1</b> edges.</div>
+  <p class="mini">Convention used today: depth counts edges (root = 0). Height counts nodes (leaf = 1, empty = 0).</p>
+ </div>
+</div>`,`(3 min) Click A, then F, then E. Let students read out parent, children, depth and height.
+Use the quick buttons: Root, Leaves, Level 2, Edges.
+ASK: Is a node's height the same as its depth? (No. Depth is measured from the root down to the node; height from the node down to its deepest leaf.)
+ASK: Can a node have two parents? (Not in a tree. That would create a graph with a cycle or shared child.)
+Note on conventions: some books use leaf height 0. Balance factors later are the same either way.`);
+
+add(1,'Why do we use trees?','A list makes you walk past every item. A balanced tree removes half of what remains at each step.',`
+<div class="grid two-wide fill">
+ <div class="panel teal col"><div id="growthLab" class="col" style="flex:1;min-height:0"></div></div>
+ <div class="panel col">
+  <h3>Four reasons</h3>
+  <div class="feature-line"><span class="marker">1</span>Model <b>hierarchy</b> naturally: folders, org charts, HTML.</div>
+  <div class="feature-line"><span class="marker">2</span><b>Search fast</b>: O(log n) when balanced.</div>
+  <div class="feature-line"><span class="marker">3</span><b>Insert and delete</b> without shifting an array.</div>
+  <div class="feature-line"><span class="marker">4</span>Get the <b>highest priority</b> item fast (heaps).</div>
+  <div class="callout amber" style="margin-top:auto;font-size:19px">Catch: point 2 holds <b>only if the tree stays balanced</b>. Remember this for Part 3.</div>
+ </div>
+</div>`,`(2 min) Drag the slider to 1,000,000 and then to 1,000,000,000.
+ASK first: "With a billion records, how many comparisons does a balanced tree need?" Most guess thousands. Answer: about 30.
+Bridge: log₂ n comes from halving, the same idea as binary search on a sorted array.`);
+
+add(1,'Where do trees live?','Click a card to reveal the tree hiding inside each system.',`
+<div class="grid three fill" style="grid-template-rows:1fr 1fr">
+ <div class="panel flip" data-act="flip"><div class="front"><div class="icon-circle">📁</div><h3>File system</h3><p>C:\\ → Users → Documents → notes.txt</p></div><div class="back"><h3 class="teal-text">The tree</h3><p>Folders are <b>internal nodes</b>, files are <b>leaves</b>, and the drive is the <b>root</b>. A file path is a root-to-node path.</p></div><span class="hint">Click to reveal</span></div>
+ <div class="panel flip" data-act="flip"><div class="front"><div class="icon-circle">🌐</div><h3>Web page (DOM)</h3><p>&lt;html&gt; → &lt;body&gt; → &lt;div&gt; → &lt;p&gt;</p></div><div class="back"><h3 class="teal-text">The tree</h3><p>The browser parses HTML into a <b>DOM tree</b>. &lt;html&gt; is the root and nested tags are children.</p></div><span class="hint">Click to reveal</span></div>
+ <div class="panel flip" data-act="flip"><div class="front"><div class="icon-circle">🧮</div><h3>Compiler</h3><p>(3 + 4) × 5</p></div><div class="back"><h3 class="teal-text">The tree</h3><p>An <b>expression tree</b>: × at the root, + below it, and the numbers as leaves. A postorder walk evaluates it.</p></div><span class="hint">Click to reveal</span></div>
+ <div class="panel flip" data-act="flip"><div class="front"><div class="icon-circle">🗄</div><h3>Database index</h3><p>Find one row among millions</p></div><div class="back"><h3 class="teal-text">The tree</h3><p><b>B-trees</b> are wide, balanced trees. A lookup takes only about 3 or 4 node reads, even with millions of rows.</p></div><span class="hint">Click to reveal</span></div>
+ <div class="panel flip" data-act="flip"><div class="front"><div class="icon-circle">⛰</div><h3>OS scheduler</h3><p>Run the most urgent job next</p></div><div class="back"><h3 class="teal-text">The tree</h3><p>A <b>heap</b> (Week 09) is a priority queue. It returns the top-priority job in O(1) and removes it in O(log n).</p></div><span class="hint">Click to reveal</span></div>
+ <div class="panel flip" data-act="flip"><div class="front"><div class="icon-circle">🤖</div><h3>Decision making</h3><p>"Is it raining?" → yes / no …</p></div><div class="back"><h3 class="teal-text">The tree</h3><p>A <b>decision tree</b> asks one question per node. Each leaf is a final decision, a common machine-learning model.</p></div><span class="hint">Click to reveal</span></div>
+</div>`,`(2 min) Let different students pick a card and guess the root, internal nodes and leaves before you flip it.
+Emphasise that the same vocabulary (root, leaf, subtree, path) works for all of them.`);
+
+add(1,'Types of trees','Some types are defined by shape. Others add an ordering rule. Click each type.',`
+<div class="grid two-wide fill">
+ <div class="panel teal col"><div id="typesLab" class="col" style="flex:1;min-height:0"></div></div>
+ <div class="panel col">
+  <h3>The family map</h3>
+  <div class="flow" style="margin:6px 0 14px"><div class="flow-box">Tree</div><div class="flow-arrow">→</div><div class="flow-box">General<br><span class="subtle" style="font-size:16px">any # children</span></div><div class="flow-box">Binary<br><span class="subtle" style="font-size:16px">≤ 2 children</span></div></div>
+  <span class="tag purple" style="align-self:start">Shape rules (binary)</span>
+  <p style="margin:8px 0 14px">Full · Complete · Perfect · Skewed</p>
+  <span class="tag amber" style="align-self:start">Shape + order rules</span>
+  <p style="margin:8px 0 14px"><b>BST</b> (left &lt; node &lt; right) · <b>Heap</b> (parent ≥ children) · <b>AVL</b> (BST + balance)</p>
+  <div class="callout purple" style="margin-top:auto;font-size:19px">A <b>heap</b> is a <b>complete</b> binary tree plus the heap-order rule. Shape and order work together.</div>
+ </div>
+</div>`,`(2 min) Click through General → Binary → Full → Complete → Perfect → Skewed, then BST, Heap, AVL.
+Common confusion: full and complete are different. Complete means filled level by level from the left. Full means no node has exactly one child.
+ASK: Is a perfect tree also full and complete? (Yes, both.)`);
+
+add(1,'Link to Week 09: the heap is a tree in disguise','A complete binary tree has no gaps, so it fits in an array. Click a cell or a node.',`
+<div class="grid two-wide fill">
+ <div class="panel amber col"><div id="heapLab" class="col" style="flex:1;min-height:0"></div></div>
+ <div class="panel col">
+  <h3>Index formulas (0-based)</h3>
+  <div class="feature-line"><span class="marker" style="background:#205448">P</span>parent(i) = ⌊(i − 1) / 2⌋</div>
+  <div class="feature-line"><span class="marker" style="background:#403569;color:#ded4ff">L</span>left(i) = 2i + 1</div>
+  <div class="feature-line"><span class="marker" style="background:#403569;color:#ded4ff">R</span>right(i) = 2i + 2</div>
+  <div class="line"></div>
+  <p>No pointers needed, because <b>complete</b> means no gaps.</p>
+  <div class="callout pink" style="margin-top:auto;font-size:19px">But: <b>is 35 in this heap?</b> Heap order does not say left or right, so you may check every node: <b>O(n)</b>. Fast searching needs a different rule: the <b>BST</b>.</div>
+ </div>
+</div>`,`(2 min) Click index 1 (75): parent 0 (90), children 3 (30) and 4 (40). Then click index 3: children at 7 and 8.
+ASK: Why can't we binary-search a heap? (Heap order compares parent with child only; it says nothing about left subtree versus right subtree.)
+This motivates the BST in Part 2.`);
+
+add(1,'Quick check: name that tree','Pick the most specific shape. Then read the reason.',`
+<div class="grid two-wide fill">
+ <div class="panel teal col"><div id="typeQuiz" class="col" style="flex:1;min-height:0"></div></div>
+ <div class="panel col">
+  <h3>Cheat sheet</h3>
+  <div class="feature-line"><span class="marker">F</span><b>Full:</b>&nbsp;every node has 0 or 2 children</div>
+  <div class="feature-line"><span class="marker">C</span><b>Complete:</b>&nbsp;levels filled left to right, no gaps</div>
+  <div class="feature-line"><span class="marker">P</span><b>Perfect:</b>&nbsp;full and all leaves on one level</div>
+  <div class="feature-line"><span class="marker">S</span><b>Skewed:</b>&nbsp;every node has at most one child</div>
+  <div class="callout amber" style="margin-top:auto;font-size:19px">Vote with fingers: 1 = Full, 2 = Complete, 3 = Perfect, 4 = Skewed.</div>
+ </div>
+</div>`,`(2 min) Four quick questions. Do a finger vote before each click.
+Answers: Perfect, Complete (C has one child, so not full), Full (gap on the left, so not complete), Skewed.
+End of Part 1, about the 12-minute mark.`);
+
+/* ============ PART 2 · BINARY TREES ============ */
+add(2,'Binary tree: at most two children','Each node stores a key and two links, left and right. Move the slider to see how much fits.',`
+<div class="grid two fill">
+ <div class="panel purple col">
+  <h3>One node = key + two links</h3>
+  <div style="height:190px;display:grid;place-items:center">${''}<svg viewBox="0 0 560 200" style="width:100%;height:100%"><g font-weight="900" text-anchor="middle"><rect x="160" y="10" width="240" height="64" rx="12" fill="#203250" stroke="#b7a0ff" stroke-width="3"/><line x1="240" y1="10" x2="240" y2="74" stroke="#b7a0ff" stroke-width="3"/><line x1="320" y1="10" x2="320" y2="74" stroke="#b7a0ff" stroke-width="3"/><text x="200" y="50" fill="#ded4ff" font-size="20">left</text><text x="280" y="52" fill="#fff" font-size="28">50</text><text x="360" y="50" fill="#ded4ff" font-size="20">right</text><path d="M200 60 L110 128" stroke="#45e3c2" stroke-width="4" marker-end="url(#ar)"/><path d="M360 60 L450 128" stroke="#45e3c2" stroke-width="4" marker-end="url(#ar)"/><rect x="30" y="132" width="168" height="52" rx="10" fill="#172541" stroke="#8fbfdd" stroke-width="2"/><text x="114" y="166" fill="#fff" font-size="22">∅ | 30 | ∅</text><rect x="362" y="132" width="168" height="52" rx="10" fill="#172541" stroke="#8fbfdd" stroke-width="2"/><text x="446" y="166" fill="#fff" font-size="22">∅ | 70 | ∅</text></g><defs><marker id="ar" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#45e3c2"/></marker></defs></svg></div>
+  <div class="codebox"><span class="k">struct</span> Node {
+    <span class="k">int</span>   key;
+    Node* left;    <span class="c">// left child, or nullptr</span>
+    Node* right;   <span class="c">// right child, or nullptr</span>
+};</div>
+  <div class="callout purple" style="margin-top:auto;font-size:19px">∅ (null) links mark missing children. A leaf has two null links.</div>
+ </div>
+ <div class="panel teal col"><div id="capLab" class="col" style="flex:1;min-height:0"></div></div>
+</div>`,`(3 min) A binary tree distinguishes LEFT from RIGHT: a single child on the left is a different tree than the same child on the right.
+Slide h from 1 to 5. ASK: How many nodes fit in height 4? (15.) What's the fewest nodes with height 4? (4, a skewed chain.)
+Key fact: n nodes → height between ⌈log₂(n+1)⌉ and n. That gap is the whole story of today.`);
+
+add(2,'How do we construct a binary tree?','Two ways to store it. The shape decides which one fits.',`
+<div class="grid two fill">
+ <div class="panel teal col">
+  <span class="tag teal" style="align-self:start">Way 1 · Linked nodes</span>
+  <div class="grid" style="grid-template-columns:1.1fr .9fr;margin-top:12px;align-items:center">
+   <div class="codebox" style="font-size:17px">Node* root = <span class="k">new</span> Node(1);
+root-&gt;left  = <span class="k">new</span> Node(2);
+root-&gt;right = <span class="k">new</span> Node(3);
+root-&gt;left-&gt;left = <span class="k">new</span> Node(4);</div>
+   <div class="viz-space" data-tree="build4" style="height:220px"></div>
+  </div>
+  <p>Works for <b>any shape</b>. Each node costs two pointers.</p>
+  <div class="callout" style="margin-top:auto;font-size:19px">Used by BSTs and AVL trees, whose shapes change.</div>
+ </div>
+ <div class="panel amber col">
+  <span class="tag amber" style="align-self:start">Way 2 · Array (level order)</span>
+  <div class="arr" style="margin:22px 0 10px"><div class="cell"><div class="token">1</div><small>[0]</small></div><div class="cell"><div class="token">2</div><small>[1]</small></div><div class="cell"><div class="token">3</div><small>[2]</small></div><div class="cell"><div class="token">4</div><small>[3]</small></div><div class="cell"><div class="token empty">·</div><small>[4]</small></div><div class="cell"><div class="token empty">·</div><small>[5]</small></div></div>
+  <p>Children of <b>i</b> sit at <b>2i + 1</b> and <b>2i + 2</b>. There are no pointers at all.</p>
+  <p>A skewed tree wastes space: height 10 needs up to <b>1023</b> slots for 10 keys.</p>
+  <div class="callout amber" style="margin-top:auto;font-size:19px">Best for <b>complete</b> trees, which is why heaps use it.</div>
+ </div>
+</div>
+<div class="callout purple">Next: build a tree <b>level by level</b> (complete shape), then <b>by a rule</b> (BST order).</div>`,`(2 min) Both store the same tree. Linked nodes are flexible; arrays are compact only when there are no gaps.
+ASK: A right-skewed chain of 4 nodes in an array uses which indices? (0, 2, 6, 14. That is mostly empty slots.)`);
+
+add(2,'Lab: build a tree level by level','Fill each level from left to right. Predict where the next letter goes before you click.',`
+<div class="grid two-wide fill">
+ <div class="panel teal col"><div id="levelLab" class="col" style="flex:1;min-height:0"></div></div>
+ <div class="panel col">
+  <h3>The algorithm (uses a queue)</h3>
+  <div class="codebox" style="font-size:16.5px">INSERT_LEVEL(root, x):
+  q ← [root]
+  <span class="k">while</span> q not empty:
+    cur ← q.dequeue()
+    <span class="k">if</span> cur.left == null:
+        cur.left ← Node(x); <span class="k">return</span>
+    q.enqueue(cur.left)
+    <span class="k">if</span> cur.right == null:
+        cur.right ← Node(x); <span class="k">return</span>
+    q.enqueue(cur.right)</div>
+  <div class="callout" style="margin-top:auto;font-size:19px">Result: always a <b>complete</b> tree, the exact shape of a heap. Array index = insertion order.</div>
+ </div>
+</div>`,`(2 min) Ask before each click: "Where does E go?" (Left child of B, index 4.)
+Point out that array index equals insertion order, which is why heaps live in arrays.
+Limitation: level order gives a nice shape but no ordering. Searching for a key is still O(n). Next: the BST rule.`);
+
+add(2,'Lab: build a Binary Search Tree','Rule: smaller keys go left, larger keys go right, at every node. Watch the path for each key.',`
+<div class="grid two-wide fill">
+ <div class="panel teal col"><div id="bstLab" class="col" style="flex:1;min-height:0"></div></div>
+ <div class="panel col">
+  <h3>BST insert = search, then attach</h3>
+  <div class="codebox" style="font-size:17px">INSERT(t, x):
+  <span class="k">if</span> t == null: <span class="k">return</span> Node(x)
+  <span class="k">if</span> x &lt; t.key: t.left  ← INSERT(t.left, x)
+  <span class="k">else</span>:         t.right ← INSERT(t.right, x)
+  <span class="k">return</span> t</div>
+  <div class="feature-line"><span class="marker">✓</span>Search follows the <b>same path</b>.</div>
+  <div class="feature-line"><span class="marker">✓</span>Cost = number of levels = <b>height</b>.</div>
+  <div class="callout amber" style="margin-top:auto;font-size:19px">Predict: where will <b>35</b> land? Say "left, right, left…" before clicking.</div>
+ </div>
+</div>`,`(4 min) Insert keys one at a time. Before 35, ask the class to trace: 35 < 50 → left; 35 > 30 → right; 35 < 40 → left of 40.
+Then type your own keys, e.g. 8, 3, 10, 1, 6, 14, 4, 7, 13, and click Load.
+Emphasise: every operation (search, insert, delete) costs O(height). Keep that phrase for Part 3.`);
+
+add(2,'Walk the tree: traversals','Four ways to visit every node once. Pick an order, then step through it.',`
+<div class="grid two-wide fill">
+ <div class="panel teal col"><div id="travLab" class="col" style="flex:1;min-height:0"></div></div>
+ <div class="panel col">
+  <table class="table" style="font-size:19px"><thead><tr><th>Order</th><th>Visit</th><th>Used for</th></tr></thead><tbody>
+   <tr><td><b>Preorder</b></td><td>Node · L · R</td><td>Copy / save a tree</td></tr>
+   <tr><td><b>Inorder</b></td><td>L · Node · R</td><td class="good">Sorted output of a BST</td></tr>
+   <tr><td><b>Postorder</b></td><td>L · R · Node</td><td>Delete a tree, evaluate (3+4)×5</td></tr>
+   <tr><td><b>Level order</b></td><td>Level by level</td><td>BFS, uses a queue</td></tr>
+  </tbody></table>
+  <div class="callout" style="margin-top:auto;font-size:19px">Each traversal visits n nodes once: <b>O(n)</b>. Inorder on a BST is a quick check that the BST is valid.</div>
+ </div>
+</div>`,`(3 min) Run Inorder first and point at the output: it's sorted. That's the BST property made visible.
+Then Preorder and Postorder. ASK: In postorder, which node comes last? (The root.)
+End of Part 2, about the 27-minute mark.`);
+
+/* ============ PART 3 · PROBLEMS & FIXES ============ */
+add(3,'The problem: insertion order decides the shape','Same seven keys. Different order. Choose an order and compare the heights.',`
+<div class="grid two-wide fill">
+ <div class="panel pink col"><div id="orderLab" class="col" style="flex:1;min-height:0"></div></div>
+ <div class="panel col">
+  <h3>Same keys, very different trees</h3>
+  <p>A plain BST does not control its shape. The <b>input order</b> does.</p>
+  <div class="line"></div>
+  <p class="lead" style="font-size:23px!important">Poll: which order do real systems produce most often?</p>
+  <button class="small-btn" data-act="reveal" data-id="poll-order" style="align-self:start">Reveal answer</button>
+  <div class="feedback no" id="poll-order" hidden style="margin-top:10px">Often <b>sorted</b>: auto-increment IDs, timestamps, alphabetical imports. That is the worst case for a BST.</div>
+  <div class="callout pink" style="margin-top:auto;font-size:19px">Height 7 for 7 keys means the BST has become a <b>linked list</b>.</div>
+ </div>
+</div>`,`(3 min) Start with Mixed (height 3), then Sorted ↑ (height 7), then Zig-zag (also height 7, so it's not only sorted input!). Then click Shuffle a few times.
+ASK: With 1,000,000 sorted IDs, how many comparisons for the last ID? (1,000,000.)`);
+
+add(3,'What goes wrong with a plain BST?','Every BST operation costs O(height). Nothing keeps the height small.',`
+<div class="grid four fill">
+ <div class="panel pink col"><span class="tag pink" style="align-self:start">Problem 1</span><h3 style="margin-top:16px">Skewed shape</h3><p>Sorted input makes a chain. Search, insert and delete fall from <b>O(log n)</b> to <b>O(n)</b>.</p></div>
+ <div class="panel pink col"><span class="tag pink" style="align-self:start">Problem 2</span><h3 style="margin-top:16px">Unpredictable</h3><p>Speed depends on input order you don't control: the same code can be fast today and slow tomorrow.</p></div>
+ <div class="panel pink col"><span class="tag pink" style="align-self:start">Problem 3</span><h3 style="margin-top:16px">Deep recursion</h3><p>Recursive insert on a chain of 100,000 nodes can <b>overflow the call stack</b>.</p></div>
+ <div class="panel amber col"><span class="tag amber" style="align-self:start">Problem 4</span><h3 style="margin-top:16px">Heap ≠ search</h3><p>A heap is always balanced, but its order can't guide a search. Finding a key is <b>O(n)</b>.</p></div>
+</div>
+<div class="callout pink">Root cause: <b>nothing controls the height</b>. Fix the height and every operation is fast.</div>`,`(2 min) Summarise. Ask students to rank which problem matters most for a database index. (Problems 1 and 2: unpredictable worst case.)
+Problem 4 links back to Week 09: heaps solve a different problem (priority), not search.`);
+
+add(3,'How do we fix it?','Three strategies. Try the rebuild idea: the middle key becomes the root.',`
+<div class="grid two-wide fill">
+ <div class="panel teal col"><div id="rebuildLab" class="col" style="flex:1;min-height:0"></div></div>
+ <div class="panel col">
+  <div class="feature-line"><span class="marker" style="background:#58402a;color:#ffd58d">1</span><b>Shuffle the input</b></div>
+  <p style="margin:0 0 6px 42px">Random order gives expected height O(log n), but <b>no guarantee</b>.</p>
+  <div class="feature-line"><span class="marker" style="background:#58402a;color:#ffd58d">2</span><b>Rebuild sometimes</b></div>
+  <p style="margin:0 0 6px 42px">Inorder → sorted list → middle as root. Costs <b>O(n)</b> per rebuild.</p>
+  <div class="feature-line"><span class="marker">3</span><b>Self-balancing tree</b></div>
+  <p style="margin:0 0 6px 42px">Repair locally after <b>every</b> insert or delete. Guaranteed <b>O(log n)</b>.</p>
+  <div class="summary-row" style="margin:6px 0 0 42px"><span>AVL</span><span>Red-Black</span><span>B-tree</span></div>
+  <div class="callout" style="margin-top:auto;font-size:19px">Today: <b>AVL</b>, the first self-balancing BST (Adelson-Velsky &amp; Landis, 1962).</div>
+ </div>
+</div>`,`(3 min) Step through the rebuild: 40 is the middle of 10..70, then 20 and 60, then the leaves.
+ASK: Why not rebuild after every insertion? (O(n) each time is too expensive.) AVL instead does small O(1) repairs called rotations.
+End of Part 3, about the 35-minute mark.`);
+
+/* ============ PART 4 · AVL TREES ============ */
+add(4,'AVL tree = BST + a balance rule','At every node, the left and right subtree heights may differ by at most 1.',`
+<div class="grid two fill">
+ <div class="panel teal col">
+  <h3>Balance factor (BF)</h3>
+  <div class="equation" style="margin:14px 0 18px;font-size:38px">BF = h(left) − h(right)</div>
+  <div class="grid three"><div class="stat center"><div class="big teal-text">−1</div><b>OK</b></div><div class="stat center"><div class="big teal-text">0</div><b>OK</b></div><div class="stat center"><div class="big teal-text">+1</div><b>OK</b></div></div>
+  <div class="viz-space" data-tree="height-demo" style="flex:1;height:auto;min-height:150px"></div>
+  <div class="callout amber" style="font-size:19px">BF = ±2 after an insert → repair with <b>rotation(s)</b>.</div>
+ </div>
+ <div class="panel col">
+  <h3>Try it: change subtree heights</h3>
+  <div class="range-line"><span>Left subtree height</span><strong id="bfLeftOut">3</strong></div><input aria-label="Left subtree height" type="range" min="0" max="5" value="3" id="bfLeft">
+  <div class="range-line"><span>Right subtree height</span><strong id="bfRightOut">1</strong></div><input aria-label="Right subtree height" type="range" min="0" max="5" value="1" id="bfRight">
+  <div class="equation" id="bfEquation" style="margin:14px 0">BF = 3 − 1 = +2</div>
+  <div class="hb"><span>Left</span><div class="hb-track"><div class="hb-fill" id="bfBarL" style="background:linear-gradient(90deg,#185c67,#39d5bc)"></div></div><span class="val" id="bfValL">3</span></div>
+  <div class="hb"><span>Right</span><div class="hb-track"><div class="hb-fill" id="bfBarR" style="background:linear-gradient(90deg,#3a467b,#8e9cff)"></div></div><span class="val" id="bfValR">1</span></div>
+  <div class="feedback" id="bfResult" style="margin-top:auto"></div>
+ </div>
+</div>`,`(2 min) Numbers beside nodes in the left tree are balance factors.
+Slider examples: 3/1 → +2 (unbalanced). 2/3 → −1 (fine). 4/4 → 0.
+Important: the rule must hold at EVERY node, not only the root.`);
+
+add(4,'Four rotation patterns','Name the path from the first unbalanced node toward the new key.',`
+<div class="grid four fill">
+ <div class="panel teal col"><span class="tag teal" style="align-self:start">LL</span><div class="big" style="margin:18px 0">↙ ↙</div><h3>Left · Left</h3><p>New key in the left subtree of the left child.</p><div class="callout" style="font-size:18px;margin-top:auto">One <b>right</b> rotation</div></div>
+ <div class="panel teal col"><span class="tag teal" style="align-self:start">RR</span><div class="big" style="margin:18px 0">↘ ↘</div><h3>Right · Right</h3><p>New key in the right subtree of the right child.</p><div class="callout" style="font-size:18px;margin-top:auto">One <b>left</b> rotation</div></div>
+ <div class="panel amber col"><span class="tag amber" style="align-self:start">LR</span><div class="big" style="margin:18px 0">↙ ↘</div><h3>Left · Right</h3><p>The path bends: left, then right.</p><div class="callout amber" style="font-size:18px;margin-top:auto">Left on child, then <b>right</b> on node</div></div>
+ <div class="panel amber col"><span class="tag amber" style="align-self:start">RL</span><div class="big" style="margin:18px 0">↘ ↙</div><h3>Right · Left</h3><p>Mirror of LR: right, then left.</p><div class="callout amber" style="font-size:18px;margin-top:auto">Right on child, then <b>left</b> on node</div></div>
+</div>
+<div class="callout purple">The letters describe the <b>path to the new key</b>, not the rotation direction. LL is fixed by a <b>right</b> rotation.</div>`,`(1 min) The most common exam mistake: "LL means rotate left". It does not. LL is fixed with a RIGHT rotation.
+Straight path (LL, RR) → single rotation. Bent path (LR, RL) → double rotation.`);
+
+add(4,'Rotation lab: watch every microstep','Pick a case. Insert three keys, spot the imbalance, then rotate.',`
+<div class="grid two-wide fill">
+ <div class="panel teal col"><div id="rotationLab" class="col" style="flex:1;min-height:0"></div></div>
+ <div class="panel col">
+  <h3>Repair recipe</h3>
+  <table class="table" style="font-size:19px"><thead><tr><th>Case</th><th>Insert</th><th>Fix</th></tr></thead><tbody>
+   <tr><td><b>LL</b></td><td>30, 20, 10</td><td>Right-rotate 30</td></tr>
+   <tr><td><b>RR</b></td><td>10, 20, 30</td><td>Left-rotate 10</td></tr>
+   <tr><td><b>LR</b></td><td>30, 10, 20</td><td>Left 10 → right 30</td></tr>
+   <tr><td><b>RL</b></td><td>10, 30, 20</td><td>Right 30 → left 10</td></tr>
+  </tbody></table>
+  <div class="callout" style="margin-top:auto;font-size:19px">After any rotation the inorder order is still <b>10, 20, 30</b>: BST order is kept.</div>
+ </div>
+</div>`,`(3 min) Do LL slowly. At step 3 ask: "Which node becomes the new root?" (20.)
+Then LR: ask why one right rotation is not enough. (It would just make a mirrored chain.) The first rotation turns LR into LL.
+A rotation changes only a few pointers: O(1).`);
+
+add(4,'Can you recognise the rotation?','Trace where the third key lands, then choose the case.',`
+<div class="grid two-wide fill">
+ <div class="panel teal col"><div id="rotationQuiz" class="col" style="flex:1;min-height:0"></div></div>
+ <div class="panel col">
+  <h3>Recognition rule</h3>
+  <div class="flow" style="margin:16px 0"><div class="flow-box">Find first node with |BF| = 2</div><div class="flow-arrow">→</div><div class="flow-box">Trace 2 steps toward the new key</div></div>
+  <p>First letter: direction from the <b>unbalanced node</b>.<br>Second letter: direction from <b>its child</b>.</p>
+  <div class="summary-row" style="margin-top:auto"><span>LL → right</span><span>RR → left</span><span>LR → left + right</span><span>RL → right + left</span></div>
+ </div>
+</div>`,`(2 min) Hand-vote before each reveal.
+Answers: 90,60,30 → LL. 4,8,12 → RR. 80,20,50 → LR. 9,30,18 → RL.`);
+
+add(4,'Showdown: plain BST vs AVL','Insert the same keys into both trees. Watch the heights.',`
+<div id="duelCtl"></div>
+<div class="grid two fill">
+ <div class="panel pink col"><div class="summary-row"><span class="tag pink">Plain BST</span><span id="duelBstH"></span></div><div id="duelBst" class="viz-space" style="flex:1;height:auto"></div></div>
+ <div class="panel teal col"><div class="summary-row"><span class="tag teal">AVL tree</span><span id="duelAvlH"></span></div><div id="duelAvl" class="viz-space" style="flex:1;height:auto"></div></div>
+</div>
+<div class="feedback" id="duelMsg"></div>`,`(3 min) Default keys are sorted 10..70: the BST becomes a chain of height 7, the AVL stays at height 3.
+Click "Insert next" and read the rotation message each time. Then try 50, 20, 60, 10, 30, 25 (25 causes an LR rotation at 50).
+ASK: After inserting 10, 20, 30, which rotation happened? (RR at 10 → left rotation.)`);
+
+add(4,'The payoff: operation costs','AVL height is always O(log n), so every operation is O(log n) in the worst case.',`
+<div class="panel fill" style="padding:18px 24px">
+ <table class="table"><thead><tr><th style="width:26%">Structure</th><th>Search</th><th>Insert</th><th>Delete</th><th>Find max</th></tr></thead><tbody>
+  <tr><td><b>Unsorted array</b></td><td class="bad">O(n)</td><td>O(1)*</td><td class="bad">O(n)</td><td class="bad">O(n)</td></tr>
+  <tr><td><b>Sorted array</b></td><td class="good">O(log n)</td><td class="bad">O(n)</td><td class="bad">O(n)</td><td class="good">O(1)</td></tr>
+  <tr><td><b>Linked list</b></td><td class="bad">O(n)</td><td>O(1)*</td><td class="bad">O(n)</td><td class="bad">O(n)</td></tr>
+  <tr><td><b>Max-heap</b> (Week 09)</td><td class="bad">O(n)</td><td class="good">O(log n)</td><td class="good">O(log n)†</td><td class="good">O(1)</td></tr>
+  <tr><td><b>BST</b>, average</td><td class="good">O(log n)</td><td class="good">O(log n)</td><td class="good">O(log n)</td><td class="good">O(log n)</td></tr>
+  <tr><td><b>BST</b>, worst (skewed)</td><td class="bad">O(n)</td><td class="bad">O(n)</td><td class="bad">O(n)</td><td class="bad">O(n)</td></tr>
+  <tr class="win"><td>AVL tree, worst case</td><td>O(log n)</td><td>O(log n)</td><td>O(log n)</td><td>O(log n)</td></tr>
+ </tbody></table>
+ <p class="mini" style="margin:10px 0 0">* insert at the end/head without keeping order. † delete-max only; deleting an arbitrary key first needs O(n) to find it.</p>
+</div>
+<div class="callout">Rule of thumb: <b>heap</b> for "what's most urgent?", <b>AVL</b> for "find, add and remove any key, always fast".</div>`,`(1 min) Point at the BST worst-case row versus the AVL row; that difference is the whole lecture.
+Caveat: one rotation is O(1), but finding the spot and updating heights along the path is O(log n).
+End of Part 4, about the 47-minute mark.`);
+
+/* ============ PART 5 · WRAP-UP ============ */
+add(5,'Exit ticket: three questions in 90 seconds','Answer on paper first. Then reveal.',`
+<div class="grid three fill">
+ <div class="panel col"><span class="tag teal" style="align-self:start">Q1 · Types</span><div class="viz-space" data-tree="exit1" style="height:170px"></div><p>Is this tree <b>full</b>? Is it <b>complete</b>?</p><button class="small-btn" data-act="reveal" data-id="exit-1" style="align-self:start">Reveal</button><div class="feedback ok" id="exit-1" hidden style="margin-top:10px">Complete <b>yes</b> (no gaps from the left). Full <b>no</b>: C has one child.</div></div>
+ <div class="panel col"><span class="tag amber" style="align-self:start">Q2 · Heap array</span><div class="big" style="margin:28px 0 22px">i = 3</div><p>In a heap array, which indices hold the <b>parent</b> and <b>children</b> of index 3?</p><button class="small-btn" data-act="reveal" data-id="exit-2" style="align-self:start">Reveal</button><div class="feedback ok" id="exit-2" hidden style="margin-top:10px">Parent ⌊(3−1)/2⌋ = <b>1</b>. Children <b>7</b> and <b>8</b>.</div></div>
+ <div class="panel col"><span class="tag purple" style="align-self:start">Q3 · AVL</span><div class="big" style="margin:28px 0 22px">10, 20, 30</div><p>Height in a plain BST? In an AVL tree? Which rotation?</p><button class="small-btn" data-act="reveal" data-id="exit-3" style="align-self:start">Reveal</button><div class="feedback ok" id="exit-3" hidden style="margin-top:10px">BST height <b>3</b> (chain). AVL height <b>2</b> after an <b>RR</b> case → left rotation at 10.</div></div>
+</div>`,`(2 min) Give 30 seconds per question before revealing. Cold-call different students for the explanation, not just the answer.`);
+
+add(5,'What we learned today','Trees organise data so each step removes a big part of the search. Balance keeps that promise.',`
+<div class="grid two-wide fill">
+ <div class="panel teal col" style="justify-content:center">
+  <div class="feature-line" style="font-size:24px"><span class="marker">✓</span>A tree: one root, one parent per node, no cycles.</div>
+  <div class="feature-line" style="font-size:24px"><span class="marker">✓</span>Types by <b>&nbsp;shape&nbsp;</b> (full, complete, perfect, skewed) and <b>&nbsp;order&nbsp;</b> (BST, heap).</div>
+  <div class="feature-line" style="font-size:24px"><span class="marker">✓</span>A heap is a <b>complete</b> binary tree stored in an array.</div>
+  <div class="feature-line" style="font-size:24px"><span class="marker">✓</span>BST cost = height; bad input order makes it O(n).</div>
+  <div class="feature-line" style="font-size:24px"><span class="marker">✓</span>AVL keeps |BF| ≤ 1 with rotations: always <b>&nbsp;O(log n)</b>.</div>
+  <div class="callout amber" style="margin-top:18px">Next: from data structures to <b>algorithm-design strategies</b>.</div>
+ </div>
+ <div class="panel purple col">
+  <h3 style="font-size:30px">Practice before next class</h3>
+  <p>① Insert <b>45, 25, 65, 15, 35, 55, 75</b> into a BST. Write its inorder and preorder traversals.</p>
+  <p>② Insert <b>1, 2, 3, 4, 5, 6, 7</b> into an AVL tree. List every rotation.</p>
+  <p>③ A complete tree has 12 nodes in an array. What are the children of index 5?</p>
+  <button class="small-btn primary" data-act="map" style="align-self:start;margin-top:auto">Revisit a lab ↗</button>
+ </div>
+</div>`,`(1 min) Answers for your reference:
+① Inorder 15 25 35 45 55 65 75; Preorder 45 25 15 35 65 55 75.
+② RR at 1 (after 3), RR at 3 (after 5), RR at 2 (after 6, root becomes 4), RR at 5 (after 7). Final: 4(2(1,3),6(5,7)).
+③ Left child index 11 exists; right child index 12 does not (only indices 0–11).
+Thank students. Use the slide map to replay any lab they found confusing.`);
+
+/* ============ ENGINE ============ */
+const $=(q,root=document)=>root.querySelector(q);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let current=0;
+
+function n(v,l=null,r=null){return {v,l,r};}
+function G(v,...k){return {v,k};}
+function ht(t){return t?1+Math.max(ht(t.l),ht(t.r)):0;}
+function bf(t){return t?ht(t.l)-ht(t.r):0;}
+function cloneTree(t){return t?n(t.v,cloneTree(t.l),cloneTree(t.r)):null;}
+function bstInsert(root,x){if(!root)return n(x);if(x<root.v)root.l=bstInsert(root.l,x);else if(x>root.v)root.r=bstInsert(root.r,x);return root;}
+function buildBst(keys){let t=null;keys.forEach(k=>t=bstInsert(t,k));return t;}
+function rotLeft(z){const y=z.r,T=y.l;y.l=z;z.r=T;return y;}
+function rotRight(z){const y=z.l,T=y.r;y.r=z;z.l=T;return y;}
+function avlInsert(root,x,actions){
+ if(!root)return n(x);
+ if(x<root.v)root.l=avlInsert(root.l,x,actions);
+ else if(x>root.v)root.r=avlInsert(root.r,x,actions);
+ else return root;
+ const b=bf(root);
+ if(b>1){if(x<root.l.v){actions.push('LL at '+root.v+' → right rotation');return rotRight(root);}
+  actions.push('LR at '+root.v+' → left-rotate '+root.l.v+', then right-rotate '+root.v);root.l=rotLeft(root.l);return rotRight(root);}
+ if(b<-1){if(x>root.r.v){actions.push('RR at '+root.v+' → left rotation');return rotLeft(root);}
+  actions.push('RL at '+root.v+' → right-rotate '+root.r.v+', then left-rotate '+root.v);root.r=rotRight(root.r);return rotLeft(root);}
+ return root;
+}
+function fromArray(arr){function b(i){return i<arr.length&&arr[i]!=null?n(arr[i],b(2*i+1),b(2*i+2)):null;}return b(0);}
+function inorder(t,a=[]){if(t){inorder(t.l,a);a.push(t);inorder(t.r,a);}return a;}
+
+const COL={norm:['#1e3d5c','#8fbfdd','#f6ffff'],focus:['#235c53','#67f7cd','#f6ffff'],hot:['#5a4520','#ffcc77','#fff3d6'],bad:['#6b3546','#ff96b0','#fff'],kid:['#2e2b53','#b7a0ff','#f1ecff'],dim:['#142338','#3d5470','#7d93ab']};
+function paint(W,H,pts,edges,r,click,empty){
+ if(!pts.length)return `<svg viewBox="0 0 ${W} ${H}"><text x="${W/2}" y="${H/2}" fill="#a9c0d4" text-anchor="middle" font-size="26">${empty||'Empty tree'}</text></svg>`;
+ const fs=Math.round(r*.78);let e='',s='';
+ edges.forEach(d=>{e+=`<line x1="${d.x1}" y1="${d.y1}" x2="${d.x2}" y2="${d.y2}" stroke="${d.hl?'#67f7cd':d.dim?'#2c4058':'#5f88a6'}" stroke-width="${d.hl?6:4}" stroke-linecap="round"/>`;});
+ pts.forEach(p=>{const c=COL[p.cls]||COL.norm;
+  s+=`<g class="nd" ${click?`data-act="${click}" data-v="${esc(p.label)}"`:''}><circle cx="${p.x}" cy="${p.y}" r="${r}" fill="${c[0]}" stroke="${c[1]}" stroke-width="${p.cls==='norm'||p.cls==='dim'?3:5}"/><text x="${p.x}" y="${p.y+fs*.36}" fill="${c[2]}" font-size="${fs}" font-weight="900" text-anchor="middle">${esc(p.label)}</text>`+
+  (p.bal!=null?`<text x="${p.x+r+3}" y="${p.y-r+6}" fill="${Math.abs(p.bal)>1?'#ff9db4':'#9cfce6'}" font-size="18" font-weight="850">${p.bal>0?'+':''}${p.bal}</text>`:'')+
+  (p.sub!=null?`<text x="${p.x}" y="${p.y+r+19}" fill="#9fb8d2" font-size="15" font-weight="800" text-anchor="middle">${esc(p.sub)}</text>`:'')+`</g>`;});
+ return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Tree diagram">${e}${s}</svg>`;
+}
+function radiusFor(count){return count>20?15:count>12?20:count>8?25:count>4?30:34;}
+function svgTree(root,o={}){
+ const {width:W=860,height:H=330,focus=[],hot=[],bad=[],kid=[],dim=[],balance=false,autoBad=false,sub=null,click=null,empty=null}=o;
+ if(!root)return paint(W,H,[],[],30,null,empty);
+ const nodes=inorder(root),count=nodes.length,r=radiusFor(count),depth=new Map();
+ (function d(t,k){if(!t)return;depth.set(t,k);d(t.l,k+1);d(t.r,k+1);})(root,0);
+ const maxD=Math.max(...depth.values()),top=r+14,bottom=r+(sub?30:12),gap=maxD?Math.min(96,(H-top-bottom)/maxD):0,pad=r+(balance?30:18);
+ const pos=new Map();nodes.forEach((t,i)=>pos.set(t,{x:count===1?W/2:pad+i*(W-2*pad)/(count-1),y:top+depth.get(t)*gap}));
+ const clsOf=t=>{const v=t.v;if(bad.includes(v)||(autoBad&&Math.abs(bf(t))>1))return 'bad';if(hot.includes(v))return 'hot';if(kid.includes(v))return 'kid';if(focus.includes(v))return 'focus';if(dim.includes(v))return 'dim';return 'norm';};
+ const lit=v=>focus.includes(v)||hot.includes(v);
+ const edges=[],pts=[];
+ nodes.forEach(t=>{const a=pos.get(t);[t.l,t.r].forEach(c=>{if(c){const b=pos.get(c);const dx=b.x-a.x,dy=b.y-a.y,L=Math.hypot(dx,dy)||1;edges.push({x1:a.x+dx/L*r,y1:a.y+dy/L*r,x2:b.x-dx/L*r,y2:b.y-dy/L*r,hl:lit(t.v)&&lit(c.v),dim:dim.includes(c.v)});}});
+  pts.push({x:a.x,y:a.y,label:t.v,cls:clsOf(t),bal:balance?bf(t):null,sub:sub?sub(t):null});});
+ return paint(W,H,pts,edges,r,click,empty);
+}
+function svgGen(root,{width:W=760,height:H=280,cls=()=>'norm',edgeHl=()=>false,click=null}={}){
+ let leaf=0;const pos=new Map(),all=[];
+ (function place(t,d){all.push(t);if(!t.k.length){pos.set(t,{xi:leaf++,d});}else{t.k.forEach(c=>place(c,d+1));pos.set(t,{xi:(pos.get(t.k[0]).xi+pos.get(t.k[t.k.length-1]).xi)/2,d});}})(root,0);
+ const maxD=Math.max(...[...pos.values()].map(p=>p.d)),r=radiusFor(all.length),pad=r+20,top=r+12,gap=maxD?Math.min(100,(H-top-r-12)/maxD):0;
+ const X=p=>leaf>1?pad+p.xi*(W-2*pad)/(leaf-1):W/2,Y=p=>top+p.d*gap;
+ const edges=[],pts=[];
+ all.forEach(t=>{const a=pos.get(t);t.k.forEach(c=>{const b=pos.get(c);const ax=X(a),ay=Y(a),bx=X(b),by=Y(b),L=Math.hypot(bx-ax,by-ay)||1;edges.push({x1:ax+(bx-ax)/L*r,y1:ay+(by-ay)/L*r,x2:bx-(bx-ax)/L*r,y2:by-(by-ay)/L*r,hl:edgeHl(t,c)});});pts.push({x:X(a),y:Y(a),label:t.v,cls:cls(t.v)});});
+ return paint(W,H,pts,edges,r,click);
+}
+function staticTreeSvg(kind){
+ if(kind==='cover')return svgTree(n(50,n(25,n(12,n(6),n(18)),n(37)),n(75,n(62),n(88,null,n(94)))),{height:360,focus:[50,25,12],hot:[18]});
+ if(kind==='build4')return svgTree(n(1,n(2,n(4)),n(3)),{width:360,height:220});
+ if(kind==='height-demo')return svgTree(n(30,n(20,n(10)),n(40)),{balance:true,width:600,height:200});
+ if(kind==='exit1')return svgTree(n('A',n('B',n('D'),n('E')),n('C',n('F'))),{width:420,height:170});
+ return '';
+}
+
+/* --- Vocabulary explorer --- */
+const vocabTree=G('A',G('B',G('E'),G('F',G('K'))),G('C',G('G')),G('D',G('H'),G('I')));
+let vocabSel='F';
+function genAll(t,p=null,d=0,out=[]){out.push({t,p,d});t.k.forEach(c=>genAll(c,t,d+1,out));return out;}
+function genH(t){return 1+Math.max(0,...t.k.map(genH));}
+function genDesc(t,out=[]){t.k.forEach(c=>{out.push(c.v);genDesc(c,out);});return out;}
+function mountVocab(){
+ const el=$('#vocabLab');if(!el)return;
+ const all=genAll(vocabTree),byV=new Map(all.map(x=>[x.t.v,x]));
+ let hot=[],focus=[],path=new Set(),allEdges=false,stats='',msg='';
+ const modes=[['#root','Root'],['#leaves','Leaves'],['#level','Level 2'],['#edges','Edges']];
+ if(vocabSel==='#root'){hot=['A'];msg='<b>Root</b> = the only node with no parent. Every path starts at A.';}
+ else if(vocabSel==='#leaves'){hot=all.filter(x=>!x.t.k.length).map(x=>x.t.v);msg='<b>Leaves</b> have no children: '+hot.join(', ')+'. Every other node is an <b>internal</b> node.';}
+ else if(vocabSel==='#level'){hot=all.filter(x=>x.d===2).map(x=>x.t.v);msg='<b>Depth</b> = edges from the root. Level 2 holds '+hot.join(', ')+'.';}
+ else if(vocabSel==='#edges'){allEdges=true;msg='This tree has <b>10 nodes</b> and <b>9 edges</b>. Any tree with n nodes has n − 1 edges, because each node except the root has one edge to its parent.';}
+ else{const x=byV.get(vocabSel);hot=[x.t.v];focus=genDesc(x.t);let a=x;while(a){path.add(a.t.v);a=a.p?byV.get(a.p.v):null;}
+  const sibs=x.p?x.p.k.filter(c=>c!==x.t).map(c=>c.v):[];
+  stats=`<span>Parent: <b>${x.p?x.p.v:'none'}</b></span><span>Children: <b>${x.t.k.map(c=>c.v).join(', ')||'none'}</b></span><span>Siblings: <b>${sibs.join(', ')||'none'}</b></span><span>Depth: <b>${x.d}</b></span><span>Height: <b>${genH(x.t)}</b></span><span>Subtree size: <b>${focus.length+1}</b></span>`;
+  msg=!x.p?`<b>${x.t.v}</b> is the <b>root</b>. Its subtree is the whole tree.`:!x.t.k.length?`<b>${x.t.v}</b> is a <b>leaf</b>: no children. The teal path shows how to reach it from the root.`:`<b>${x.t.v}</b> is an <b>internal node</b>. Its subtree (teal) is {${[x.t.v,...focus].join(', ')}}.`;}
+ if(!stats)stats='<span>Nodes: <b>10</b></span><span>Edges: <b>9</b></span><span>Tree height: <b>4</b></span><span>Leaves: <b>5</b></span>';
+ el.innerHTML=`<div class="controls"><span class="status">Show:</span>${modes.map(([k,l])=>`<button class="tab ${vocabSel===k?'on':''}" data-act="vmode" data-mode="${k}">${l}</button>`).join('')}<span class="status" style="margin-left:auto">or click a node</span></div>
+ <div class="viz-space" style="flex:1;height:auto;min-height:200px">${svgGen(vocabTree,{width:780,height:270,click:'vnode',cls:v=>hot.includes(v)?'hot':focus.includes(v)?'focus':'norm',edgeHl:(p,c)=>allEdges||(path.has(p.v)&&path.has(c.v))})}</div>
+ <div class="summary-row" style="margin-bottom:10px">${stats}</div><div class="feedback ok">${msg}</div>`;
+}
+
+/* --- Growth slider --- */
+const growthStops=[10,100,1000,1e4,1e5,1e6,1e7,1e9];let growthIdx=5;
+function mountGrowth(){
+ const el=$('#growthLab');if(!el)return;
+ const N=growthStops[growthIdx],T=Math.ceil(Math.log2(N+1)),fmt=x=>x.toLocaleString('en-US');
+ el.innerHTML=`<h3>How many comparisons to find one record?</h3><div class="range-line"><span>Number of records n</span><strong>${fmt(N)}</strong></div><input type="range" id="growthRange" min="0" max="${growthStops.length-1}" value="${growthIdx}" aria-label="Number of records">
+ <div class="grid two" style="margin:16px 0"><div class="stat center" style="border-color:#d76b8b88"><b>📃 List: check one by one</b><div class="big pink-text">${fmt(N)}</div></div><div class="stat center" style="border-color:#2ca69288"><b>🌳 Balanced tree: halve each step</b><div class="big teal-text">${T}</div></div></div>
+ <div class="hb"><span>List</span><div class="hb-track"><div class="hb-fill" style="width:100%;background:linear-gradient(90deg,#7a3550,#ff8fa8)"></div></div><span class="val">${fmt(N)}</span></div>
+ <div class="hb"><span>Tree</span><div class="hb-track"><div class="hb-fill" style="width:${Math.max(1.2,T/N*100)}%;background:linear-gradient(90deg,#185c67,#39d5bc)"></div></div><span class="val">${T}</span></div>
+ <div class="feedback ok" style="margin-top:auto">With <b>${fmt(N)}</b> records: up to <b>${fmt(N)}</b> checks in a list, about <b>${T}</b> in a balanced tree. That is about <b>${fmt(Math.round(N/T))}×</b> fewer.</div>`;
+ $('#growthRange').addEventListener('input',e=>{growthIdx=+e.target.value;mountGrowth();$('#growthRange').focus();});
+}
+
+/* --- Types explorer --- */
+const TYPES=[
+ {k:'general',l:'General',gen:()=>G('A',G('B',G('E'),G('F')),G('C'),G('D',G('G'),G('H'),G('I'))),rule:'Any number of children per node.',ex:'File systems, org charts, the HTML DOM.',tag:'Shape'},
+ {k:'binary',l:'Binary',t:()=>n('A',n('B',n('D'),n('E')),n('C',null,n('F'))),rule:'Each node has at most 2 children: a <b>left</b> and a <b>right</b>.',ex:'The base of BSTs, heaps, AVL and expression trees.',tag:'Shape'},
+ {k:'full',l:'Full',t:()=>n('A',n('B'),n('C',n('F'),n('G'))),rule:'Every node has <b>0 or 2</b> children, never exactly 1.',ex:'Expression trees with binary operators.',tag:'Shape'},
+ {k:'complete',l:'Complete',t:()=>n('A',n('B',n('D'),n('E')),n('C',n('F'))),rule:'All levels full except the last, which is filled <b>from the left</b>, with no gaps.',ex:'Heaps, stored in an array.',tag:'Shape'},
+ {k:'perfect',l:'Perfect',t:()=>n('A',n('B',n('D'),n('E')),n('C',n('F'),n('G'))),rule:'Every internal node has 2 children and <b>all leaves are on one level</b>. Nodes = 2<sup>h</sup> − 1.',ex:'Tournament brackets, the ideal balanced shape.',tag:'Shape'},
+ {k:'skewed',l:'Skewed',t:()=>n('A',null,n('B',null,n('C',null,n('D')))),rule:'Every node has <b>at most one</b> child. It is really a linked list.',ex:'What a BST becomes with sorted input (Part 3).',tag:'Shape',bad:true},
+ {k:'bst',l:'BST',t:()=>n(50,n(30,n(20),n(40)),n(70,n(60),n(80))),rule:'For every node: keys in the left subtree &lt; node &lt; keys in the right subtree.',ex:'Ordered search, dictionaries, sets.',tag:'Order'},
+ {k:'heap',l:'Heap',t:()=>n(90,n(75,n(30),n(40)),n(80,n(50),n(60))),rule:'<b>Complete</b> shape + parent ≥ children (max-heap).',ex:'Priority queues, Heap Sort (Week 09).',tag:'Order'},
+ {k:'avl',l:'AVL',t:()=>n(50,n(30,n(20)),n(70,n(60),n(80))),rule:'A BST where every node has balance factor −1, 0 or +1 (numbers shown).',ex:'Guaranteed O(log n) search (Part 4).',tag:'Order',bal:true}
+];
+let typeSel='complete';
+function mountTypes(){
+ const el=$('#typesLab');if(!el)return;const T=TYPES.find(x=>x.k===typeSel);
+ const svg=T.gen?svgGen(T.gen(),{width:760,height:250}):svgTree(T.t(),{width:760,height:250,balance:!!T.bal,bad:T.bad?['A','B','C','D']:[]});
+ el.innerHTML=`<div class="tabs">${TYPES.map(x=>`<button class="tab ${x.k===typeSel?'on':''}" data-act="type" data-type="${x.k}">${x.l}</button>`).join('')}</div>
+ <div class="viz-space" style="flex:1;height:auto;min-height:200px">${svg}</div>
+ <div class="summary-row" style="margin-bottom:8px"><span class="tag ${T.tag==='Shape'?'purple':'amber'}">${T.tag} rule</span><span style="font-size:22px">${T.l} tree</span></div>
+ <div class="feedback ${T.bad?'no':'ok'}"><b>Rule:</b> ${T.rule}<br><span class="subtle">Seen in: ${T.ex}</span></div>`;
+}
+
+/* --- Heap ↔ array --- */
+const heapArr=[90,75,80,30,40,50,60,20,25];let heapSel=1;
+function mountHeap(){
+ const el=$('#heapLab');if(!el)return;const i=heapSel,p=i>0?Math.floor((i-1)/2):-1,kids=[2*i+1,2*i+2].filter(x=>x<heapArr.length);
+ const idx=v=>heapArr.indexOf(v);
+ const svg=svgTree(fromArray(heapArr),{width:760,height:260,hot:[heapArr[i]],focus:p>=0?[heapArr[p]]:[],kid:kids.map(k=>heapArr[k]),sub:t=>'['+idx(t.v)+']',click:'heap-node'});
+ el.innerHTML=`<div class="viz-space" style="flex:1;height:auto;min-height:200px">${svg}</div>
+ <div class="arr" style="margin:6px 0 12px">${heapArr.map((v,j)=>`<div class="cell"><button class="token ${j===i?'accent':j===p?'success':kids.includes(j)?'kid':''}" data-act="heap-i" data-i="${j}">${v}</button><small>[${j}]</small></div>`).join('')}</div>
+ <div class="feedback ok">Index <b>${i}</b> (${heapArr[i]}): parent ${p>=0?`⌊(${i}−1)/2⌋ = <b>${p}</b> (${heapArr[p]})`:'<b>none</b>, it is the root'} · children ${kids.length?kids.map(k=>`<b>${k}</b> (${heapArr[k]})`).join(' and '):`2·${i}+1 = ${2*i+1} is past the end, so <b>none</b> (a leaf)`}</div>`;
+}
+
+/* --- Type quiz --- */
+const typeQuiz=[
+ {t:()=>n('A',n('B',n('D'),n('E')),n('C',n('F'),n('G'))),a:'Perfect',why:'Every internal node has 2 children and all leaves share one level. (It is also full and complete; perfect is the most specific.)'},
+ {t:()=>n('A',n('B',n('D'),n('E')),n('C',n('F'))),a:'Complete',why:'The last level fills from the left with no gaps. It is not full: C has only one child.'},
+ {t:()=>n('A',n('B'),n('C',n('F'),n('G'))),a:'Full',why:'Every node has 0 or 2 children. It is not complete: B\'s children are missing while C\'s exist, which leaves a gap on the left.'},
+ {t:()=>n('A',null,n('B',n('C',null,n('D')))),a:'Skewed',why:'Every node has only one child, so height = number of nodes, just like a linked list.'}
+];
+let tqStep=0,tqAns=null;
+function mountTypeQuiz(){
+ const el=$('#typeQuiz');if(!el)return;const q=typeQuiz[tqStep];
+ el.innerHTML=`<div class="summary-row"><span class="tag teal">Tree ${tqStep+1} / ${typeQuiz.length}</span><span>Most specific shape?</span></div>
+ <div class="viz-space" style="flex:1;height:auto;min-height:170px">${svgTree(q.t(),{width:700,height:220})}</div>
+ <div class="choice-grid">${['Full','Complete','Perfect','Skewed'].map((x,j)=>`<button class="choice ${tqAns===x?(x===q.a?'selected':'bad'):tqAns&&x===q.a?'selected':''}" data-act="tq-answer" data-choice="${x}" ${tqAns?'disabled':''}>${j+1} · ${x}</button>`).join('')}</div>
+ <div class="feedback ${tqAns?(tqAns===q.a?'ok':'no'):''}" style="margin-top:12px">${tqAns?`<b>${tqAns===q.a?'Correct!':'Not quite. It is '+q.a+'.'}</b> ${esc(q.why)}`:'Vote first, then click your answer.'}</div>
+ <div class="controls" style="margin-top:10px"><button class="small-btn primary" data-act="tq-next" ${tqAns?'':'disabled'}>${tqStep===typeQuiz.length-1?'Start again ↺':'Next tree →'}</button></div>`;
+}
+
+/* --- Capacity --- */
+let capH=3;
+function mountCap(){
+ const el=$('#capLab');if(!el)return;const N=2**capH-1;
+ el.innerHTML=`<h3>How many nodes fit in height h?</h3><div class="range-line"><span>Height h (levels)</span><strong>${capH}</strong></div><input type="range" id="capRange" min="1" max="5" value="${capH}" aria-label="Tree height">
+ <div class="viz-space" style="flex:1;height:auto;min-height:180px">${svgTree(fromArray(Array.from({length:N},(_,i)=>i+1)),{width:760,height:230})}</div>
+ <div class="grid three"><div class="stat center"><b>Level i holds ≤</b><div class="big purple-text">2<sup>i</sup></div></div><div class="stat center"><b>Max nodes</b><div class="big teal-text">${N}</div></div><div class="stat center"><b>Min nodes (chain)</b><div class="big pink-text">${capH}</div></div></div>
+ <div class="feedback ok" style="margin-top:12px">Height ${capH} holds between <b>${capH}</b> and <b>2<sup>${capH}</sup> − 1 = ${N}</b> nodes. So n nodes need height <b>≥ ⌈log₂(n+1)⌉</b>.</div>`;
+ $('#capRange').addEventListener('input',e=>{capH=+e.target.value;mountCap();$('#capRange').focus();});
+}
+
+/* --- Level-order construction --- */
+const levelKeys='ABCDEFGHIJ'.split('');let levelCount=4;
+function mountLevel(){
+ const el=$('#levelLab');if(!el)return;const k=levelCount,arr=levelKeys.slice(0,k),i=k-1,p=i>0?Math.floor((i-1)/2):-1;
+ const msg=k===0?'Empty tree. Click <b>Insert next</b>: A becomes the root at index 0.':k===levelKeys.length?'All 10 letters placed with <b>no gaps</b>, so this is a complete binary tree, exactly how a heap is stored.':i===0?'<b>A</b> is the root at index 0. Where will B go?':`<b>${arr[i]}</b> goes to index <b>${i}</b>: the <b>${i%2?'left':'right'}</b> child of <b>${arr[p]}</b> (index ${p}).${k<levelKeys.length?' Predict the next one!':''}`;
+ el.innerHTML=`<div class="summary-row"><span class="tag teal">${k} / ${levelKeys.length} placed</span><span>Next spot: index <b>${k<levelKeys.length?k:'—'}</b></span></div>
+ <div class="viz-space" style="flex:1;height:auto;min-height:180px">${svgTree(fromArray(arr),{width:760,height:240,empty:'Empty · click Insert next',hot:i>=0?[arr[i]]:[],focus:p>=0?[arr[p]]:[]})}</div>
+ <div class="arr" style="margin:4px 0 10px">${levelKeys.map((v,j)=>`<div class="cell"><div class="token ${j>=k?'empty':j===i?'accent':j===p?'success':''}">${j<k?v:'·'}</div><small>[${j}]</small></div>`).join('')}</div>
+ <div class="feedback ${k?'ok':''}">${msg}</div>
+ <div class="controls" style="margin-top:10px;justify-content:center"><button class="small-btn" data-act="lvl-prev" ${k===0?'disabled':''}>← Undo</button><button class="small-btn primary" data-act="lvl-next" ${k===levelKeys.length?'disabled':''}>Insert next →</button><button class="small-btn" data-act="lvl-all">Fill all</button><button class="small-btn" data-act="lvl-reset">↺ Reset</button></div>`;
+}
+
+/* --- BST builder --- */
+let bstVals=[50,30,70,20,40,60,80,35],bstCount=0,bstErr='';
+function parseKeys(raw,max){const parts=raw.split(/[\s,;]+/).filter(Boolean),nums=parts.map(Number);if(!parts.length||parts.length>max||nums.some(x=>!Number.isInteger(x)||x<1||x>99)||new Set(nums).size!==nums.length)return null;return nums;}
+function mountBst(){
+ const el=$('#bstLab');if(!el)return;const k=bstCount,prev=buildBst(bstVals.slice(0,Math.max(0,k-1))),x=bstVals[k-1];
+ const path=[];let msg='Ready. Click <b>Insert next</b> to place '+bstVals[0]+' as the root.';
+ if(k>0){let t=prev;const steps=[];while(t){path.push(t.v);steps.push(`${x} ${x<t.v?'&lt;':'&gt;'} ${t.v} → ${x<t.v?'left':'right'}`);t=x<t.v?t.l:t.r;}
+  msg=steps.length?`Insert <b>${x}</b>: ${steps.join(' · ')} · empty spot, so attach here.`:`<b>${x}</b> becomes the root.`;}
+ const root=buildBst(bstVals.slice(0,k));
+ el.innerHTML=`<div class="controls"><input id="bstInput" type="text" aria-label="Keys to insert" value="${esc(bstVals.join(', '))}" style="flex:1;width:0"><button class="small-btn" data-act="bst-load">Load keys</button></div>${bstErr?`<div class="feedback no" style="margin-top:8px">${esc(bstErr)}</div>`:''}
+ <div class="viz-space" style="flex:1;height:auto;min-height:180px">${svgTree(root,{width:760,height:250,focus:path,hot:k?[x]:[],empty:'Empty · click Insert next'})}</div>
+ <div class="summary-row" style="margin-bottom:8px"><span>Inserted: <b>${k} / ${bstVals.length}</b></span><span>Height: <b>${ht(root)}</b></span><span>Comparisons for this insert: <b>${path.length}</b></span></div>
+ <div class="feedback ${k?'ok':''}" style="min-height:64px">${msg}</div>
+ <div class="controls" style="margin-top:10px;justify-content:center"><button class="small-btn" data-act="bst-prev" ${k===0?'disabled':''}>← Undo</button><button class="small-btn primary" data-act="bst-next" ${k===bstVals.length?'disabled':''}>Insert next →</button><button class="small-btn" data-act="bst-reset">↺ Reset</button></div>`;
+}
+
+/* --- Traversals --- */
+const travTree=n(50,n(30,n(20),n(40)),n(70,n(60),n(80)));
+const TRAV={pre:'Preorder',in:'Inorder',post:'Postorder',level:'Level order'};
+let travKind='in',travStep=0,travTimer=null;
+function travOrder(kind){const out=[];const pre=t=>{if(t){out.push(t.v);pre(t.l);pre(t.r);}},ino=t=>{if(t){ino(t.l);out.push(t.v);ino(t.r);}},post=t=>{if(t){post(t.l);post(t.r);out.push(t.v);}};
+ if(kind==='pre')pre(travTree);else if(kind==='in')ino(travTree);else if(kind==='post')post(travTree);else{const q=[travTree];while(q.length){const t=q.shift();out.push(t.v);if(t.l)q.push(t.l);if(t.r)q.push(t.r);}}return out;}
+function stopTrav(){if(travTimer){clearInterval(travTimer);travTimer=null;}}
+function mountTrav(){
+ const el=$('#travLab');if(!el)return;const order=travOrder(travKind),seen=order.slice(0,travStep),cur=seen[seen.length-1],done=travStep===order.length;
+ el.innerHTML=`<div class="tabs">${Object.entries(TRAV).map(([k,l])=>`<button class="tab ${k===travKind?'on':''}" data-act="trav-kind" data-kind="${k}">${l}</button>`).join('')}</div>
+ <div class="viz-space" style="flex:1;height:auto;min-height:190px">${svgTree(travTree,{width:760,height:250,focus:seen.slice(0,-1),hot:cur!=null?[cur]:[],dim:order.filter(v=>!seen.includes(v)&&travStep>0)})}</div>
+ <div class="board" style="justify-content:flex-start;min-height:74px;margin-bottom:10px">${order.map((v,j)=>`<div class="token ${j<travStep?(j===travStep-1?'accent':'success'):'empty'}" style="width:62px;height:62px;font-size:23px">${j<travStep?v:'·'}</div>`).join('')}</div>
+ <div class="feedback ${done?'ok':''}">${travStep===0?`<b>${TRAV[travKind]}</b>: predict the first node, then click Next.`:done?`Done: ${order.join(', ')}.${travKind==='in'?' <b>Sorted!</b> Inorder of a BST always gives sorted keys.':travKind==='post'?' The root comes <b>last</b>.':travKind==='pre'?' The root comes <b>first</b>.':' Visited level by level using a queue.'}`:`Visited <b>${cur}</b>. ${order.length-travStep} node(s) left.`}</div>
+ <div class="controls" style="margin-top:10px;justify-content:center"><button class="small-btn" data-act="trav-prev" ${travStep===0?'disabled':''}>← Back</button><button class="small-btn primary" data-act="trav-next" ${done?'disabled':''}>Next node →</button><button class="small-btn" data-act="trav-play">${travTimer?'❚❚ Pause':'▶ Play'}</button><button class="small-btn" data-act="trav-reset">↺ Reset</button></div>`;
+}
+
+/* --- Insertion order matters --- */
+const ORDERS={mixed:['Mixed',[40,20,60,10,30,50,70]],asc:['Sorted ↑',[10,20,30,40,50,60,70]],desc:['Sorted ↓',[70,60,50,40,30,20,10]],zig:['Zig-zag',[10,70,20,60,30,50,40]]};
+let orderSel='mixed',orderCustom=null;
+function mountOrder(){
+ const el=$('#orderLab');if(!el)return;const keys=orderSel==='shuffle'?orderCustom:ORDERS[orderSel][1],t=buildBst(keys),h=ht(t),good=h<=3;
+ el.innerHTML=`<div class="tabs">${Object.entries(ORDERS).map(([k,[l]])=>`<button class="tab ${k===orderSel?'on':''}" data-act="order" data-order="${k}">${l}</button>`).join('')}<button class="tab ${orderSel==='shuffle'?'on':''}" data-act="order-shuffle">🎲 Shuffle</button></div>
+ <div class="summary-row" style="margin-top:10px"><span>Insert order: <b>${keys.join(', ')}</b></span></div>
+ <div class="viz-space" style="flex:1;height:auto;min-height:190px">${svgTree(t,{width:760,height:260,bad:good?[]:keys.slice(),focus:good?keys.slice():[]})}</div>
+ <div class="grid three" style="margin-bottom:10px"><div class="stat center"><b>Height</b><div class="big ${good?'teal-text':'pink-text'}">${h}</div></div><div class="stat center"><b>Best possible</b><div class="big teal-text">3</div></div><div class="stat center"><b>Worst search</b><div class="big ${good?'teal-text':'pink-text'}">${h} cmp</div></div></div>
+ <div class="feedback ${good?'ok':'no'}">${good?'Balanced: every search takes at most <b>3</b> comparisons.':h>=7?'Degenerate: this is a <b>linked list</b> in disguise. Search is O(n).':'Partly unbalanced: some searches take '+h+' comparisons.'}</div>`;
+}
+
+/* --- Rebuild balanced --- */
+let rebuildStep=0;
+const rebuildOrder=[40,20,60,10,30,50,70],rebuildSlices=[0,1,3,7];
+function mountRebuild(){
+ const el=$('#rebuildLab');if(!el)return;const s=rebuildStep,sorted=[10,20,30,40,50,60,70];
+ const tree=s===0?buildBst(sorted):buildBst(rebuildOrder.slice(0,rebuildSlices[s])),placed=s===0?[]:rebuildOrder.slice(0,rebuildSlices[s]),fresh=s===0?[]:rebuildOrder.slice(rebuildSlices[s-1],rebuildSlices[s]);
+ const msgs=['A skewed BST from sorted input, height <b>7</b>. Step 1: read it with an <b>inorder</b> walk to get a sorted list.','The middle of 10…70 is <b>40</b>, so 40 becomes the new root.','Middle of the left half (10, 20, 30) is <b>20</b>. Middle of the right half (50, 60, 70) is <b>60</b>.','Remaining keys become leaves. Height <b>3</b>, the best possible for 7 keys. Cost: O(n) per rebuild.'];
+ el.innerHTML=`<div class="summary-row"><span class="tag ${s===0?'pink':'teal'}">${s===0?'Before':'Rebuild step '+s+' / 3'}</span><span>Height: <b>${ht(tree)}</b></span></div>
+ <div class="viz-space" style="flex:1;height:auto;min-height:190px">${svgTree(tree,{width:760,height:270,bad:s===0?sorted:[],hot:fresh,focus:placed.filter(v=>!fresh.includes(v))})}</div>
+ <div class="board" style="margin-bottom:10px">${sorted.map(v=>`<div class="token ${fresh.includes(v)?'accent':placed.includes(v)?'success':''}" style="width:60px;height:60px;font-size:22px">${v}</div>`).join('')}</div>
+ <div class="feedback ${s===0?'no':'ok'}">${msgs[s]}</div>
+ <div class="controls" style="margin-top:10px;justify-content:center"><button class="small-btn" data-act="reb-prev" ${s===0?'disabled':''}>← Back</button><button class="small-btn primary" data-act="reb-next" ${s===3?'disabled':''}>Next step →</button><button class="small-btn" data-act="reb-reset">↺ Reset</button></div>`;
+}
+
+/* --- Balance factor slider --- */
+function mountBalance(){
+ const l=$('#bfLeft'),r=$('#bfRight');if(!l||!r)return;
+ function update(){const a=+l.value,b=+r.value,d=a-b;$('#bfLeftOut').textContent=a;$('#bfRightOut').textContent=b;$('#bfEquation').textContent='BF = '+a+' − '+b+' = '+(d>0?'+':'')+d;
+  $('#bfBarL').style.width=(a/5*100)+'%';$('#bfBarR').style.width=(b/5*100)+'%';$('#bfValL').textContent=a;$('#bfValR').textContent=b;
+  const good=Math.abs(d)<=1;$('#bfResult').className='feedback '+(good?'ok':'no');$('#bfResult').innerHTML=good?'<b>✓ Balanced at this node.</b> BF is −1, 0 or +1.':`<b>! Unbalanced (BF ${d>0?'+':''}${d}).</b> The ${d>0?'left':'right'} side is too tall, so the AVL tree must rotate.`;}
+ l.addEventListener('input',update);r.addEventListener('input',update);update();
+}
+
+/* --- Rotation lab --- */
+const rotationInputs={LL:[30,20,10],RR:[10,20,30],LR:[30,10,20],RL:[10,30,20]};
+let rotCase='LL',rotStep=0;
+function rotationFrames(type){
+ const seq=rotationInputs[type];let t=null;const frames=[];
+ for(let i=0;i<3;i++){t=bstInsert(t,seq[i]);frames.push({tree:cloneTree(t),focus:[seq[i]],caption:i===0?`Insert ${seq[i]} as the root.`:i===1?`Insert ${seq[i]} using the BST rule. BF of ${seq[0]} is ${bf(t)>0?'+':''}${bf(t)}: still fine.`:`Insert ${seq[i]}. Node ${seq[0]} now has BF = ${bf(t)>0?'+':''}${bf(t)}. Unbalanced! Which case is it?`,action:i===2?'Detect '+type:'BST insert'});}
+ if(type==='LL'){t=rotRight(t);frames.push({tree:cloneTree(t),focus:[20],caption:'Right-rotate at 30: 20 moves up and 30 becomes its right child. Balanced.',action:'Right rotation'});}
+ if(type==='RR'){t=rotLeft(t);frames.push({tree:cloneTree(t),focus:[20],caption:'Left-rotate at 10: 20 moves up and 10 becomes its left child. Balanced.',action:'Left rotation'});}
+ if(type==='LR'){t.l=rotLeft(t.l);frames.push({tree:cloneTree(t),focus:[20],caption:'Step 1: left-rotate the child 10. Now it looks like LL, and 30 is still unbalanced.',action:'Left rotation at 10'});t=rotRight(t);frames.push({tree:cloneTree(t),focus:[20],caption:'Step 2: right-rotate 30. 20 is the new root. Balanced.',action:'Right rotation at 30'});}
+ if(type==='RL'){t.r=rotRight(t.r);frames.push({tree:cloneTree(t),focus:[20],caption:'Step 1: right-rotate the child 30. Now it looks like RR, and 10 is still unbalanced.',action:'Right rotation at 30'});t=rotLeft(t);frames.push({tree:cloneTree(t),focus:[20],caption:'Step 2: left-rotate 10. 20 is the new root. Balanced.',action:'Left rotation at 10'});}
+ return frames;
+}
+function mountRotation(){
+ const el=$('#rotationLab');if(!el)return;const frames=rotationFrames(rotCase),i=rotStep,f=frames[i],last=i===frames.length-1;
+ el.innerHTML=`<div class="tabs">${Object.keys(rotationInputs).map(k=>`<button class="tab ${k===rotCase?'on':''}" data-act="rot-case" data-case="${k}">${k} · ${rotationInputs[k].join(', ')}</button>`).join('')}</div>
+ <div class="summary-row" style="margin-top:10px"><span class="tag teal">Step ${i+1} / ${frames.length}</span><span class="tag ${last?'teal':'amber'}">${esc(f.action)}</span></div>
+ <div class="viz-space" style="flex:1;height:auto;min-height:190px">${svgTree(f.tree,{width:700,height:260,focus:f.focus,balance:true,autoBad:true})}</div>
+ <div class="feedback ${last?'ok':i===2?'no':''}" style="min-height:62px">${esc(f.caption)}</div>
+ <div class="controls" style="justify-content:center;margin-top:10px"><button class="small-btn" data-act="rot-prev" ${i===0?'disabled':''}>← Microstep</button><button class="small-btn primary" data-act="rot-next" ${last?'disabled':''}>Next microstep →</button><button class="small-btn" data-act="rot-reset">↺ Reset</button></div>`;
+}
+
+/* --- Rotation quiz --- */
+const rotQuiz=[
+ {seq:[90,60,30],a:'LL',why:'30 goes left of 60, which is left of 90. Right-rotate at 90.'},
+ {seq:[4,8,12],a:'RR',why:'12 goes right of 8, which is right of 4. Left-rotate at 4.'},
+ {seq:[80,20,50],a:'LR',why:'50 goes left of 80, then right of 20. Left-rotate 20, then right-rotate 80.'},
+ {seq:[9,30,18],a:'RL',why:'18 goes right of 9, then left of 30. Right-rotate 30, then left-rotate 9.'}
+];
+let rqStep=0,rqAns=null;
+function mountRotQuiz(){
+ const el=$('#rotationQuiz');if(!el)return;const q=rotQuiz[rqStep];
+ el.innerHTML=`<div class="summary-row"><span class="tag teal">Challenge ${rqStep+1} / ${rotQuiz.length}</span></div><h3 style="font-size:34px;margin:16px 0 4px">Insert: ${q.seq.join(' → ')}</h3>
+ <div class="viz-space" style="flex:1;height:auto;min-height:140px">${rqAns?svgTree(buildBst(q.seq),{width:600,height:200,balance:true,autoBad:true}):'<div class="big subtle" style="font-size:80px">?</div>'}</div>
+ <div class="choice-grid">${['LL','RR','LR','RL'].map(x=>`<button class="choice ${rqAns===x?(x===q.a?'selected':'bad'):rqAns&&x===q.a?'selected':''}" data-act="rq-answer" data-choice="${x}" ${rqAns?'disabled':''}>${x}</button>`).join('')}</div>
+ <div class="feedback ${rqAns?(rqAns===q.a?'ok':'no'):''}" style="margin-top:12px">${rqAns?`<b>${rqAns===q.a?'Correct!':'It is '+q.a+'.'}</b> ${esc(q.why)}`:'Trace the path in your head, then choose.'}</div>
+ <div class="controls" style="margin-top:10px"><button class="small-btn primary" data-act="rq-next" ${rqAns?'':'disabled'}>${rqStep===rotQuiz.length-1?'Start again ↺':'Next challenge →'}</button></div>`;
+}
+
+/* --- BST vs AVL duel --- */
+let duelVals=[10,20,30,40,50,60,70],duelCount=0,duelErr='';
+const duelPresets=[['Sorted 10…70','10, 20, 30, 40, 50, 60, 70'],['LR example','50, 20, 60, 10, 30, 25'],['Descending','90, 80, 70, 60, 50, 40, 30, 20']];
+function mountDuel(){
+ const ctl=$('#duelCtl');if(!ctl)return;const k=duelCount,keys=duelVals.slice(0,k);
+ const bst=buildBst(keys);let avl=null,log=[];keys.forEach((x,i)=>{const a=[];avl=avlInsert(avl,x,a);if(i===k-1)log=a;});
+ const hb=ht(bst),ha=ht(avl),last=keys[k-1];
+ ctl.innerHTML=`<div class="controls"><input id="duelInput" type="text" aria-label="Keys for the showdown" value="${esc(duelVals.join(', '))}" style="flex:1;width:0"><button class="small-btn" data-act="duel-load">Load</button>${duelPresets.map(([l,v])=>`<button class="tab" data-act="duel-preset" data-keys="${v}">${l}</button>`).join('')}<span style="width:12px"></span><button class="small-btn" data-act="duel-prev" ${k===0?'disabled':''}>← Undo</button><button class="small-btn primary" data-act="duel-next" ${k===duelVals.length?'disabled':''}>Insert next →</button><button class="small-btn" data-act="duel-all">All</button><button class="small-btn" data-act="duel-reset">↺</button></div>`;
+ $('#duelBst').innerHTML=svgTree(bst,{width:700,height:300,hot:k?[last]:[],bad:hb>ha+1?keys:[],empty:'Click Insert next'});
+ $('#duelAvl').innerHTML=svgTree(avl,{width:700,height:300,hot:k?[last]:[],balance:true,empty:'Click Insert next'});
+ $('#duelBstH').innerHTML=`Height <b>${hb}</b>`;$('#duelAvlH').innerHTML=`Height <b>${ha}</b>`;
+ const m=$('#duelMsg');m.className='feedback '+(duelErr?'no':k?'ok':'');
+ m.innerHTML=duelErr?esc(duelErr):k===0?`Keys to insert: <b>${duelVals.join(', ')}</b>. Predict both heights before you start!`:`Inserted <b>${last}</b> (${k}/${duelVals.length}). AVL: ${log.length?'<b>'+esc(log.join('; '))+'</b>':'no rotation needed'}. Worst search: BST <b>${hb}</b> vs AVL <b>${ha}</b> comparisons.`;
+}
+
+/* ============ DECK CONTROL ============ */
+function mountActivities(){
+ document.querySelectorAll('[data-tree]').forEach(el=>el.innerHTML=staticTreeSvg(el.dataset.tree));
+ mountVocab();mountGrowth();mountTypes();mountHeap();mountTypeQuiz();mountCap();mountLevel();mountBst();mountTrav();mountOrder();mountRebuild();mountBalance();mountRotation();mountRotQuiz();mountDuel();
+}
+function fitDeck(){const ratio=Math.min(window.innerWidth/1600,window.innerHeight/900);const deck=$('#deck');deck.style.position='absolute';deck.style.left='50%';deck.style.top='50%';deck.style.transform=`translate(-50%,-50%) scale(${ratio})`;}
+function closeOverlays(){for(const el of [$('#menuOverlay'),$('#notesOverlay')]){el.classList.remove('open');el.setAttribute('aria-hidden','true');}}
+function openMenu(){closeOverlays();$('#menuList').innerHTML=slides.map((s,i)=>`<button class="map-item ${current===i?'current':''}" data-act="jump" data-target="${i}"><small>${String(i+1).padStart(2,'0')} · PART ${s.part} · ${PARTS[s.part][0].toUpperCase()}</small>${esc(s.title)}</button>`).join('');$('#menuOverlay').classList.add('open');$('#menuOverlay').setAttribute('aria-hidden','false');}
+function openNotes(){closeOverlays();const s=slides[current];$('#notesPosition').textContent=`Slide ${current+1} · Part ${s.part} · ${PARTS[s.part][1]}`;$('#notesContent').textContent=s.notes;$('#notesOverlay').classList.add('open');$('#notesOverlay').setAttribute('aria-hidden','false');}
+function goTo(index){stopTrav();current=Math.max(0,Math.min(slides.length-1,index));closeOverlays();render();}
+function render(){
+ const s=slides[current],P=PARTS[s.part];
+ $('#slide').innerHTML=`<div class="kicker"><span class="dot"></span> PART ${s.part} · ${P[0]} &nbsp;/&nbsp; WEEK 10 &nbsp;·&nbsp; <span class="time">⏱ ${P[1]}</span></div><h1 class="slide-title">${s.title}</h1><div class="slide-sub">${s.sub}</div><div class="slide-body">${s.content}</div>`;
+ $('#partChips').innerHTML=Object.entries(PARTS).map(([id,p])=>`<button class="chip ${+id===s.part?'active':''}" data-act="part" data-part="${id}">${p[2]}</button>`).join('');
+ $('#pageCount').textContent=String(current+1).padStart(2,'0')+' / '+String(slides.length).padStart(2,'0');
+ $('#progressFill').style.width=((current+1)*100/slides.length)+'%';
+ $('#prevButton').disabled=current===0;$('#nextButton').disabled=current===slides.length-1;
+ mountActivities();
+}
+/* lecture clock */
+let clockStart=null,clockAcc=0,clockTick=null;
+function clockText(){const ms=clockAcc+(clockStart?Date.now()-clockStart:0),s=Math.floor(ms/1000);return '⏱ '+String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
+function toggleClock(){const b=$('#timerBtn');if(clockStart){clockAcc+=Date.now()-clockStart;clockStart=null;clearInterval(clockTick);b.classList.remove('running');}else{clockStart=Date.now();clockTick=setInterval(()=>{b.textContent=clockText();},1000);b.classList.add('running');}b.textContent=clockText();}
+
+function handleClick(event){
+ const button=event.target.closest('[data-act]');if(!button)return;
+ const act=button.dataset.act;
+ if(act==='prev')return goTo(current-1);
+ if(act==='next')return goTo(current+1);
+ if(act==='map')return openMenu();
+ if(act==='notes')return $('#notesOverlay').classList.contains('open')?closeOverlays():openNotes();
+ if(act==='close')return closeOverlays();
+ if(act==='timer')return toggleClock();
+ if(act==='full'){if(!document.fullscreenElement){$('#deck').requestFullscreen?.().then(fitDeck).catch(()=>{});}else{document.exitFullscreen?.();}return;}
+ if(act==='part')return goTo(slides.findIndex(s=>s.part===Number(button.dataset.part)));
+ if(act==='jump')return goTo(Number(button.dataset.target));
+ if(act==='reveal'){const node=document.getElementById(button.dataset.id);if(node){node.hidden=!node.hidden;button.textContent=node.hidden?'Reveal':'Hide answer';}return;}
+ if(act==='flip'){button.classList.toggle('flipped');return;}
+ if(act==='vnode'){vocabSel=button.dataset.v;return mountVocab();}
+ if(act==='vmode'){vocabSel=button.dataset.mode;return mountVocab();}
+ if(act==='type'){typeSel=button.dataset.type;return mountTypes();}
+ if(act==='heap-i'){heapSel=+button.dataset.i;return mountHeap();}
+ if(act==='heap-node'){heapSel=heapArr.indexOf(+button.dataset.v);return mountHeap();}
+ if(act==='tq-answer'){tqAns=button.dataset.choice;return mountTypeQuiz();}
+ if(act==='tq-next'){tqStep=(tqStep+1)%typeQuiz.length;tqAns=null;return mountTypeQuiz();}
+ if(act.startsWith('lvl-')){levelCount=act==='lvl-reset'?0:act==='lvl-all'?levelKeys.length:Math.max(0,Math.min(levelKeys.length,levelCount+(act==='lvl-next'?1:-1)));return mountLevel();}
+ if(act==='bst-load'){const v=parseKeys($('#bstInput').value,12);if(!v)bstErr='Use 1–12 distinct whole numbers from 1 to 99, separated by commas.';else{bstVals=v;bstCount=0;bstErr='';}return mountBst();}
+ if(act.startsWith('bst-')){bstErr='';bstCount=act==='bst-reset'?0:Math.max(0,Math.min(bstVals.length,bstCount+(act==='bst-next'?1:-1)));return mountBst();}
+ if(act==='trav-kind'){stopTrav();travKind=button.dataset.kind;travStep=0;return mountTrav();}
+ if(act==='trav-play'){if(travTimer){stopTrav();return mountTrav();}if(travStep>=7)travStep=0;travTimer=setInterval(()=>{if(!$('#travLab')){stopTrav();return;}travStep++;if(travStep>=7)stopTrav();mountTrav();},800);return mountTrav();}
+ if(act.startsWith('trav-')){stopTrav();travStep=act==='trav-reset'?0:Math.max(0,Math.min(7,travStep+(act==='trav-next'?1:-1)));return mountTrav();}
+ if(act==='order'){orderSel=button.dataset.order;return mountOrder();}
+ if(act==='order-shuffle'){const a=[10,20,30,40,50,60,70];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}orderCustom=a;orderSel='shuffle';return mountOrder();}
+ if(act.startsWith('reb-')){rebuildStep=act==='reb-reset'?0:Math.max(0,Math.min(3,rebuildStep+(act==='reb-next'?1:-1)));return mountRebuild();}
+ if(act==='rot-case'){rotCase=button.dataset.case;rotStep=0;return mountRotation();}
+ if(act.startsWith('rot-')){const max=rotationFrames(rotCase).length-1;rotStep=act==='rot-reset'?0:Math.max(0,Math.min(max,rotStep+(act==='rot-next'?1:-1)));return mountRotation();}
+ if(act==='rq-answer'){rqAns=button.dataset.choice;return mountRotQuiz();}
+ if(act==='rq-next'){rqStep=(rqStep+1)%rotQuiz.length;rqAns=null;return mountRotQuiz();}
+ if(act==='duel-load'||act==='duel-preset'){const v=parseKeys(act==='duel-load'?$('#duelInput').value:button.dataset.keys,10);if(!v)duelErr='Use 1–10 distinct whole numbers from 1 to 99, separated by commas.';else{duelVals=v;duelCount=0;duelErr='';}return mountDuel();}
+ if(act.startsWith('duel-')){duelErr='';duelCount=act==='duel-reset'?0:act==='duel-all'?duelVals.length:Math.max(0,Math.min(duelVals.length,duelCount+(act==='duel-next'?1:-1)));return mountDuel();}
+}
+document.addEventListener('click',handleClick);
+document.addEventListener('keydown',event=>{
+ if(event.ctrlKey&&event.shiftKey&&event.key.toLowerCase()==='p'){event.preventDefault();return $('#notesOverlay').classList.contains('open')?closeOverlays():openNotes();}
+ if(event.key==='Escape'){closeOverlays();return;}
+ if(['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)&&document.activeElement.type!=='range')return;
+ if(document.activeElement?.type==='range'&&(event.key==='ArrowRight'||event.key==='ArrowLeft'))return;
+ if(event.key==='ArrowRight'||event.key==='PageDown'||event.key===' '){event.preventDefault();if(!$('.overlay.open'))goTo(current+1);return;}
+ if(event.key==='ArrowLeft'||event.key==='PageUp'){event.preventDefault();if(!$('.overlay.open'))goTo(current-1);return;}
+ if(event.key==='Home'){event.preventDefault();goTo(0);return;}
+ if(event.key==='End'){event.preventDefault();goTo(slides.length-1);return;}
+ if(event.key.toLowerCase()==='m'){event.preventDefault();return $('#menuOverlay').classList.contains('open')?closeOverlays():openMenu();}
+ if(event.key.toLowerCase()==='f'){event.preventDefault();if(!document.fullscreenElement){$('#deck').requestFullscreen?.().then(fitDeck).catch(()=>{});}else document.exitFullscreen?.();}
+});
+window.addEventListener('resize',fitDeck);
+document.addEventListener('fullscreenchange',fitDeck);
+fitDeck();render();
+</script>
+</body>
+</html>

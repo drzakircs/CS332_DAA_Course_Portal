@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#090e21">
+<title>CS332 Session 31 | DP Made Simple</title>
+<style>
+:root{color-scheme:dark;--bg:#080f24;--ink:#eef6ff;--muted:#abc1d7;--teal:#45e3c2;--amber:#ffcc77;--pink:#ff8fa8;--purple:#b7a0ff}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#030814;color:var(--ink);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;display:grid;place-items:center;overflow:hidden}button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.35;cursor:not-allowed}
+#deck{width:1600px;height:900px;position:relative;overflow:hidden;background:radial-gradient(ellipse 950px 620px at 92% -10%,#2e2650 0%,transparent 60%),radial-gradient(ellipse 700px 480px at 0% 100%,#133243 0%,transparent 60%),var(--bg);box-shadow:0 24px 90px #0009;border:1px solid #29354c}
+.topbar{position:absolute;top:0;left:0;right:0;height:76px;padding:0 40px 0 48px;display:flex;align-items:center;gap:14px;border-bottom:1px solid #ffffff20;background:#071126b5;z-index:3}
+.brand{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#b7a0ff,#45e3c2);color:#120a2a;display:grid;place-items:center;font-weight:1000;font-size:18px}.course{font-size:17px;font-weight:900;letter-spacing:.06em}.course-sub{font-size:13px;color:var(--muted);margin-top:2px}
+.dots{display:flex;gap:6px;margin-left:auto}.dots button{width:30px;height:30px;border-radius:50%;border:1px solid #5a708c;background:#172541;color:#cfe0f5;font-weight:900;font-size:13px}.dots button.on{background:#b7a0ff;border-color:#b7a0ff;color:#140a30}.dots button.seen{border-color:#8e7de0}
+.small-btn{border:1px solid #5a708c;background:#172541;border-radius:10px;color:var(--ink);font-size:16px;font-weight:850;padding:10px 15px;min-height:42px}.small-btn:hover{border-color:var(--teal)}.small-btn.purple{background:#b7a0ff;border-color:#b7a0ff;color:#140a30}.small-btn.warning{border-color:#c38b59;color:#ffda9b}.small-btn:focus-visible{outline:4px solid var(--amber);outline-offset:2px}
+#timerBtn{font-variant-numeric:tabular-nums;min-width:92px}#timerBtn.running{border-color:var(--amber);color:var(--amber)}
+#slide{position:absolute;inset:92px 56px 92px;display:flex;flex-direction:column;min-height:0;z-index:1}
+.head{animation:rise .35s ease both}@keyframes rise{from{transform:translateY(10px)}}
+.kicker{color:var(--purple);font-weight:900;font-size:14px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:4px}.kicker .time{color:var(--amber)}
+.slide-title{font-size:48px;line-height:1.08;font-weight:930;letter-spacing:-1.4px;margin:0 0 16px}
+.body{flex:1;min-height:0;display:grid;grid-template-columns:.92fr 1.08fr;gap:22px}
+.panel{border:1px solid #ffffff26;background:linear-gradient(152deg,#192842e6,#101b34eb);border-radius:22px;padding:20px 24px;min-height:0;overflow:hidden;display:flex;flex-direction:column}
+.stephead{display:flex;align-items:center;gap:10px;margin-bottom:12px;color:var(--muted);font-weight:800;font-size:15px;letter-spacing:.08em;text-transform:uppercase}.pips{display:flex;gap:6px}.pips i{width:28px;height:9px;border-radius:5px;background:#33496a}.pips i.on{background:var(--purple)}
+.step{display:flex;gap:14px;align-items:flex-start;border:1px solid #2c4867;background:#14233b;border-radius:16px;padding:13px 16px;margin-bottom:10px;font-size:22px;line-height:1.4;color:#dbe7f5}.step .n{flex:0 0 34px;height:34px;border-radius:10px;background:#285d5c;color:#a6ffeb;display:grid;place-items:center;font-weight:900;font-size:17px;margin-top:1px}.step b{color:#fff}.step.new{border-color:var(--amber);background:#2d2a25;animation:pop .35s ease}.step.new .n{background:#ffcc77;color:#2a1c05}@keyframes pop{from{transform:translateX(-8px)}}
+.step.key{border-color:#8e7de0;background:#262247}.step.key .n{background:#b7a0ff;color:#140a30}
+.more{margin-top:auto;font-size:16px;color:var(--muted);font-weight:800;display:flex;align-items:center;gap:8px}.more kbd{border:1px solid #5a708c;border-radius:6px;padding:2px 8px;background:#172541;color:#fff;font-family:inherit}
+.vis{align-items:center;justify-content:center}
+.big{font-size:44px;font-weight:1000;letter-spacing:-1px}.huge{font-size:64px;font-weight:1000;letter-spacing:-2px}.mid{font-size:28px;font-weight:850}
+.teal-text{color:var(--teal)}.amber-text{color:var(--amber)}.pink-text{color:var(--pink)}.purple-text{color:var(--purple)}.subtle{color:var(--muted)}
+.coin{width:74px;height:74px;border-radius:50%;display:inline-grid;place-items:center;font-weight:1000;font-size:30px;border:3px solid var(--amber);background:#473b2a;color:var(--amber);margin:4px}.coin.bad{border-color:var(--pink);background:#5b3348;color:#ffd0dc}.coin.good{border-color:var(--teal);background:#16413d;color:#cffff4}
+.box{border-radius:16px;padding:14px 18px;border:2px solid #3c5675;background:#16253d;text-align:center}.box.good{border-color:var(--teal);background:#143c3d}.box.bad{border-color:var(--pink);background:#3b273b}.box.key{border-color:var(--purple);background:#262247}.box.win{border-color:var(--amber);background:#4f4024;box-shadow:0 0 0 4px #ffcc7733}
+.row{display:flex;gap:14px;justify-content:center;align-items:stretch;flex-wrap:wrap}
+.formula{font-family:"Cascadia Code",Consolas,monospace;font-size:26px;font-weight:700;padding:14px 20px;border-radius:14px;background:#262247;border:2px solid #8e7de0;color:#f0ebff;text-align:center}
+.codebox{font-family:"Cascadia Code",Consolas,monospace;font-size:20px;line-height:1.6;background:#081326;border:1px solid #43536d;border-radius:14px;padding:14px 18px;white-space:pre;color:#d9f1ff;width:100%}.codebox .k{color:#7effde;font-weight:800}.codebox .ln{display:block;border-radius:6px;padding:0 6px;margin:0 -6px}.codebox .ln.hl{background:#4f4024;color:#ffe2a6}.codebox .cm{color:#ffcc77;font-weight:800}
+.cells{display:flex;gap:7px;justify-content:center;flex-wrap:wrap}.cell{text-align:center}.cell .v{width:64px;height:62px;display:grid;place-items:center;border:2px solid #3c5675;background:#16253d;border-radius:12px;font-weight:950;font-size:24px;transition:all .3s}.cell small{display:block;color:var(--muted);font-size:14px;margin-top:4px;font-weight:800}.cell.base .v{border-color:#8e7de0;background:#2e2b53}.cell.done .v{border-color:#2ca692;background:#16413d}.cell.cur .v{border-color:var(--amber);background:#4f4024;color:#ffe2a6;box-shadow:0 0 0 4px #ffcc7733}.cell.dep .v{border-color:var(--teal);box-shadow:0 0 0 4px #45e3c255}.cell.empty .v{border-style:dashed;color:#5d7591}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%}.cmp .box{text-align:left;font-size:20px}.cmp .box h3{margin:0 0 10px;font-size:26px}.cmp .box div{padding:8px 0;border-top:1px solid #ffffff1f}
+.feedback{border-radius:14px;border:1px solid #476984;background:#172c46;padding:12px 16px;font-size:20px;line-height:1.45;color:#e4f1ff}.feedback.ok{border-color:var(--teal);background:#143c3d}.feedback.no{border-color:var(--pink);background:#3b273b}.feedback.hint{border-color:var(--amber);background:#3d3126}.feedback b{color:#fff}
+.qcard{display:flex;align-items:center;gap:14px;border:1px solid #3c5675;background:#16253d;border-radius:16px;padding:14px 16px;margin-bottom:12px;width:100%}.qcard .q{flex:1;font-size:22px;font-weight:800}.qcard .ans{font-size:17px;color:#d1dded;margin-top:4px;font-weight:600}
+input.ans{width:110px;background:#101d32;border:2px solid #b7a0ff;color:#fff;border-radius:11px;padding:8px 12px;font-size:24px;font-weight:900;text-align:center}
+.gridtab{border-collapse:separate;border-spacing:6px;margin:0 auto}.gridtab td{width:70px;height:54px;text-align:center;border:2px solid #3c5675;background:#16253d;border-radius:11px;font-weight:950;font-size:23px}.gridtab th{color:var(--muted);font-size:14px}.gridtab td.base{border-color:#8e7de0;background:#2e2b53}.gridtab td.done{border-color:#2ca692;background:#16413d}.gridtab td.cur{border-color:var(--amber);background:#4f4024;color:#ffe2a6}.gridtab td.dep{border-color:var(--teal);box-shadow:0 0 0 3px #45e3c255}.gridtab td.empty{border-style:dashed;color:#5d7591}
+.footer{position:absolute;bottom:0;left:0;right:0;height:76px;padding:0 56px;display:flex;align-items:center;gap:15px;border-top:1px solid #ffffff27;background:#071126e8;z-index:3}.foot-hint{color:#9bb3cb;font-size:15px;margin-right:auto}.page-count{color:#d5ebfa;font-size:16px;font-weight:850;min-width:150px;text-align:center}.nav-button{height:50px;min-width:130px;font-size:18px;font-weight:900;border-radius:12px;color:var(--ink);border:1px solid #617c9d;background:#1a2d4d}.nav-button.next{color:#140a30;background:#b7a0ff;border-color:#b7a0ff;min-width:190px}.nav-button.next.slide{background:#45e3c2;border-color:#45e3c2;color:#05142c}.nav-button:disabled{opacity:.35}
+.overlay{position:absolute;inset:0;background:#030a19e9;z-index:10;display:none;align-items:center;justify-content:center;padding:72px}.overlay.open{display:flex}.overlay-panel{width:100%;height:100%;background:#15213a;border:1px solid #7b9db2;border-radius:25px;padding:35px 45px;display:flex;flex-direction:column;gap:18px}.overlay-head{display:flex;align-items:center;gap:22px}.overlay-head h2{font-size:34px;margin:0}.notes-content{font-size:25px;line-height:1.58;white-space:pre-line;color:#dbeaf9;overflow:auto}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="deck" role="application" aria-label="Session 31: dynamic programming made simple">
+ <header class="topbar"><div class="brand">CS</div><div><div class="course">CS332 · SESSION 31 · DYNAMIC PROGRAMMING</div><div class="course-sub">Air University · Week 11 · one idea per slide · press Space for the next step</div></div><div class="dots" id="dots"></div><button class="small-btn" id="timerBtn" data-act="timer">⏱ 00:00</button><button class="small-btn" data-act="notes" title="Tutor notes (Ctrl+Shift+P)">☼ Notes</button><button class="small-btn" data-act="full" title="Full screen (F)">⛶</button></header>
+ <main id="slide" aria-live="polite"></main>
+ <footer class="footer"><div class="foot-hint"><b>Space</b> or <b>→</b> = next step &nbsp;·&nbsp; <b>←</b> = back &nbsp;·&nbsp; dots at the top jump to a slide</div><div class="page-count" id="pageCount"></div><button class="nav-button" id="prevButton" data-act="prev">← Back</button><button class="nav-button next" id="nextButton" data-act="next">Next step ▸</button></footer>
+ <div id="notesOverlay" class="overlay" aria-hidden="true"><div class="overlay-panel"><div class="overlay-head"><h2>Tutor notes</h2><div style="margin-left:auto;color:var(--muted)" id="notesPosition"></div><button class="small-btn" data-act="close">✕ Close</button></div><div id="notesContent" class="notes-content"></div></div></div>
+</div>
+<script>
+'use strict';
+const $=(q,r=document)=>r.querySelector(q);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const coins=(arr,cls='')=>arr.map(v=>`<span class="coin ${cls}">${v}</span>`).join('');
+const COINS=[1,3,4];
+function coinTable(A){const T=[0],pick=[0];for(let a=1;a<=A;a++){let b=Infinity,p=0;for(const c of COINS)if(c<=a&&T[a-c]+1<b){b=T[a-c]+1;p=c;}T.push(b);pick.push(p);}return {T,pick};}
+const CT=coinTable(10).T;
+
+/* slide = {time,title,steps:[[text,key?]],vis:(s)=>html, mount?:()=>void, notes} ; s = number of steps shown (1..n) */
+const slides=[];const add=o=>slides.push(o);
+
+/* 1 */
+add({time:'00–03 min',title:'What is Dynamic Programming?',steps:[
+ ['🧮 Quick question: what is <b>1 + 1 + 1 + 1 + 1</b>?'],
+ ['It is <b>5</b>. Now add one more "+ 1". What do you get?'],
+ ['You said <b>6</b> instantly. You did not count again: you <b>remembered</b> 5.'],
+ ['💡 That is <b>Dynamic Programming</b>: remember answers so you never solve the same thing twice.','key']],
+ vis:s=>s===1?`<div class="huge">1+1+1+1+1 = <span class="amber-text">?</span></div>`:s===2?`<div class="huge">1+1+1+1+1 = <span class="teal-text">5</span></div><div class="huge" style="margin-top:20px">1+1+1+1+1+1 = <span class="amber-text">?</span></div>`:s===3?`<div class="huge"><span class="teal-text">5</span> + 1 = <span class="teal-text">6</span></div><div class="mid subtle" style="margin-top:20px">no recounting: you reused 5 ✓</div>`:`<div class="huge purple-text center" style="text-align:center">DP =<br>recursion + memory</div><div class="mid subtle" style="margin-top:20px">solve once · remember · reuse</div>`,
+ notes:'Do this live: ask the class 1+1+1+1+1, then add one more. Everyone answers 6 instantly. Say: "You just did dynamic programming."'});
+
+/* 2 */
+add({time:'03–06 min',title:'Why do we need it?',steps:[
+ ['Problem: pay <b>Rs 6</b> with the <b>fewest coins</b>. Coins: <b>1, 3, 4</b>.'],
+ ['Greedy takes the biggest coin first: <b>4 + 1 + 1 = 3 coins</b>.'],
+ ['But <b>3 + 3 = only 2 coins!</b> Greedy was wrong.'],
+ ['Brute force (try everything) is always right, but <b>far too slow</b> for big problems.'],
+ ['💡 DP tries every choice like brute force, but solves each smaller problem <b>only once</b>.','key']],
+ vis:s=>s===1?`<div class="mid subtle">Coins you have</div><div style="margin:10px 0 24px">${coins(COINS)}</div><div class="big">Pay: <span class="amber-text">Rs 6</span></div>`:s===2?`<div class="mid pink-text">Greedy</div><div style="margin:12px 0">${coins([4,1,1],'bad')}</div><div class="big pink-text">3 coins</div>`:s===3?`<div class="row" style="width:100%"><div class="box bad" style="flex:1"><div class="mid pink-text">Greedy</div>${coins([4,1,1],'bad')}<div class="big pink-text">3</div></div><div class="box good" style="flex:1"><div class="mid teal-text">Best</div>${coins([3,3],'good')}<div class="big teal-text">2</div></div></div>`:s===4?`<div class="huge">🐢</div><div class="big" style="margin:10px 0">Brute force</div><div class="mid subtle">correct ✓ · but 2ⁿ work ✗</div>`:`<div class="row"><div class="box bad"><div class="mid">Greedy</div><div class="subtle">fast ✓ · wrong ✗</div></div><div class="box bad"><div class="mid">Brute force</div><div class="subtle">right ✓ · slow ✗</div></div><div class="box good"><div class="mid teal-text">DP</div><div class="subtle">right ✓ · fast ✓</div></div></div>`,
+ notes:'Recall Session 30: greedy failed for {1,3,4}. Brute force works but explodes. DP gets both correctness and speed.'});
+
+/* 3 */
+add({time:'06–09 min',title:'Big problem → smaller problems',steps:[
+ ['To pay 6, think about the <b>LAST coin</b> you hand over.'],
+ ['If the last coin is <b>1</b>, you still need to pay <b>5</b>.'],
+ ['If it is <b>3</b>, you still pay <b>3</b>. If it is <b>4</b>, you still pay <b>2</b>.'],
+ ['"Pay 5", "Pay 3", "Pay 2" are the <b>same kind</b> of problem, just smaller. They are called <b>subproblems</b>.','key']],
+ vis:s=>{const W=700,H=330;let g=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:700px">`;const box=(x,y,t,cls)=>`<rect x="${x-80}" y="${y-36}" width="160" height="72" rx="16" fill="${cls==='root'?'#4f4024':cls==='sub'?'#262247':'#16253d'}" stroke="${cls==='root'?'#ffcc77':cls==='sub'?'#b7a0ff':'#8fbfdd'}" stroke-width="3"/><text x="${x}" y="${y+11}" text-anchor="middle" font-size="30" font-weight="900" fill="#fff">${t}</text>`;
+  const kids=[[120,'Pay 5','−1'],[350,'Pay 3','−3'],[580,'Pay 2','−4']].slice(0,s===1?0:s===2?1:3);
+  kids.forEach(([x,t,l])=>{g+=`<line x1="350" y1="96" x2="${x}" y2="214" stroke="#5f88a6" stroke-width="4"/><text x="${(350+x)/2+(x<350?-26:x>350?26:18)}" y="160" text-anchor="middle" font-size="24" font-weight="900" fill="#ffcc77">${l}</text>`;});
+  g+=box(350,60,'Pay 6','root');kids.forEach(([x,t])=>g+=box(x,250,t,s>=4?'sub':''));
+  if(s>=4)g+=`<text x="350" y="320" text-anchor="middle" font-size="22" font-weight="800" fill="#b7a0ff">same problem, smaller amount</text>`;
+  return g+'</svg>';},
+ notes:'Key habit: always ask "what was the LAST choice?" Each possible last choice leaves a smaller copy of the same problem.'});
+
+/* 4 */
+add({time:'09–13 min',title:'Property 1 · Optimal substructure',steps:[
+ ['Last coin <b>1</b> → 1 + best(5) = 1 + 2 = <b>3 coins</b>'],
+ ['Last coin <b>3</b> → 1 + best(3) = 1 + 1 = <b>2 coins</b>'],
+ ['Last coin <b>4</b> → 1 + best(2) = 1 + 2 = <b>3 coins</b>'],
+ ['Take the smallest: <b>best(6) = 2</b> (3 + 3).'],
+ ['📌 <b>Optimal substructure</b> = the best answer is built from the <b>best answers</b> of smaller problems.','key']],
+ vis:s=>{const o=[[1,5,2,'4+1'],[3,3,1,'3'],[4,2,2,'1+1']];return `<div class="row" style="width:100%">${o.map(([c,r,b,how],i)=>`<div class="box ${s>3&&c===3?'win':s>i?'good':''}" style="flex:1;opacity:${s>i?1:.25}"><div class="mid">last coin <span class="amber-text">${c}</span></div><div class="subtle" style="margin:6px 0">then pay ${r} best = ${s>i?b+' ('+how+')':'?'}</div><div class="big">${s>i?'1 + '+b+' = '+(1+b):'?'}</div></div>`).join('')}</div>
+ ${s>=5?`<div class="formula" style="margin-top:24px">best(a) = 1 + min( best(a−1), best(a−3), best(a−4) )<br><span style="font-size:20px">best(0) = 0</span></div>`:s>=4?`<div class="big amber-text" style="margin-top:24px">best(6) = 2 ✓</div>`:''}`;},
+ notes:'The +1 is the last coin itself. min compares all choices. DP tries ALL last coins; greedy tried only the biggest.'});
+
+/* 5 */
+function fibTree(k,d=0){return {v:'F('+k+')',n:k,d,k:k>1?[fibTree(k-1,d+1),fibTree(k-2,d+1)]:[]};}
+const FT=fibTree(5);
+function treeSvg(root,W,H,cls){let leaf=0;const pos=new Map(),all=[];
+ (function place(t,d){all.push(t);if(!t.k.length)pos.set(t,{xi:leaf++,d});else{t.k.forEach(c=>place(c,d+1));pos.set(t,{xi:(pos.get(t.k[0]).xi+pos.get(t.k.at(-1)).xi)/2,d});}})(root,0);
+ const maxD=4,r=26,pad=r+8,top=r+8,gap=(H-top-r-8)/maxD,X=p=>pad+p.xi*(W-2*pad)/(leaf-1),Y=p=>top+p.d*gap;
+ const C={norm:['#1e3d5c','#8fbfdd'],rep:['#5b3348','#ff8fa8'],hide:null};let e='',s='';
+ all.forEach(t=>{const k=cls(t);if(!k)return;const a=pos.get(t);t.k.forEach(c=>{if(cls(c)){const b=pos.get(c);e+=`<line x1="${X(a)}" y1="${Y(a)}" x2="${X(b)}" y2="${Y(b)}" stroke="#5f88a6" stroke-width="3"/>`;}});s+=`<circle cx="${X(a)}" cy="${Y(a)}" r="${r}" fill="${C[k][0]}" stroke="${C[k][1]}" stroke-width="3"/><text x="${X(a)}" y="${Y(a)+6}" text-anchor="middle" font-size="16" font-weight="900" fill="#fff">${t.v}</text>`;});
+ return `<svg viewBox="0 0 ${W} ${H}" style="width:100%">${e}${s}</svg>`;}
+add({time:'13–17 min',title:'Property 2 · Overlapping subproblems',steps:[
+ ['Fibonacci: <b>F(n) = F(n−1) + F(n−2)</b>. Let\'s compute F(5) with plain recursion.'],
+ ['F(5) asks for F(4) and F(3)…'],
+ ['…and each of those asks for more. The tree keeps growing.'],
+ ['Look at the pink nodes: <b>F(3) is computed 2 times</b>, <b>F(2) 3 times</b>!'],
+ ['15 calls, but only 6 different questions. 📌 <b>Overlapping subproblems</b> = the same smaller problem appears again and again.','key']],
+ vis:s=>{const seen=new Set();const firsts=new Set();(function pre(t){if(!seen.has(t.n)){seen.add(t.n);firsts.add(t);}t.k.forEach(pre);})(FT);
+  const maxD=s===1?0:s===2?1:4;return treeSvg(FT,780,380,t=>t.d>maxD?null:(s>=4&&!firsts.has(t)&&t.n>=2?'rep':'norm'))+(s>=5?`<div class="row" style="margin-top:8px"><div class="box bad"><div class="big pink-text">15</div>calls</div><div class="box good"><div class="big teal-text">6</div>different questions</div></div>`:'');},
+ notes:'F(40) with plain recursion: about 331 million calls for 41 different subproblems. Saving answers makes it about 40.'});
+
+/* 6 quick check */
+const QC=[{q:'Fibonacci (plain recursion)',a:'yes',why:'Both properties: subproblems repeat (F(3), F(2)…).'},{q:'Merge Sort',a:'no',why:'Its halves never repeat, so there is no overlap. Divide & conquer is enough.'},{q:'Fewest coins with {1, 3, 4}',a:'yes',why:'Best answers build on best smaller answers, and the smaller amounts repeat.'}];
+let qcAns={};
+add({time:'17–19 min',title:'Quick check: does it need DP?',steps:[
+ ['📌 Rule: use DP when a problem has <b>BOTH</b>: ① optimal substructure ② overlapping subproblems.','key'],
+ ['Now answer the three questions on the right. Click Yes or No.']],
+ vis:()=>`<div id="qcLab" style="width:100%"></div>`,mount:mountQC,
+ notes:'Fast round: hands up for Yes/No before clicking. Merge Sort is the trap: optimal substructure but no overlap.'});
+function mountQC(){const el=$('#qcLab');if(!el)return;el.innerHTML=QC.map((x,i)=>{const a=qcAns[i];return `<div class="qcard" style="border-color:${a?(a===x.a?'#2ca692':'#d76b8b'):'#3c5675'}"><div class="q">${x.q}${a?`<div class="ans">${a===x.a?'✓':'✗'} ${x.a==='yes'?'Yes, DP.':'No DP.'} ${x.why}</div>`:''}</div>${a?'':`<button class="small-btn purple" data-act="qc" data-i="${i}" data-a="yes">Yes</button><button class="small-btn warning" data-act="qc" data-i="${i}" data-a="no">No</button>`}</div>`;}).join('');}
+
+/* 7 stairs */
+add({time:'19–24 min',title:'How to write a recurrence',steps:[
+ ['Problem: climb <b>n</b> stairs taking <b>1 or 2</b> steps at a time. How many different ways?'],
+ ['① <b>Name it:</b> ways(n) = number of ways to reach step n.'],
+ ['② <b>Last move:</b> you arrived from step n−1 (a 1-step) or from step n−2 (a 2-step).'],
+ ['③ <b>Add them:</b> ways(n) = ways(n−1) + ways(n−2)'],
+ ['④ <b>Base cases:</b> ways(0) = 1 (stand still), ways(1) = 1. Done!','key']],
+ vis:s=>{const W=620,H=300,sw=110,sh=55;let g=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:620px">`;
+  for(let i=0;i<=4;i++){const x=30+i*sw,y=H-20-i*sh;g+=`<rect x="${x}" y="${y}" width="${sw}" height="${i*sh+20}" fill="${s>=3&&(i===3||i===2)?'#16413d':i===4?'#4f4024':'#1e3d5c'}" stroke="${s>=3&&(i===3||i===2)?'#45e3c2':i===4?'#ffcc77':'#5f88a6'}" stroke-width="2"/><text x="${x+sw/2}" y="${y+28}" text-anchor="middle" font-size="20" font-weight="900" fill="#fff">${i===4?'n':i===3?'n−1':i===2?'n−2':i}</text>`;}
+  g+=`<text x="${30+4*sw+sw/2}" y="${H-20-4*sh-14}" text-anchor="middle" font-size="34">🧍</text>`;
+  if(s>=3){g+=`<path d="M${30+3*sw+sw/2} ${H-20-3*sh-6} Q ${30+3.6*sw} ${H-20-4.3*sh} ${30+4*sw+20} ${H-20-4*sh-4}" stroke="#45e3c2" stroke-width="4" fill="none"/><text x="${30+3.6*sw}" y="${H-20-4.4*sh}" font-size="18" font-weight="900" fill="#45e3c2">1-step</text><path d="M${30+2*sw+sw/2} ${H-20-2*sh-6} Q ${30+3*sw} ${H-20-4.8*sh} ${30+4*sw+10} ${H-20-4*sh-8}" stroke="#ffcc77" stroke-width="4" fill="none" stroke-dasharray="8 6"/><text x="${30+2.6*sw}" y="${H-20-4.2*sh}" font-size="18" font-weight="900" fill="#ffcc77">2-step</text>`;}
+  g+='</svg>';const w=[1,1,2,3,5,8,13];
+  return g+(s>=4?`<div class="formula" style="margin-top:14px">ways(n) = ways(n−1) + ways(n−2)</div>`:'')+(s>=5?`<div class="cells" style="margin-top:14px">${w.map((v,i)=>`<div class="cell ${i<2?'base':'done'}"><div class="v">${v}</div><small>ways(${i})</small></div>`).join('')}</div>`:'');},
+ notes:'Check ways(3) = 3 on the board: 1+1+1, 1+2, 2+1. ways(0) = 1 because there is one way to be at the bottom: do nothing. Values are Fibonacci again.'});
+
+/* 8 memo */
+const MEMOCODE=['F(n):','  <span class="k">if</span> n ≤ 1: <span class="k">return</span> n','  <span class="k">if</span> n <span class="k">in</span> memo: <span class="k">return</span> memo[n]     <span class="cm">← LOOK</span>','  memo[n] ← F(n−1) + F(n−2)         <span class="cm">← WRITE</span>','  <span class="k">return</span> memo[n]'];
+add({time:'24–28 min',title:'Way 1 · Memoization = recursion + a notebook',steps:[
+ ['Problem: plain recursion solves the <b>same</b> F(2), F(3)… again and again.'],
+ ['Fix: keep a <b>notebook</b> (the memo). Before solving, <b>LOOK</b> in the notebook.'],
+ ['After solving, <b>WRITE</b> the answer in the notebook.'],
+ ['Next time the same question comes, just <b>read</b> it. No work!'],
+ ['Result for F(6): <b>25 calls → 11 calls</b>.','key']],
+ vis:s=>{const hl=s===2||s===4?[2]:s===3?[3]:[];return `<div class="codebox">${MEMOCODE.map((l,i)=>`<span class="ln ${hl.includes(i)?'hl':''}">${l}</span>`).join('')}</div>
+  <div class="box key" style="margin-top:18px;width:100%;text-align:left"><div class="mid">📒 Notebook (memo)</div><div class="mid" style="margin-top:8px;font-family:Consolas,monospace">${s<3?'<span class="subtle">empty</span>':s===3?'F(2) = 1 <span class="teal-text">← written</span>':'F(2) = 1 <span class="amber-text">← read again, free!</span>'}</div></div>
+  ${s>=5?`<div class="row" style="margin-top:16px"><div class="box bad"><div class="big pink-text">25</div>calls without memo</div><div class="box good"><div class="big teal-text">11</div>calls with memo</div></div>`:''}`;},
+ notes:'Memoization = top-down. It keeps the recursion; only two lines are added (LOOK and WRITE).'});
+
+/* 9 tab */
+add({time:'28–31 min',title:'Way 2 · Tabulation = fill a table from the bottom',steps:[
+ ['No recursion. Make a table <b>T[0 … 6]</b>.'],
+ ['Fill the <b>base cases</b> first: T[0] = 0, T[1] = 1.'],
+ ['Each next cell = the two cells before it: <b>T[2] = 1 + 0 = 1</b>.'],
+ ['Keep going left → right: T[3] = 2, T[4] = 3, T[5] = 5.'],
+ ['Last cell <b>T[6] = 8</b> is the answer. Just one simple loop!','key']],
+ vis:s=>{const F=[0,1,1,2,3,5,8],filled=[0,0,2,3,6,7][s]||7;
+  return `<div class="cells">${F.map((v,i)=>`<div class="cell ${i<filled?(i<2?'base':(s===3&&i===2)||(s===5&&i===6)?'cur':'done'):'empty'} ${s===3&&i<2?'dep':''}"><div class="v">${i<filled?v:'·'}</div><small>T[${i}]</small></div>`).join('')}</div>
+  ${s>=3?`<div class="mid amber-text" style="margin-top:18px">→ fill direction: left to right</div>`:''}
+  ${s>=5?`<div class="codebox" style="margin-top:18px">T[0] ← 0 ;  T[1] ← 1\n<span class="k">for</span> i ← 2 <span class="k">to</span> n:\n    T[i] ← T[i−1] + T[i−2]\n<span class="k">return</span> T[n]</div>`:''}`;},
+ notes:'Tabulation = bottom-up. Start from base cases and loop upward; every cell you need is already filled.'});
+
+/* 10 compare */
+const CMPROWS=[['Starts at the <b>top</b>: F(6)','Starts at the <b>bottom</b>: T[0]'],['Uses <b>recursion</b>','Uses a simple <b>loop</b>'],['Solves only the subproblems it <b>needs</b>','Fills <b>every</b> cell'],['Very large n: recursion can <b>overflow</b>','No recursion: <b>safe</b> for large n']];
+add({time:'31–33 min',title:'Memoization vs tabulation',steps:[
+ ['Same recurrence, same answer. Only the <b>order of work</b> is different.'],
+ ['Memo starts at the top; table starts at the bottom.'],
+ ['Memo uses recursion; table uses a loop.'],
+ ['Memo solves only what it needs; table fills every cell.'],
+ ['For huge n, prefer the <b>table</b>: no deep recursion.','key']],
+ vis:s=>`<div class="cmp"><div class="box key"><h3>🔽 Memoization</h3>${CMPROWS.slice(0,Math.max(0,s-1)).map(r=>`<div>${r[0]}</div>`).join('')}</div><div class="box good"><h3>🔼 Tabulation</h3>${CMPROWS.slice(0,Math.max(0,s-1)).map(r=>`<div>${r[1]}</div>`).join('')}</div></div>`,
+ notes:'Both are O(n) for Fibonacci. Exams like asking which one risks a stack overflow: memoization.'});
+
+/* 11 recipe */
+add({time:'33–37 min',title:'The DP recipe: use it every time',steps:[
+ ['① <b>Subproblem:</b> what does one cell mean? T[a] = fewest coins to pay a.'],
+ ['② <b>Recurrence:</b> T[a] = 1 + min( T[a−1], T[a−3], T[a−4] )'],
+ ['③ <b>Base case:</b> T[0] = 0'],
+ ['④ <b>Order:</b> fill small → large, so the cells you need are always ready.'],
+ ['⑤ <b>Answer &amp; cost:</b> answer is T[A]. Time = cells × work per cell = <b>O(A)</b>.','key']],
+ vis:s=>`<div class="cells">${Array.from({length:11},(_,a)=>`<div class="cell ${a===0&&s>=3?'base':a===10&&s>=5?'cur':'empty'}"><div class="v">${a===0&&s>=3?0:a===10&&s>=5?'?':'·'}</div><small>T[${a}]</small></div>`).join('')}</div>
+ ${s>=2?`<div class="formula" style="margin-top:20px">T[a] = 1 + min( T[a−1], T[a−3], T[a−4] )</div>`:''}
+ ${s>=4?`<div class="mid amber-text" style="margin-top:16px">fill → T[1], T[2], T[3], …</div>`:''}
+ ${s>=5?`<div class="mid teal-text" style="margin-top:10px">answer = T[10] · next slide: you fill it!</div>`:''}`,
+ notes:'This recipe is the same for knapsack and rod cutting in Session 32. Cost rule: #cells × work per cell.'});
+
+/* 12 activity A */
+const actA={i:1,fb:'',cls:''};
+add({time:'37–43 min',title:'Your turn: fill the DP table',steps:[
+ ['Fill T[1] … T[10] using <b>T[a] = 1 + min(T[a−1], T[a−3], T[a−4])</b>.'],
+ ['The <span class="teal-text"><b>teal</b></span> cells are your inputs.'],
+ ['Answer = <b>1 + the smallest teal value</b>. Type it and press <b>Enter</b>.','key']],
+ vis:()=>`<div id="actA" style="width:100%"></div>`,mount:mountA,
+ notes:'Pairs: one computes, one checks. Answers: 0 1 2 1 1 2 2 2 2 3 3. T[10] = 3 coins (3 + 3 + 4).'});
+function mountA(){const el=$('#actA');if(!el)return;const i=actA.i,done=i>10,deps=done?[]:COINS.filter(c=>c<=i).map(c=>i-c);
+ el.innerHTML=`<div class="cells">${CT.map((v,a)=>`<div class="cell ${a===0?'base':a<i?'done':a===i?'cur':'empty'} ${deps.includes(a)?'dep':''}"><div class="v">${a<i?v:a===i?'?':'·'}</div><small>T[${a}]</small></div>`).join('')}</div>
+ ${done?`<div class="feedback ok" style="margin-top:22px;font-size:22px"><b>🎉 Done! T[10] = 3 coins</b>: 3 + 3 + 4.<br>Greedy would use 4 coins (4 + 4 + 1 + 1).</div>`:
+ `<div class="mid" style="margin:22px 0 10px;text-align:center">Inputs: ${deps.map(d=>`T[${d}] = <span class="teal-text">${CT[d]}</span>`).join(' · ')}</div>
+ <div style="display:flex;gap:10px;justify-content:center;align-items:center"><span class="big" style="font-size:32px">T[${i}] =</span><input class="ans" id="ansA" inputmode="numeric" autocomplete="off" aria-label="Value of T[${i}]"><button class="small-btn purple" data-act="a-check">Check</button><button class="small-btn warning" data-act="a-show">Show me</button></div>
+ <div class="feedback ${actA.cls}" style="margin-top:14px">${actA.fb||'Smallest teal value + 1 = ?'}</div>`}
+ <div style="text-align:center;margin-top:12px"><button class="small-btn" data-act="a-reset">↺ Restart</button></div>`;
+ $('#ansA')?.focus();}
+function checkA(show){const i=actA.i,deps=COINS.filter(c=>c<=i).map(c=>i-c),want=CT[i],m=Math.min(...deps.map(d=>CT[d]));
+ if(show){actA.fb=`T[${i}] = 1 + min(${deps.map(d=>CT[d]).join(', ')}) = 1 + ${m} = ${want}.`;actA.cls='hint';actA.i++;return mountA();}
+ const v=parseInt(($('#ansA')||{}).value,10);if(v===want){actA.fb=`✓ Correct! T[${i}] = 1 + ${m} = ${want}.`;actA.cls='ok';actA.i++;}else{actA.fb=`✗ Not quite. The smallest teal value is ${m}, so add 1.`;actA.cls='no';}mountA();}
+
+/* 13 activity B */
+const GR=4,GC=5,gv=(r,c)=>{let g=[];for(let i=0;i<GR;i++){g.push([]);for(let j=0;j<GC;j++)g[i].push(i===0||j===0?1:g[i-1][j]+g[i][j-1]);}return g[r][c];};
+const INT=[];for(let r=1;r<GR;r++)for(let c=1;c<GC;c++)INT.push([r,c]);const actB={k:0,fb:'',cls:''};
+add({time:'43–47 min',title:'Challenge: a 2-D table',steps:[
+ ['🤖 A robot moves only <b>right →</b> or <b>down ↓</b>. How many paths reach each cell?'],
+ ['Paths to a cell = paths from <b>above</b> + paths from the <b>left</b>.'],
+ ['Top row and left column = <b>1</b> (only one straight way).'],
+ ['Fill the rest <b>row by row</b>. Type the value, press <b>Enter</b>.','key']],
+ vis:()=>`<div id="actB" style="width:100%"></div>`,mount:mountB,
+ notes:'Answer: bottom-right = 35. Point out: knapsack (S32) and LCS (S33) use this same 2-D table idea.'});
+function mountB(){const el=$('#actB');if(!el)return;const k=actB.k,done=k>=INT.length,[cr,cc]=done?[-1,-1]:INT[k],filled=(r,c)=>r===0||c===0||INT.findIndex(([a,b])=>a===r&&b===c)<k;
+ let t=`<table class="gridtab"><tr><th></th>${Array.from({length:GC},(_,c)=>`<th>c${c}</th>`).join('')}</tr>`;
+ for(let r=0;r<GR;r++){t+=`<tr><th>r${r}</th>`;for(let c=0;c<GC;c++){const cur=r===cr&&c===cc,dep=(r===cr-1&&c===cc)||(r===cr&&c===cc-1);t+=`<td class="${r===0||c===0?'base':cur?'cur':filled(r,c)?'done':'empty'} ${dep?'dep':''}">${filled(r,c)?gv(r,c):cur?'?':'·'}</td>`;}t+='</tr>';}t+='</table>';
+ el.innerHTML=t+(done?`<div class="feedback ok" style="margin-top:18px;font-size:22px"><b>🎉 35 paths</b> to the bottom-right corner. Same 2-D table idea as knapsack (next session).</div>`:
+ `<div style="display:flex;gap:10px;justify-content:center;align-items:center;margin-top:16px"><span class="big" style="font-size:30px">P[${cr}][${cc}] =</span><input class="ans" id="ansB" inputmode="numeric" autocomplete="off" aria-label="Value of P[${cr}][${cc}]"><button class="small-btn purple" data-act="b-check">Check</button><button class="small-btn warning" data-act="b-show">Show me</button></div>
+ <div class="feedback ${actB.cls}" style="margin-top:12px">${actB.fb||`above (${gv(cr-1,cc)}) + left (${gv(cr,cc-1)}) = ?`}</div>`)+`<div style="text-align:center;margin-top:10px"><button class="small-btn" data-act="b-reset">↺ Restart</button></div>`;
+ $('#ansB')?.focus();}
+function checkB(show){const [r,c]=INT[actB.k],want=gv(r,c),ex=`${gv(r-1,c)} + ${gv(r,c-1)} = ${want}`;
+ if(show){actB.fb=`P[${r}][${c}] = ${ex}.`;actB.cls='hint';actB.k++;return mountB();}
+ const v=parseInt(($('#ansB')||{}).value,10);if(v===want){actB.fb=`✓ Correct! ${ex}.`;actB.cls='ok';actB.k++;}else{actB.fb='✗ Not quite. Add the teal cell above and the teal cell to the left.';actB.cls='no';}mountB();}
+
+/* 14 summary */
+add({time:'47–50 min',title:'What you learned today',steps:[
+ ['DP = <b>recursion + memory</b>: solve each subproblem once.'],
+ ['Use DP when you see <b>optimal substructure</b> AND <b>overlapping subproblems</b>.'],
+ ['Write the recurrence: <b>name it → last choice → combine → base cases</b>.'],
+ ['Store answers <b>top-down</b> (memo) or <b>bottom-up</b> (table).'],
+ ['Next session: <b>0/1 knapsack</b> and <b>rod cutting</b> with the same recipe.','key']],
+ vis:s=>`<div style="width:100%"><div class="mid" style="margin-bottom:12px">✍ Exit ticket</div>
+ ${[['Which DP property does Merge Sort lack?','Overlapping subproblems.'],['Recurrence for stairs (1 or 2 steps)?','ways(n) = ways(n−1) + ways(n−2), with ways(0) = ways(1) = 1.'],['A table has n × m cells, O(1) work each. Time?','O(n · m)']].map(([q,a],i)=>`<div class="qcard"><div class="q">${i+1}. ${q}<div class="ans" id="ex${i}" hidden>✓ ${a}</div></div><button class="small-btn" data-act="reveal" data-id="ex${i}">Answer</button></div>`).join('')}</div>`,
+ notes:'Quiz 3 (Session 33) covers DP fundamentals. Remind students to practise the recipe.'});
+
+/* ---------- engine ---------- */
+let cur=0,step=1;const seen=new Set([0]);
+function renderSlide(){const s=slides[cur];
+ $('#slide').innerHTML=`<div class="head"><div class="kicker">Session 31 · slide ${cur+1} of ${slides.length} · <span class="time">⏱ ${s.time}</span></div><h1 class="slide-title">${s.title}</h1></div>
+ <div class="body"><div class="panel" id="stepsPanel"></div><div class="panel vis" id="visPanel"></div></div>`;
+ $('#dots').innerHTML=slides.map((x,i)=>`<button class="${i===cur?'on':seen.has(i)?'seen':''}" data-act="jump" data-t="${i}" title="${esc(x.title)}">${i+1}</button>`).join('');
+ renderStep(true);}
+function renderStep(full){const s=slides[cur],n=s.steps.length;
+ $('#stepsPanel').innerHTML=`<div class="stephead">Step ${step} of ${n}<div class="pips">${s.steps.map((_,i)=>`<i class="${i<step?'on':''}"></i>`).join('')}</div></div>
+ ${s.steps.slice(0,step).map(([t,k],i)=>`<div class="step ${i===step-1?'new':''} ${k?'key':''}"><span class="n">${i+1}</span><div>${t}</div></div>`).join('')}
+ <div class="more">${step<n?'Press <kbd>Space</kbd> for the next step':'✓ Slide complete. Press <kbd>Space</kbd> for the next slide'}</div>`;
+ if(full||!s.mount){$('#visPanel').innerHTML=s.vis(step);if(s.mount)s.mount();}
+ const last=step>=n&&cur===slides.length-1,nb=$('#nextButton');nb.disabled=last;nb.textContent=step<n?'Next step ▸':'Next slide →';nb.classList.toggle('slide',step>=n);
+ $('#prevButton').disabled=cur===0&&step===1;$('#pageCount').textContent=`Slide ${cur+1}/${slides.length} · step ${step}/${n}`;}
+function next(){const n=slides[cur].steps.length;if(step<n){step++;renderStep(false);}else if(cur<slides.length-1){cur++;step=1;seen.add(cur);renderSlide();}}
+function prev(){if(step>1){step--;renderStep(false);}else if(cur>0){cur--;step=slides[cur].steps.length;renderSlide();}}
+function jump(i){cur=i;step=1;seen.add(i);renderSlide();}
+function fitDeck(){const r=Math.min(innerWidth/1600,innerHeight/900),d=$('#deck');d.style.position='absolute';d.style.left='50%';d.style.top='50%';d.style.transform=`translate(-50%,-50%) scale(${r})`;}
+function closeNotes(){$('#notesOverlay').classList.remove('open');}
+function toggleNotes(){const o=$('#notesOverlay');if(o.classList.contains('open'))return closeNotes();$('#notesPosition').textContent=`Slide ${cur+1} · ${slides[cur].time}`;$('#notesContent').textContent=slides[cur].notes;o.classList.add('open');}
+let cs=null,ca=0,ct=null;const ctext=()=>{const t=Math.floor((ca+(cs?Date.now()-cs:0))/1000);return '⏱ '+String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');};
+function toggleClock(){const b=$('#timerBtn');if(cs){ca+=Date.now()-cs;cs=null;clearInterval(ct);b.classList.remove('running');}else{cs=Date.now();ct=setInterval(()=>b.textContent=ctext(),1000);b.classList.add('running');}b.textContent=ctext();}
+document.addEventListener('click',ev=>{const b=ev.target.closest('[data-act]');if(!b)return;const a=b.dataset.act;
+ if(a==='next')return next();if(a==='prev')return prev();if(a==='jump')return jump(+b.dataset.t);
+ if(a==='timer')return toggleClock();if(a==='notes')return toggleNotes();if(a==='close')return closeNotes();
+ if(a==='full'){if(!document.fullscreenElement)$('#deck').requestFullscreen?.().then(fitDeck).catch(()=>{});else document.exitFullscreen?.();return;}
+ if(a==='reveal'){const n=document.getElementById(b.dataset.id);if(n)n.hidden=!n.hidden;return;}
+ if(a==='qc'){qcAns[+b.dataset.i]=b.dataset.a;return mountQC();}
+ if(a==='a-check')return checkA(false);if(a==='a-show')return checkA(true);if(a==='a-reset'){actA.i=1;actA.fb='';actA.cls='';return mountA();}
+ if(a==='b-check')return checkB(false);if(a==='b-show')return checkB(true);if(a==='b-reset'){actB.k=0;actB.fb='';actB.cls='';return mountB();}});
+document.addEventListener('keydown',ev=>{
+ if(ev.ctrlKey&&ev.shiftKey&&ev.key.toLowerCase()==='p'){ev.preventDefault();return toggleNotes();}
+ if(ev.key==='Escape')return closeNotes();const ae=document.activeElement;
+ if(ae&&ae.classList.contains('ans')){if(ev.key==='Enter'){ev.preventDefault();ae.id==='ansA'?checkA(false):checkB(false);return;}if(ev.key!=='PageDown'&&ev.key!=='PageUp')return;}
+ if($('#notesOverlay').classList.contains('open'))return;
+ if(ev.key==='ArrowRight'||ev.key==='PageDown'||ev.key===' '){ev.preventDefault();return next();}
+ if(ev.key==='ArrowLeft'||ev.key==='PageUp'){ev.preventDefault();return prev();}
+ if(ev.key.toLowerCase()==='f'){ev.preventDefault();if(!document.fullscreenElement)$('#deck').requestFullscreen?.().then(fitDeck).catch(()=>{});else document.exitFullscreen?.();}});
+addEventListener('resize',fitDeck);document.addEventListener('fullscreenchange',fitDeck);fitDeck();renderSlide();
+</script>
+</body>
+</html>

@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#090e21">
+<title>CS332 Session 30 | Greedy Method</title>
+<style>
+:root{color-scheme:dark;--bg:#080f24;--ink:#eef6ff;--muted:#abc1d7;--teal:#45e3c2;--amber:#ffcc77;--pink:#ff8fa8;--purple:#b7a0ff}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#030814;color:var(--ink);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;display:grid;place-items:center;overflow:hidden}button,select,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.35;cursor:not-allowed}
+#deck{width:1600px;height:900px;position:relative;overflow:hidden;background:radial-gradient(ellipse 950px 620px at 92% -10%,#3a2f1c 0%,transparent 60%),radial-gradient(ellipse 700px 480px at 0% 100%,#133243 0%,transparent 60%),var(--bg);box-shadow:0 24px 90px #0009;border:1px solid #29354c}
+#deck:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.16;background-image:radial-gradient(#6383a5 1px,transparent 1px);background-size:28px 28px;mask-image:linear-gradient(90deg,transparent,#000 30%,transparent)}
+.topbar{position:absolute;top:0;left:0;right:0;height:84px;padding:0 40px 0 50px;display:flex;align-items:center;gap:14px;border-bottom:1px solid #ffffff20;background:#071126b5;z-index:3}
+.brand{width:47px;height:47px;border-radius:13px;background:linear-gradient(135deg,#ffcc77,#ff8fa8);color:#2a1205;display:grid;place-items:center;font-weight:1000;font-size:19px}.course{font-size:18px;font-weight:900;letter-spacing:.06em}.course-sub{font-size:13px;color:var(--muted);margin-top:2px}
+.dots{display:flex;gap:7px;margin-left:auto;align-items:center}.dots button{width:34px;height:34px;border-radius:50%;border:1px solid #5a708c;background:#172541;color:#cfe0f5;font-weight:900;font-size:14px}.dots button.on{background:#ffcc77;border-color:#ffcc77;color:#2a1c05}.dots button.seen{border-color:#c9a15b}
+.small-btn{border:1px solid #5a708c;background:#172541;border-radius:10px;color:var(--ink);font-size:16px;font-weight:850;padding:10px 15px;min-height:42px}.small-btn:hover{border-color:var(--teal);background:#26395a}.small-btn.primary{background:#29bca3;border-color:#29bca3;color:#05142c}.small-btn.warning{border-color:#c38b59;color:#ffda9b}.small-btn.danger{border-color:#d76b8b;color:#ffb3c6}.small-btn.amber{background:#ffcc77;border-color:#ffcc77;color:#2a1c05}.small-btn:focus-visible,.choice:focus-visible,.tab:focus-visible{outline:4px solid var(--amber);outline-offset:2px}
+#timerBtn{font-variant-numeric:tabular-nums;min-width:92px}#timerBtn.running{border-color:var(--amber);color:var(--amber)}
+#slide{position:absolute;inset:100px 60px 94px;display:flex;flex-direction:column;min-height:0;z-index:1}#slide>*{animation:rise .35s ease both}@keyframes rise{from{transform:translateY(12px)}}
+.kicker{display:inline-flex;align-items:center;gap:11px;color:var(--amber);font-weight:900;font-size:15px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:6px}.kicker .dot{width:10px;height:10px;border-radius:100%;background:var(--amber);box-shadow:0 0 0 5px #ffcc771a}.kicker .time{color:var(--teal);letter-spacing:.08em}
+.slide-title{font-size:46px;line-height:1.07;font-weight:930;letter-spacing:-1.4px;margin:0 0 6px}.slide-sub{color:#c2d1e7;font-size:20px;line-height:1.38;margin:0 0 16px}.slide-body{flex:1;min-height:0;display:flex;flex-direction:column;gap:14px;overflow:hidden}
+.grid{display:grid;gap:18px;min-height:0}.grid.two{grid-template-columns:1fr 1fr}.grid.lab{grid-template-columns:1.12fr .88fr}.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}.fill{flex:1;min-height:0}
+.panel{border:1px solid #ffffff26;background:linear-gradient(152deg,#192842e6,#101b34eb);border-radius:22px;padding:18px 22px;min-height:0;position:relative;overflow:hidden}.panel.teal{border-color:#2ca69288}.panel.purple{border-color:#8e7de088}.panel.amber{border-color:#dfa95b88}.panel.pink{border-color:#d76b8b88}.panel h3{margin:0 0 8px;font-weight:900;font-size:24px}.panel p{font-size:19px;color:#d1dded;line-height:1.45;margin:7px 0}.panel b{color:#fff}.col{display:flex;flex-direction:column}
+.lead{font-size:24px!important;line-height:1.3!important;font-weight:800;color:var(--ink)!important}.mini{font-size:15px!important;color:var(--muted)!important}.big{font-size:40px;font-weight:1000;letter-spacing:-1.4px}
+.callout{display:block;border:1px solid #62c8bb79;border-left:6px solid var(--teal);border-radius:14px;padding:12px 18px;background:#1538459d;font-size:18px;line-height:1.4;color:#e0fff8}.callout.amber{border-color:#ffcd76;border-left-color:var(--amber);background:#3d312693}.callout.pink{border-color:#f487a0;border-left-color:var(--pink);background:#402d3f82}
+.tag{display:inline-block;font-weight:900;font-size:14px;letter-spacing:.06em;text-transform:uppercase;border-radius:9px;padding:6px 10px;background:#304465;color:#d6ebff;align-self:start}.tag.teal{color:#7cffe5;background:#205448}.tag.amber{color:#ffd58d;background:#58402a}.tag.pink{color:#ffacc1;background:#5b3348}.tag.purple{color:#c8b8ff;background:#403569}
+.teal-text{color:var(--teal)}.amber-text{color:var(--amber)}.pink-text{color:var(--pink)}.purple-text{color:var(--purple)}.subtle{color:var(--muted)}
+.summary-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.summary-row span{border:1px solid #50657e;background:#1e314d;border-radius:10px;padding:6px 11px;font-size:16px;font-weight:800}.summary-row span b{color:var(--teal)}
+.controls{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.status{font-size:17px;color:#bad1e7}
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.choice{border:1px solid #65809b;background:#203250;color:var(--ink);border-radius:13px;min-height:54px;padding:10px 15px;font-size:19px;font-weight:900;text-align:left}.choice:hover{background:#2d4767;border-color:var(--teal)}.choice.selected{border-color:var(--teal);background:#1a5b57}.choice.bad{border-color:var(--pink);background:#643247}
+.feedback{border-radius:14px;border:1px solid #476984;background:#172c46;padding:11px 16px;font-size:18px;line-height:1.45;color:#e4f1ff;min-height:50px}.feedback.ok{border-color:var(--teal);background:#143c3d}.feedback.no{border-color:var(--pink);background:#3b273b}.feedback.hint{border-color:var(--amber);background:#3d3126}.feedback b{color:#fff}
+.table{border-collapse:collapse;width:100%;font-size:17px}.table th,.table td{padding:9px 12px;border-bottom:1px solid #40536e;text-align:left}.table th{font-size:14px;color:#92ffe4;font-weight:900;background:#1b3448}.table tr:last-child td{border-bottom:0}.table td{color:#d7e5f3}.table td.good{color:var(--teal);font-weight:800}.table td.bad{color:var(--pink);font-weight:800}
+.token{min-width:58px;height:58px;padding:0 10px;display:grid;place-items:center;border:2px solid var(--amber);border-radius:14px;background:#473b2a;color:var(--amber);font-weight:950;font-size:20px}.token.coin{border-radius:50%;width:58px;padding:0}
+.board{display:flex;flex-wrap:wrap;gap:8px;align-items:center;align-content:center}
+.tabs{display:flex;gap:7px;flex-wrap:wrap}.tab{border:1px solid #5a708c;background:#172541;border-radius:10px;color:var(--ink);font-size:16px;font-weight:850;padding:8px 13px}.tab:hover{border-color:var(--teal)}.tab.on{background:#29bca3;border-color:#29bca3;color:#05142c}
+input[type=range]{accent-color:var(--amber);width:100%;height:28px;margin:4px 0;cursor:pointer}select{background:#101d32;border:1px solid #70819e;color:#e6f6ff;padding:8px 12px;border-radius:11px;min-height:44px;font-size:18px}.range-line{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:17px;color:var(--muted)}.range-line strong{font-size:28px;color:var(--amber)}
+/* guide */
+.guide-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}.guide-head h3{margin:0!important}.pips{display:flex;gap:6px;margin-left:auto}.pips i{width:26px;height:8px;border-radius:5px;background:#33496a}.pips i.on{background:var(--amber)}
+.gcard{display:flex;gap:12px;align-items:flex-start;border:1px solid #2c4867;background:#14233b;border-radius:13px;padding:8px 12px;margin-bottom:6px}.gcard .num{flex:0 0 28px;height:28px;border-radius:9px;background:#285d5c;color:#a6ffeb;display:grid;place-items:center;font-weight:900;font-size:14px}.gcard b.t{display:block;font-size:16.5px;color:#fff;margin-bottom:1px}.gcard div{font-size:16px;line-height:1.36;color:#d1dded}.gcard.new{border-color:var(--amber);background:#2b2a2a;animation:pop .35s ease}.gcard.new .num{background:#ffcc77;color:#2a1c05}@keyframes pop{from{transform:scale(.97)}}.gcard.check{border-color:#8e7de0;background:#221f3f}.gcard.check .num{background:#403569;color:#c8b8ff}
+.mini-btn{padding:3px 10px;min-height:0;font-size:14px;border-radius:8px;border:1px solid #8e7de0;background:#2e2b53;color:#ded4ff;font-weight:850}
+/* proof */
+.proof-step{display:block;width:100%;text-align:left;border:1px solid #5c7898;background:#1c2d49;color:var(--ink);border-radius:11px;padding:8px 12px;font-size:16px;font-weight:700;margin-bottom:6px;line-height:1.33}.proof-step:hover{border-color:var(--amber)}.proof-step.wrong{border-color:var(--pink);background:#4a2a3a;animation:shake .3s}@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.proof-done{display:flex;gap:10px;align-items:flex-start;border:1px solid #2c4867;background:#143c3d;border-color:#2ca692;border-radius:11px;padding:7px 12px;font-size:16px;margin-bottom:6px;line-height:1.33}.proof-done>span{flex:0 0 26px;height:26px;border-radius:8px;background:#29bca3;color:#05142c;display:grid;place-items:center;font-weight:900;font-size:14px}
+.kbar{display:flex;height:54px;border-radius:12px;overflow:hidden;border:2px solid #4d6788;background:#0f1c33}.kbar div{display:grid;place-items:center;font-weight:900;font-size:15px;color:#06142a;border-right:2px solid #0f1c33;transition:width .4s;white-space:nowrap;overflow:hidden}
+.howto{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px}.howto .icon{width:70px;height:70px;border-radius:20px;display:grid;place-items:center;font-size:34px;background:#3a2f1c;border:1px solid #c9a15b}
+.jump{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:1px solid #47617f;background:#1a2b46;color:var(--ink);border-radius:12px;padding:9px 13px;font-size:17px;font-weight:800;margin-bottom:7px}.jump:hover{border-color:var(--amber)}.jump span{width:30px;height:30px;border-radius:9px;background:#58402a;color:#ffd58d;display:grid;place-items:center;font-size:15px;flex:0 0 auto}
+.footer{position:absolute;bottom:0;left:0;right:0;height:77px;padding:0 57px;display:flex;align-items:center;gap:15px;border-top:1px solid #ffffff27;background:#071126e8;z-index:3}.foot-hint{color:#9bb3cb;font-size:15px;margin-right:auto}.page-count{color:#d5ebfa;font-size:17px;font-weight:850;min-width:80px;text-align:center}.progress-track{height:7px;background:#39516d;border-radius:9px;width:172px;overflow:hidden}.progress-fill{height:100%;background:linear-gradient(90deg,#ffcc77,#ff8fa8);transition:width .3s}.nav-button{height:49px;min-width:116px;font-size:17px;font-weight:850;border-radius:12px;color:var(--ink);border:1px solid #617c9d;background:#1a2d4d}.nav-button.next{color:#2a1c05;background:#ffcc77;border-color:#ffcc77}.nav-button:disabled{opacity:.35}
+.fullsize{font-size:72px;font-weight:1000;line-height:1.04;letter-spacing:-2.4px}
+.overlay{position:absolute;inset:0;background:#030a19e9;z-index:10;display:none;align-items:center;justify-content:center;padding:72px}.overlay.open{display:flex}.overlay-panel{width:100%;height:100%;background:#15213a;border:1px solid #7b9db2;border-radius:25px;padding:35px 45px;display:flex;flex-direction:column;gap:18px}.overlay-head{display:flex;align-items:center;gap:22px}.overlay-head h2{font-size:34px;margin:0}.notes-content{font-size:25px;line-height:1.58;white-space:pre-line;color:#dbeaf9;overflow:auto}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="deck" role="application" aria-label="Session 30 step-by-step lesson: the greedy method">
+ <header class="topbar"><div class="brand">CS</div><div><div class="course">CS332 · SESSION 30</div><div class="course-sub">Air University · Week 10 · The greedy method · step-by-step lesson</div></div><div class="dots" id="dots"></div><button class="small-btn" id="timerBtn" data-act="timer" title="Start / pause the clock">⏱ 00:00</button><button class="small-btn" data-act="notes" title="Instructor notes (Ctrl+Shift+P)">☼ Notes</button><button class="small-btn" data-act="full" title="Full screen (F)">⛶</button></header>
+ <main id="slide" aria-live="polite"></main>
+ <footer class="footer"><div class="foot-hint">← → change slide &nbsp;·&nbsp; <b>Next step</b> buttons build each idea &nbsp;·&nbsp; Ctrl + Shift + P = tutor notes</div><div class="progress-track"><div class="progress-fill" id="progressFill"></div></div><div class="page-count" id="pageCount"></div><button class="nav-button" id="prevButton" data-act="prev">← Back</button><button class="nav-button next" id="nextButton" data-act="next">Next →</button></footer>
+ <div id="notesOverlay" class="overlay" aria-hidden="true"><div class="overlay-panel"><div class="overlay-head"><h2>Instructor notes</h2><div style="margin-left:auto" class="status" id="notesPosition"></div><button class="small-btn" data-act="close">✕ Close</button></div><div id="notesContent" class="notes-content"></div></div></div>
+</div>
+<script>
+'use strict';
+const slides=[];
+function add(time,title,sub,content,notes){slides.push({time,title,sub,content,notes});}
+const chk=(id,txt,cls='teal-text')=>` <button class="mini-btn" data-act="reveal" data-id="${id}">Answer</button> <b id="${id}" hidden class="${cls}">${txt}</b>`;
+
+/* ---------- step-by-step guides ---------- */
+const GUIDES={
+ change:{title:'Why greedy works here, in 5 steps',steps:[
+  ['The greedy idea','A shopkeeper giving change hands over the <b>largest note that fits</b>, then repeats with what is left. Click <b>Give next note</b>.'],
+  ['Property 1 · Greedy choice','Some best answer <b>starts with the greedy choice</b>. Giving the biggest note now never ruins the final answer.'],
+  ['Property 2 · Optimal substructure','After one note, what is left (e.g. Rs 186) is a <b>smaller copy</b> of the same problem. Solve that best, and the whole answer is best.'],
+  ['Both together','Greedy choice + optimal substructure ⇒ greedy is <b>optimal</b>. If either is missing, greedy may fail (slide 7).'],
+  ['Check yourself','Is "largest note first" optimal for Rs 100, 50, 20, 10, 5, 2, 1?'+chk('gc5','Yes. The lab checks against an exact DP answer for every amount, and they always match.')]]},
+ rules:{title:'Build a greedy solution in 5 steps',steps:[
+  ['Step 1 · Objective','Maximise the <b>number</b> of non-overlapping activities in one room.'],
+  ['Step 2 · Candidate rules','Three rules sound reasonable: earliest <b>start</b>, <b>shortest</b>, earliest <b>finish</b>. 🤔 Predict the winner, then try each tab.'],
+  ['Step 3 · Test with examples','Earliest start → 1. Shortest → 3. Earliest finish → 4. A single counterexample <b>kills</b> a rule.'],
+  ['Step 4 · Prove the survivor','Earliest finish leaves the most time for everything else. We prove it on slide 5.'],
+  ['Check yourself','Why does "earliest start" fail here?'+chk('gr5','A starts first but runs 0–10 and blocks everything else.')]]},
+ run:{title:'Run the algorithm in 5 steps',steps:[
+  ['1 · Sort','Sort activities by <b>finish time</b>. (Already done on the left.)'],
+  ['2 · Track one number','<b>lastFinish</b> = end time of the last activity you took. It starts at −∞.'],
+  ['3 · Decide','If start ≥ lastFinish → <b>TAKE</b> and set lastFinish = finish. Otherwise → <b>SKIP</b>. Use the buttons on the left.'],
+  ['4 · Cost','Sort O(n log n) + one scan O(n) = <b>O(n log n)</b> in total.'],
+  ['Check yourself','lastFinish = 7 and the next activity is [5, 9). Take or skip?'+chk('gu5','Skip: 5 < 7, so it overlaps.','pink-text')]]},
+ proof:{title:'Exchange argument in 4 steps',steps:[
+  ['What is it?','Take <b>any</b> optimal solution and <b>swap</b> one of its choices for the greedy choice. Show it is still valid and just as good.'],
+  ['Every exchange proof has 6 parts','<b>Set up → Greedy choice → Key fact → Swap → Conclude → Repeat.</b> Build the proof on the left in this order.'],
+  ['Stuck?','Use <b>💡 Hint</b> on the left. A wrong piece shakes; there is no penalty, so try again.'],
+  ['Check yourself','Try the same swap for "shortest first". Why does the proof break?'+chk('gp4','The shortest activity can finish <b>later</b> than X, so later activities may collide. The key fact finish(A) ≤ finish(X) is lost.')]]},
+ fk:{title:'Fractional knapsack in 5 steps',steps:[
+  ['The problem','A bag holds 50 kg. You may take <b>part</b> of an item (rice, gold dust, fuel). Maximise the value.'],
+  ['Three rules','Highest value first? Lightest first? Best <b>value ÷ weight</b> first? 🤔 Predict, then try each tab.'],
+  ['Why the ratio wins','Every kg of space should hold the most value. Swapping a low-ratio kg for a high-ratio kg only <b>raises</b> the value: another exchange argument.'],
+  ['Cost','Compute ratios O(n), sort O(n log n), fill O(n). Total <b>O(n log n)</b>.'],
+  ['Check yourself','At 50 kg, what does each rule give?'+chk('gf5','Highest value $220, lightest $230, ratio <b>$240</b>.')]]},
+ limits:{title:'Strengths & limitations in 5 steps',steps:[
+  ['Strengths','<b>Fast</b> (often O(n log n)), <b>simple</b> code, very little memory.'],
+  ['Limitation 1 · Coins','Coins {1, 3, 4}, amount 6: greedy 4+1+1 = <b>3 coins</b>, best 3+3 = <b>2</b>. Try it on the left.'],
+  ['Limitation 2 · 0/1 knapsack','No fractions, 50 kg: greedy by ratio takes A+B+D = <b>$170</b>; best is B+C = <b>$220</b>.'],
+  ['The fix','When the greedy choice isn\'t provably safe, use <b>dynamic programming</b>: try every choice for each subproblem and store the best.'],
+  ['Check yourself','Coins {1, 4, 6}, amount 8. Is greedy optimal?'+chk('gl5','No: greedy 6+1+1 = 3 coins; best 4+4 = 2.','pink-text')]]}
+};
+const gStep={};
+function guideHtml(k){const g=GUIDES[k],s=gStep[k]||1,n=g.steps.length;
+ return `<div class="guide-head"><h3>${g.title}</h3><div class="pips">${g.steps.map((_,i)=>`<i class="${i<s?'on':''}"></i>`).join('')}</div></div>
+ <div style="flex:1;min-height:0">${g.steps.slice(0,s).map(([t,b],i)=>`<div class="gcard ${i===s-1?'new':''} ${t.startsWith('Check')?'check':''}"><span class="num">${i+1}</span><div><b class="t">${t}</b>${b}</div></div>`).join('')}</div>
+ <div class="controls" style="margin-top:8px"><button class="small-btn" data-act="g-prev" data-g="${k}" ${s<=1?'disabled':''}>← Back</button>${s<n?`<button class="small-btn amber" data-act="g-next" data-g="${k}">Next step (${s+1}/${n}) →</button>`:`<button class="small-btn primary" data-act="next">✓ Done: next slide →</button>`}</div>`;}
+function mountGuides(){document.querySelectorAll('[data-guide]').forEach(el=>el.innerHTML=guideHtml(el.dataset.guide));}
+
+/* ---------- slides ---------- */
+add('00–04 min','Greedy: choose, commit, repeat','Session 30 · How to use this lesson, and where we are going.',`
+<div class="grid two fill">
+ <div class="panel amber col" style="justify-content:center;gap:16px;background:linear-gradient(140deg,#3a2f1c,#151c37)">
+  <span class="tag amber">Session 30 · The greedy method</span>
+  <div class="fullsize">Best move now.<br><span class="amber-text">But is it safe?</span></div>
+  <div class="callout amber" style="font-size:17px">Remember the S29 hiker? Same rule, but stuck on a small hill from one start and at the summit from another. Today: <b>when can we trust greedy, and how do we prove it?</b></div>
+  <div class="grid three">
+   <div class="howto"><div class="icon">📖</div><b>1 · Read</b><span class="subtle">one step at a time</span></div>
+   <div class="howto"><div class="icon">🤔</div><b>2 · Predict</b><span class="subtle">before you click</span></div>
+   <div class="howto"><div class="icon">👆</div><b>3 · Click</b><span class="subtle">and check yourself</span></div>
+  </div>
+ </div>
+ <div class="panel col">
+  <h3>Today's path (click to jump)</h3>
+  <button class="jump" data-act="jump" data-target="1"><span>💵</span>Greedy-choice property: the shopkeeper</button>
+  <button class="jump" data-act="jump" data-target="2"><span>📏</span>Constructing a greedy solution: which rule?</button>
+  <button class="jump" data-act="jump" data-target="3"><span>▶</span>Run earliest-finish yourself</button>
+  <button class="jump" data-act="jump" data-target="4"><span>🛡</span>Activity: greedy-choice justification</button>
+  <button class="jump" data-act="jump" data-target="5"><span>🎒</span>Example: fractional knapsack</button>
+  <button class="jump" data-act="jump" data-target="6"><span>⚠</span>Strengths &amp; limitations</button>
+  <button class="jump" data-act="jump" data-target="7"><span>⚖</span>Greedy vs dynamic programming</button>
+  <p class="mini" style="margin-top:auto">Look for the amber <b>Next step →</b> buttons on each slide.</p>
+ </div>
+</div>`,`Start the clock. Recap S29 in one sentence: greedy = best-looking move now, never undone.
+ASK: "When the hiker got stuck, what went wrong?" A local best is not the global best. Today we learn to prove when greedy IS safe.`);
+
+add('04–10 min','💵 What makes greedy correct?','Example: give change with the fewest notes and coins (Rs 100, 50, 20, 10, 5, 2, 1).',`
+<div class="grid lab fill">
+ <div class="panel amber col"><div id="changeLab" class="col" style="flex:1;min-height:0"></div></div>
+ <div class="panel col" data-guide="change"></div>
+</div>`,`Default Rs 286: 100, 100, 50, 20, 10, 5, 1 = 7 notes. DP agrees.
+Point at the "remaining" chip after each note: that is optimal substructure made visible.
+Key line: greedy choice + optimal substructure ⇒ greedy is optimal.`);
+
+add('10–16 min','📏 Constructing a greedy solution','Activity selection: one room, seven requests. Which rule picks the most activities?',`
+<div class="grid lab fill">
+ <div class="panel amber col"><div id="ruleLab" class="col" style="flex:1;min-height:0"></div></div>
+ <div class="panel col" data-guide="rules"></div>
+</div>`,`Vote first. Earliest start → 1 (A blocks everything). Shortest → 3 (C overlaps B and D). Earliest finish → 4.
+Stress the recipe: objective → rule → test/prove → repeat.`);
+
+add('16–21 min','▶ Run earliest-finish yourself','Activities are sorted by finish time. For each one, decide TAKE or SKIP.',`
+<div class="grid lab fill">
+ <div class="panel teal col"><div id="scheduleLab" class="col" style="flex:1;min-height:0"></div></div>
+ <div class="panel col" data-guide="run"></div>
+</div>`,`Do the first two together, then let a student drive. Wrong choices are rejected with a hint.
+Final: A, D, F = 3 activities.`);
+
+add('21–29 min','🛡 Activity: greedy-choice justification','Prove that "earliest finish" is safe. Click the proof pieces in the right order.',`
+<div class="grid lab fill">
+ <div class="panel amber col"><div id="proofLab" class="col" style="flex:1;min-height:0"></div></div>
+ <div class="panel col" data-guide="proof"></div>
+</div>`,`Main activity. Pairs discuss before each click. Read guide steps 1–2 first: the 6-part outline is the scaffold.
+Correct order: set up O and X → A finishes earliest → finish(A) ≤ finish(X) → swap X for A → same size, so optimal → repeat on the rest.`);
+
+add('29–35 min','🎒 Example: fractional knapsack','Same items as the Session 29 bag. Now you may take part of an item.',`
+<div class="grid lab fill">
+ <div class="panel teal col"><div id="fkLab" class="col" style="flex:1;min-height:0"></div></div>
+ <div class="panel col" data-guide="fk"></div>
+</div>`,`At 50 kg: value $220, lightest $230, ratio $240. Move the slider: the ratio rule is never beaten.`);
+
+add('35–42 min','⚠ Strengths & limitations','Greedy is fast and simple, but one counterexample breaks it. Test some coin systems.',`
+<div class="grid lab fill">
+ <div class="panel pink col"><div id="coinLab" class="col" style="flex:1;min-height:0"></div></div>
+ <div class="panel col" data-guide="limits"></div>
+</div>`,`Start with {1,3,4} and 6: greedy 3 coins, DP 2. Then {1,5,10,25} and 30: they match. Then {1,4,6} and 8.
+Message: greedy is not wrong in general; it is correct only with a proof.`);
+
+add('42–50 min','⚖ Greedy vs dynamic programming','Quick quiz, then the comparison you should remember.',`
+<div class="grid lab fill">
+ <div class="panel purple col"><div id="jbLab" class="col" style="flex:1;min-height:0"></div></div>
+ <div class="panel col">
+  <table class="table"><thead><tr><th></th><th>⚡ Greedy</th><th>🧠 DP</th></tr></thead><tbody>
+   <tr><td><b>Choices</b></td><td>Commits to <b>one</b></td><td>Compares <b>all</b></td></tr>
+   <tr><td><b>Needs</b></td><td>Greedy choice + substructure</td><td>Substructure + overlap</td></tr>
+   <tr><td><b>Speed</b></td><td class="good">Fast, O(n log n)</td><td>Slower: fills a table</td></tr>
+   <tr><td><b>Memory</b></td><td class="good">Little</td><td>Table of states</td></tr>
+   <tr><td><b>Risk</b></td><td class="bad">Wrong without proof</td><td class="good">Optimal when it applies</td></tr>
+   <tr><td><b>Examples</b></td><td>Activity selection, fractional knapsack, Huffman</td><td>0/1 knapsack, any coin change</td></tr>
+  </tbody></table>
+  <div class="callout amber" style="margin-top:auto">Rule of thumb: <b>try greedy, then try to break it.</b> Can't prove it? Use DP. <span class="subtle">Next week: DP in depth.</span></div>
+ </div>
+</div>`,`6 claims, one at a time. For each "Breaks" answer, ask for the counterexample before clicking.
+Answers: safe, breaks, safe, breaks, safe, breaks.
+Exit question: "In one sentence, when is greedy optimal?"`);
+
+/* ---------- helpers ---------- */
+const $=(q,r=document)=>r.querySelector(q);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let current=0;const seen=new Set([0]);
+function dpCoins(d,amt){const best=Array(amt+1).fill(Infinity),pick=Array(amt+1).fill(0);best[0]=0;for(let a=1;a<=amt;a++)for(const c of d)if(c<=a&&best[a-c]+1<best[a]){best[a]=best[a-c]+1;pick[a]=c;}const ch=[];let a=amt;while(a>0&&pick[a]){ch.push(pick[a]);a-=pick[a];}return {count:best[amt],ch};}
+
+/* Shopkeeper change */
+const NOTES=[100,50,20,10,5,2,1];let chAmt=286,chPicks=[];
+function mountChange(){const el=$('#changeLab');if(!el)return;const rem=chAmt-chPicks.reduce((a,b)=>a+b,0),done=rem===0,next=done?null:NOTES.find(x=>x<=rem),opt=dpCoins(NOTES,chAmt);
+ el.innerHTML=`<div class="range-line"><span>Change to give</span><strong>Rs ${chAmt}</strong></div><input type="range" id="chRange" min="1" max="500" value="${chAmt}" aria-label="Amount of change">
+ <div class="summary-row" style="margin:6px 0"><span>Notes given: <b>${chPicks.length}</b></span><span>Remaining: <b>Rs ${rem}</b></span>${!done&&chPicks.length?`<span class="amber-text" style="border-color:#c9a15b">↳ a smaller copy of the same problem</span>`:''}</div>
+ <div class="board" style="flex:1;min-height:0">${chPicks.length?chPicks.map(v=>`<div class="token ${v<10?'coin':''}">${v}</div>`).join(''):'<span class="subtle" style="font-size:20px">🤔 Predict: how many notes for Rs '+chAmt+'?</span>'}</div>
+ <div class="feedback ${done?(chPicks.length===opt.count?'ok':'no'):''}">${done?`Greedy used <b>${chPicks.length}</b> notes. Exact best (DP) = <b>${opt.count}</b> ${chPicks.length===opt.count?'✓ Greedy is optimal here.':'✗'}`:`Largest note ≤ Rs ${rem} is <b>Rs ${next}</b>. Give it.`}</div>
+ <div class="controls" style="margin-top:10px"><button class="small-btn amber" data-act="ch-next" ${done?'disabled':''}>Give next note →</button><button class="small-btn" data-act="ch-all" ${done?'disabled':''}>Finish</button><button class="small-btn" data-act="ch-reset">↺ Reset</button><span class="status">Move the slider to try other amounts.</span></div>`;
+ $('#chRange').addEventListener('input',e=>{chAmt=+e.target.value;chPicks=[];mountChange();$('#chRange').focus();});}
+
+/* Timeline */
+function timelineSvg(tasks,dec=[],focus=-1,{width=820,height=300,max=14}={}){const padL=56,padR=20,plot=width-padL-padR,row=Math.min(36,(height-40)/tasks.length),top=32;
+ let s=`<svg viewBox="0 0 ${width} ${height}" style="width:100%;height:100%">`;
+ for(let t=0;t<=max;t+=2){const x=padL+plot*t/max;s+=`<line x1="${x}" y1="26" x2="${x}" y2="${height-6}" stroke="#506784" stroke-dasharray="3 8" opacity=".6"/><text x="${x}" y="19" text-anchor="middle" fill="#a7c7df" font-size="15">${t}</text>`;}
+ tasks.forEach((a,i)=>{const y=top+i*row,x=padL+plot*a.s/max,w=Math.max(5,plot*(a.e-a.s)/max),d=dec[i],fill=d==='take'?'#2ebf9d':d==='skip'?'#6b3d52':focus===i?'#e7b45a':'#315574',stroke=focus===i?'#ffeba6':d==='take'?'#73fbe0':'#769bb6';
+  s+=`<text x="24" y="${y+row/2+6}" fill="#dfebf8" text-anchor="middle" font-size="18" font-weight="850">${a.id}</text><rect x="${x}" y="${y+3}" width="${w}" height="${row-8}" rx="6" fill="${fill}" stroke="${stroke}" stroke-width="2"/><text x="${x+w/2}" y="${y+row/2+5}" fill="${d==='skip'?'#f6c9da':'#fff'}" font-size="15" font-weight="750" text-anchor="middle">${a.s}–${a.e}</text>`;});
+ return s+'</svg>';}
+
+/* Rule comparison */
+const RTASKS=[{id:'A',s:0,e:10},{id:'B',s:1,e:4},{id:'C',s:3,e:5},{id:'D',s:4,e:7},{id:'E',s:7,e:9},{id:'F',s:8,e:11},{id:'G',s:9,e:12}];
+const RULES={start:['Earliest start',(a,b)=>a.s-b.s],short:['Shortest duration',(a,b)=>(a.e-a.s)-(b.e-b.s)||a.s-b.s],finish:['Earliest finish',(a,b)=>a.e-b.e]};
+let ruleSel=null;
+function mountRule(){const el=$('#ruleLab');if(!el)return;let chosen=[];
+ if(ruleSel)RTASKS.slice().sort(RULES[ruleSel][1]).forEach(a=>{if(chosen.every(c=>a.s>=c.e||c.s>=a.e))chosen.push(a);});
+ const why={start:'A starts first but runs 0–10 and blocks almost everything.',short:'C is the shortest, but it overlaps both B and D, knocking out two.',finish:'Finishing early leaves the most room for the rest. Best possible!'};
+ el.innerHTML=`<div class="tabs"><span class="status" style="align-self:center">Try a rule:</span>${Object.entries(RULES).map(([k,[l]])=>`<button class="tab ${k===ruleSel?'on':''}" data-act="rule" data-k="${k}">${l}</button>`).join('')}</div>
+ <div style="flex:1;min-height:0;margin:8px 0">${timelineSvg(RTASKS,RTASKS.map(t=>ruleSel?(chosen.includes(t)?'take':'skip'):undefined),-1,{max:12})}</div>
+ <div class="feedback ${!ruleSel?'':ruleSel==='finish'?'ok':'no'}">${!ruleSel?'🤔 Predict which rule wins, then click a tab. Green = chosen, red = rejected.':`<b>${RULES[ruleSel][0]}</b> picks ${chosen.map(x=>x.id).join(', ')} → <b>${chosen.length}</b> activit${chosen.length===1?'y':'ies'} (best possible: 4). ${why[ruleSel]}`}</div>`;}
+
+/* TAKE/SKIP */
+const STASKS=[{id:'A',s:1,e:4},{id:'B',s:3,e:5},{id:'C',s:0,e:6},{id:'D',s:5,e:7},{id:'E',s:5,e:9},{id:'F',s:8,e:9},{id:'G',s:8,e:11},{id:'H',s:2,e:14}];
+const sch={i:0,dec:[],checked:false,fb:''};
+function lastFin(k){let f=-Infinity;for(let i=0;i<k;i++)if(sch.dec[i]==='take')f=STASKS[i].e;return f;}
+function mountSchedule(){const el=$('#scheduleLab');if(!el)return;const i=sch.i,done=i>=STASKS.length,a=STASKS[i],before=lastFin(i),fits=!done&&a.s>=before,f=v=>Number.isFinite(v)?v:'−∞',cnt=sch.dec.filter(x=>x==='take').length;
+ el.innerHTML=`<div class="summary-row">${done?'<span class="tag teal">Complete</span>':`<span class="tag amber">Now: ${a.id} [${a.s}, ${a.e})</span>`}<span>lastFinish <b>${f(sch.checked&&fits?a.e:before)}</b></span><span>chosen <b>${cnt}</b></span></div>
+ <div style="flex:1;min-height:0;margin:6px 0">${timelineSvg(STASKS,sch.dec,done||sch.checked?-1:i)}</div>
+ <div class="feedback ${sch.checked||done?'ok':sch.fb?'no':''}">${done?`Chose <b>${STASKS.filter((_,j)=>sch.dec[j]==='take').map(x=>x.id).join(', ')}</b> = ${cnt} activities. Optimal!`:sch.checked?`<b>${fits?'TAKE':'SKIP'} ${a.id}</b>: ${fits?`${a.s} ≥ ${f(before)}, so it fits. lastFinish becomes ${a.e}.`:`${a.s} < ${f(before)}, so it overlaps. lastFinish stays ${f(before)}.`}`:sch.fb?esc(sch.fb):`🤔 Is start ${a.s} ≥ lastFinish ${f(before)}?`}</div>
+ <div class="controls" style="margin-top:10px;justify-content:center">${done?'':sch.checked?`<button class="small-btn amber" data-act="sch-next">Next activity →</button>`:`<button class="small-btn primary" data-act="sch" data-c="take">✓ TAKE</button><button class="small-btn warning" data-act="sch" data-c="skip">✗ SKIP</button>`}<button class="small-btn" data-act="sch-reset">↺ Reset</button></div>`;}
+
+/* Proof builder */
+const PROOF=[['Set up','Let O be any optimal schedule, and let X be its first activity.'],['Greedy choice','Let A be the activity that finishes earliest of all.'],['Key fact','So finish(A) ≤ finish(X).'],['Swap','Replace X with A in O. Every later activity started after X finished, so it also starts after A finishes.'],['Conclude','The new schedule is valid and the same size, so it is optimal and starts with A.'],['Repeat','Remove A and everything overlapping it. What is left is a smaller copy of the problem; apply the same argument.']];
+const SHUF=[3,1,5,0,4,2];let proofDone=0,proofWrong=-1,proofHint=false;
+function mountProof(){const el=$('#proofLab');if(!el)return;const left=SHUF.filter(k=>k>=proofDone);
+ el.innerHTML=`<div class="summary-row"><span class="tag amber">Claim</span><span>"Earliest finish" is a safe greedy choice</span><span>Placed <b>${proofDone} / 6</b></span></div>
+ <div style="margin-top:10px">${PROOF.slice(0,proofDone).map(([t,p],i)=>`<div class="proof-done"><span>${i+1}</span><div><b class="teal-text">${t}:</b> ${esc(p)}</div></div>`).join('')}</div>
+ ${left.length?`<p class="mini" style="margin:6px 0">Pieces left: click the one that comes <b>next</b>:</p>${left.map(k=>`<button class="proof-step ${k===proofWrong?'wrong':''}" data-act="proof" data-k="${k}">${esc(PROOF[k][1])}</button>`).join('')}`:''}
+ <div class="feedback ${proofDone===6?'ok':proofWrong>=0?'no':proofHint?'hint':''}" style="margin-top:auto">${proofDone===6?'<b>∎ Proof complete!</b> You built an <b>exchange argument</b>: swap an optimal choice for the greedy one and nothing gets worse.':proofHint?`💡 Next part is <b>${PROOF[proofDone][0]}</b>: it starts "${esc(PROOF[proofDone][1].split(' ').slice(0,4).join(' '))}…"`:proofWrong>=0?'Not yet. What must we know <b>before</b> that piece?':`Next part: <b>${PROOF[proofDone][0]}</b>.`}</div>
+ <div class="controls" style="margin-top:8px"><button class="small-btn warning" data-act="proof-hint" ${proofDone===6?'disabled':''}>💡 Hint</button><button class="small-btn" data-act="proof-reset">↺ Reset</button></div>`;}
+
+/* Fractional knapsack */
+const ITEMS=[{id:'A',e:'💻',w:10,v:60,c:'#45e3c2'},{id:'B',e:'📷',w:20,v:100,c:'#7eb4ff'},{id:'C',e:'🎧',w:30,v:120,c:'#b7a0ff'},{id:'D',e:'📘',w:5,v:10,c:'#ffcc77'}];
+const FKR={value:['Highest value',(a,b)=>b.v-a.v],light:['Lightest first',(a,b)=>a.w-b.w],ratio:['Best value ÷ weight',(a,b)=>b.v/b.w-a.v/a.w]};
+let fkRule=null,fkCap=50;
+function fracKnap(cmp,cap){let room=cap,val=0;const take={};ITEMS.slice().sort(cmp).forEach(it=>{const f=Math.max(0,Math.min(1,room/it.w));take[it.id]=f;room-=f*it.w;val+=f*it.v;});return {take,val};}
+function mountFk(){const el=$('#fkLab');if(!el)return;const rule=fkRule||'ratio',res=fracKnap(FKR[rule][1],fkCap),best=fracKnap(FKR.ratio[1],fkCap).val,order=ITEMS.slice().sort(FKR[rule][1]);
+ el.innerHTML=`<div class="tabs"><span class="status" style="align-self:center">Rule:</span>${Object.entries(FKR).map(([k,[l]])=>`<button class="tab ${k===fkRule?'on':''}" data-act="fk" data-k="${k}">${l}</button>`).join('')}</div>
+ ${!fkRule?`<div class="feedback hint" style="margin-top:12px">🤔 Predict: which rule gives the most value? Then pick a tab.</div>`:`
+ <div class="range-line" style="margin-top:6px"><span>Bag capacity</span><strong>${fkCap} kg</strong></div><input type="range" id="fkRange" min="10" max="65" step="5" value="${fkCap}" aria-label="Bag capacity">
+ <div class="kbar" style="margin:6px 0">${order.filter(it=>res.take[it.id]>0).map(it=>`<div style="width:${res.take[it.id]*it.w/fkCap*100}%;background:${it.c}">${it.id}${res.take[it.id]<1?' '+Math.round(res.take[it.id]*100)+'%':''}</div>`).join('')}</div>`}
+ <table class="table" style="margin-top:6px"><thead><tr><th>Item</th><th>kg</th><th>$</th><th>$/kg</th><th>Taken</th></tr></thead><tbody>${order.map(it=>`<tr><td>${it.e} <b>${it.id}</b></td><td>${it.w}</td><td>${it.v}</td><td>${it.v/it.w}</td><td class="${fkRule&&res.take[it.id]>0?'good':''}">${!fkRule?'?':res.take[it.id]===1?'all':res.take[it.id]>0?+(res.take[it.id]*it.w).toFixed(1)+' kg':'—'}</td></tr>`).join('')}</tbody></table>
+ ${fkRule?`<div class="feedback ${Math.abs(res.val-best)<1e-9?'ok':'no'}" style="margin-top:auto"><b>${FKR[rule][0]}</b> → <b>$${+res.val.toFixed(1)}</b>. ${Math.abs(res.val-best)<1e-9?'Maximum value ✓':`Ratio rule gets $${+best.toFixed(1)}.`}</div>`:''}`;
+ $('#fkRange')?.addEventListener('input',e=>{fkCap=+e.target.value;mountFk();$('#fkRange').focus();});}
+
+/* Coin lab */
+const PRESETS={odd:['1, 3, 4',[1,3,4]],us:['1, 5, 10, 25',[1,5,10,25]],other:['1, 4, 6',[1,4,6]]};
+const coin={sys:'odd',amount:6,picks:[]};
+function mountCoin(){const el=$('#coinLab');if(!el)return;const cs=PRESETS[coin.sys][1],rem=coin.amount-coin.picks.reduce((a,b)=>a+b,0),done=rem===0,opt=dpCoins(cs,coin.amount),next=done?null:cs.filter(x=>x<=rem).at(-1);
+ el.innerHTML=`<div class="tabs"><span class="status" style="align-self:center">Coins:</span>${Object.entries(PRESETS).map(([k,[l]])=>`<button class="tab ${k===coin.sys?'on':''}" data-act="coin-sys" data-k="${k}">{${l}}</button>`).join('')}</div>
+ <div class="range-line" style="margin-top:6px"><span>Amount</span><strong>${coin.amount}</strong></div><input type="range" id="coinAmt" min="1" max="40" value="${coin.amount}" aria-label="Amount">
+ <div class="summary-row" style="margin:6px 0"><span>Remaining <b>${rem}</b></span><span>Greedy coins <b>${coin.picks.length}</b></span></div>
+ <div class="board" style="flex:1;min-height:0">${coin.picks.length?coin.picks.map(v=>`<div class="token coin">${v}</div>`).join(''):'<span class="subtle" style="font-size:20px">🤔 Predict: will greedy find the fewest coins?</span>'}</div>
+ <div class="feedback ${done?(coin.picks.length===opt.count?'ok':'no'):''}">${done?`Greedy: <b>${coin.picks.length}</b> coins. Best (DP): <b>${opt.count}</b> = ${opt.ch.join(' + ')}. ${coin.picks.length===opt.count?'They match ✓':'Greedy is <b>not</b> optimal ✗'}`:`Next greedy coin: <b>${next}</b> (largest ≤ ${rem}).`}</div>
+ <div class="controls" style="margin-top:10px"><button class="small-btn amber" data-act="coin-next" ${done?'disabled':''}>Take next coin →</button><button class="small-btn" data-act="coin-all" ${done?'disabled':''}>Finish greedy</button><button class="small-btn" data-act="coin-reset">↺ Reset</button></div>`;
+ $('#coinAmt').addEventListener('input',e=>{coin.amount=+e.target.value;coin.picks=[];mountCoin();$('#coinAmt').focus();});}
+
+/* Justify or break quiz */
+const JB=[
+ {t:'Activity selection',c:'Always pick the activity that finishes earliest.',a:'safe',why:'Exchange argument: it never leaves less room than any other first choice.'},
+ {t:'Activity selection',c:'Always pick the shortest activity first.',a:'break',why:'[1,5), [4,6), [5,9): the shortest, [4,6), blocks both others, giving 1 instead of 2.'},
+ {t:'Fractional knapsack',c:'Take items by highest value ÷ weight.',a:'safe',why:'Each kg holds the most value possible, and fractions fill any gap.'},
+ {t:'0/1 knapsack',c:'Take whole items by highest value ÷ weight.',a:'break',why:'50 kg: greedy A+B+D = $170, best B+C = $220.'},
+ {t:'Coins {1, 5, 10, 25}',c:'Always take the largest coin that fits.',a:'safe',why:'This coin system is canonical: greedy is optimal for every amount.'},
+ {t:'Coins {1, 3, 4}',c:'Always take the largest coin that fits.',a:'break',why:'6 = 4+1+1 (3 coins), but 3+3 uses 2.'}];
+let jbStep=0,jbAns=null,jbScore=0;
+function mountJb(){const el=$('#jbLab');if(!el)return;const q=JB[jbStep];
+ el.innerHTML=`<div class="summary-row"><span class="tag purple">Justify or break · ${jbStep+1} / ${JB.length}</span><span>Score <b>${jbScore}</b></span></div>
+ <span class="tag" style="margin-top:16px">${esc(q.t)}</span><p class="lead" style="margin:10px 0">"${esc(q.c)}"</p>
+ <div class="choice-grid" style="margin-top:auto">${[['safe','✓ Safe (can be justified)'],['break','✗ Breaks (counterexample)']].map(([k,l])=>`<button class="choice ${jbAns===k?(k===q.a?'selected':'bad'):jbAns&&k===q.a?'selected':''}" data-act="jb" data-k="${k}" ${jbAns?'disabled':''}>${l}</button>`).join('')}</div>
+ <div class="feedback ${jbAns?(jbAns===q.a?'ok':'no'):''}" style="margin-top:10px">${jbAns?`<b>${jbAns===q.a?'✓ Correct.':'✗ Not quite.'}</b> ${esc(q.why)}`:'If you think it breaks, say the counterexample out loud before clicking.'}</div>
+ <div class="controls" style="margin-top:10px"><button class="small-btn primary" data-act="jb-next" ${jbAns?'':'disabled'}>${jbStep===JB.length-1?`Finished: ${jbScore}/${JB.length} · restart ↺`:'Next claim →'}</button></div>`;}
+
+/* ---------- deck control ---------- */
+function mountAll(){mountGuides();mountChange();mountRule();mountSchedule();mountProof();mountFk();mountCoin();mountJb();}
+function fitDeck(){const r=Math.min(innerWidth/1600,innerHeight/900),d=$('#deck');d.style.position='absolute';d.style.left='50%';d.style.top='50%';d.style.transform=`translate(-50%,-50%) scale(${r})`;}
+function closeOverlays(){const o=$('#notesOverlay');o.classList.remove('open');o.setAttribute('aria-hidden','true');}
+function openNotes(){const s=slides[current];$('#notesPosition').textContent=`Slide ${current+1} · ${s.time}`;$('#notesContent').textContent=s.notes;$('#notesOverlay').classList.add('open');$('#notesOverlay').setAttribute('aria-hidden','false');}
+function goTo(i){current=Math.max(0,Math.min(slides.length-1,i));seen.add(current);closeOverlays();render();}
+function render(){const s=slides[current];
+ $('#slide').innerHTML=`<div class="kicker"><span class="dot"></span> SESSION 30 · THE GREEDY METHOD &nbsp;·&nbsp; <span class="time">⏱ ${s.time}</span></div><h1 class="slide-title">${s.title}</h1><div class="slide-sub">${s.sub}</div><div class="slide-body">${s.content}</div>`;
+ $('#dots').innerHTML=slides.map((x,i)=>`<button class="${i===current?'on':seen.has(i)?'seen':''}" data-act="jump" data-target="${i}" title="${esc(x.title)}">${i+1}</button>`).join('');
+ $('#pageCount').textContent=(current+1)+' / '+slides.length;$('#progressFill').style.width=((current+1)*100/slides.length)+'%';
+ $('#prevButton').disabled=current===0;$('#nextButton').disabled=current===slides.length-1;mountAll();}
+let cs=null,ca=0,ct=null;const ctext=()=>{const s=Math.floor((ca+(cs?Date.now()-cs:0))/1000);return '⏱ '+String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');};
+function toggleClock(){const b=$('#timerBtn');if(cs){ca+=Date.now()-cs;cs=null;clearInterval(ct);b.classList.remove('running');}else{cs=Date.now();ct=setInterval(()=>b.textContent=ctext(),1000);b.classList.add('running');}b.textContent=ctext();}
+
+document.addEventListener('click',ev=>{const b=ev.target.closest('[data-act]');if(!b)return;const a=b.dataset.act;
+ if(a==='prev')return goTo(current-1);if(a==='next')return goTo(current+1);if(a==='jump')return goTo(+b.dataset.target);
+ if(a==='timer')return toggleClock();if(a==='close')return closeOverlays();if(a==='notes')return $('#notesOverlay').classList.contains('open')?closeOverlays():openNotes();
+ if(a==='full'){if(!document.fullscreenElement)$('#deck').requestFullscreen?.().then(fitDeck).catch(()=>{});else document.exitFullscreen?.();return;}
+ if(a==='reveal'){const n=document.getElementById(b.dataset.id);if(n)n.hidden=!n.hidden;return;}
+ if(a==='g-next'||a==='g-prev'){const k=b.dataset.g,n=GUIDES[k].steps.length;gStep[k]=Math.max(1,Math.min(n,(gStep[k]||1)+(a==='g-next'?1:-1)));return mountGuides();}
+ if(a==='ch-next'||a==='ch-all'){let g=0;do{const r=chAmt-chPicks.reduce((x,y)=>x+y,0);if(r<=0)break;chPicks.push(NOTES.find(x=>x<=r));}while(a==='ch-all'&&g++<600);return mountChange();}
+ if(a==='ch-reset'){chPicks=[];return mountChange();}
+ if(a==='rule'){ruleSel=b.dataset.k;return mountRule();}
+ if(a==='sch'){const exp=STASKS[sch.i].s>=lastFin(sch.i)?'take':'skip';if(b.dataset.c!==exp)sch.fb='Check again: compare the start time with lastFinish.';else{sch.dec[sch.i]=exp;sch.checked=true;sch.fb='';}return mountSchedule();}
+ if(a==='sch-next'){sch.i++;sch.checked=false;sch.fb='';return mountSchedule();}
+ if(a==='sch-reset'){sch.i=0;sch.dec=[];sch.checked=false;sch.fb='';return mountSchedule();}
+ if(a==='proof'){const k=+b.dataset.k;if(k===proofDone){proofDone++;proofWrong=-1;proofHint=false;}else{proofWrong=k;proofHint=false;}return mountProof();}
+ if(a==='proof-hint'){proofHint=true;proofWrong=-1;return mountProof();}
+ if(a==='proof-reset'){proofDone=0;proofWrong=-1;proofHint=false;return mountProof();}
+ if(a==='fk'){fkRule=b.dataset.k;return mountFk();}
+ if(a==='coin-sys'){coin.sys=b.dataset.k;coin.picks=[];return mountCoin();}
+ if(a==='coin-next'||a==='coin-all'){const c=PRESETS[coin.sys][1];let g=0;do{const r=coin.amount-coin.picks.reduce((x,y)=>x+y,0);if(r<=0)break;coin.picks.push(c.filter(x=>x<=r).at(-1));}while(a==='coin-all'&&g++<100);return mountCoin();}
+ if(a==='coin-reset'){coin.picks=[];return mountCoin();}
+ if(a==='jb'){jbAns=b.dataset.k;if(jbAns===JB[jbStep].a)jbScore++;return mountJb();}
+ if(a==='jb-next'){if(jbStep===JB.length-1){jbStep=0;jbScore=0;}else jbStep++;jbAns=null;return mountJb();}
+});
+document.addEventListener('keydown',ev=>{
+ if(ev.ctrlKey&&ev.shiftKey&&ev.key.toLowerCase()==='p'){ev.preventDefault();return $('#notesOverlay').classList.contains('open')?closeOverlays():openNotes();}
+ if(ev.key==='Escape')return closeOverlays();const ae=document.activeElement;
+ if(ae&&ae.type==='range'&&(ev.key==='ArrowLeft'||ev.key==='ArrowRight'))return;
+ if(ev.key==='ArrowRight'||ev.key==='PageDown'||ev.key===' '){ev.preventDefault();if(!$('.overlay.open'))goTo(current+1);return;}
+ if(ev.key==='ArrowLeft'||ev.key==='PageUp'){ev.preventDefault();if(!$('.overlay.open'))goTo(current-1);return;}
+ if(ev.key.toLowerCase()==='f'){ev.preventDefault();if(!document.fullscreenElement)$('#deck').requestFullscreen?.().then(fitDeck).catch(()=>{});else document.exitFullscreen?.();}
+});
+addEventListener('resize',fitDeck);document.addEventListener('fullscreenchange',fitDeck);fitDeck();render();
+</script>
+</body>
+</html>

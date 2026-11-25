@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#090e21">
+<title>CS332 Session 31 | 2-D DP Challenge</title>
+<style>
+:root{color-scheme:dark;--bg:#080f24;--ink:#eef6ff;--muted:#abc1d7;--teal:#45e3c2;--amber:#ffcc77;--pink:#ff8fa8;--purple:#b7a0ff}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#030814;color:var(--ink);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;display:grid;place-items:center;overflow:hidden}button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.35;cursor:not-allowed}
+#deck{width:1600px;height:900px;position:relative;overflow:hidden;background:radial-gradient(ellipse 950px 620px at 92% -10%,#2e2650 0%,transparent 60%),radial-gradient(ellipse 700px 480px at 0% 100%,#133243 0%,transparent 60%),var(--bg);box-shadow:0 24px 90px #0009;border:1px solid #29354c}
+.topbar{position:absolute;top:0;left:0;right:0;height:76px;padding:0 40px 0 48px;display:flex;align-items:center;gap:14px;border-bottom:1px solid #ffffff20;background:#071126b5;z-index:3}
+.brand{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#b7a0ff,#45e3c2);color:#120a2a;display:grid;place-items:center;font-size:24px}.course{font-size:17px;font-weight:900;letter-spacing:.06em}.course-sub{font-size:13px;color:var(--muted);margin-top:2px}
+.dots{display:flex;gap:6px;margin-left:auto}.dots button{width:32px;height:32px;border-radius:50%;border:1px solid #5a708c;background:#172541;color:#cfe0f5;font-weight:900;font-size:13px}.dots button.on{background:#b7a0ff;border-color:#b7a0ff;color:#140a30}.dots button.seen{border-color:#8e7de0}
+.small-btn{border:1px solid #5a708c;background:#172541;border-radius:10px;color:var(--ink);font-size:16px;font-weight:850;padding:10px 15px;min-height:42px}.small-btn:hover{border-color:var(--teal)}.small-btn.purple{background:#b7a0ff;border-color:#b7a0ff;color:#140a30}.small-btn.amber{background:#ffcc77;border-color:#ffcc77;color:#2a1c05}.small-btn.warning{border-color:#c38b59;color:#ffda9b}.small-btn.big{font-size:26px;padding:8px 22px}.small-btn:focus-visible{outline:4px solid var(--amber);outline-offset:2px}
+#timerBtn{font-variant-numeric:tabular-nums;min-width:92px}#timerBtn.running{border-color:var(--amber);color:var(--amber)}
+#slide{position:absolute;inset:92px 56px 92px;display:flex;flex-direction:column;min-height:0;z-index:1}
+.head{animation:rise .35s ease both}@keyframes rise{from{transform:translateY(10px)}}
+.kicker{color:var(--purple);font-weight:900;font-size:14px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:4px}.kicker .time{color:var(--amber)}
+.slide-title{font-size:46px;line-height:1.08;font-weight:930;letter-spacing:-1.4px;margin:0 0 14px}
+.body{flex:1;min-height:0;display:grid;grid-template-columns:.8fr 1.2fr;gap:22px}
+.panel{border:1px solid #ffffff26;background:linear-gradient(152deg,#192842e6,#101b34eb);border-radius:22px;padding:18px 22px;min-height:0;overflow:hidden;display:flex;flex-direction:column}
+.stephead{display:flex;align-items:center;gap:10px;margin-bottom:12px;color:var(--muted);font-weight:800;font-size:15px;letter-spacing:.08em;text-transform:uppercase}.pips{display:flex;gap:6px}.pips i{width:26px;height:9px;border-radius:5px;background:#33496a}.pips i.on{background:var(--purple)}
+.step{display:flex;gap:13px;align-items:flex-start;border:1px solid #2c4867;background:#14233b;border-radius:15px;padding:12px 15px;margin-bottom:9px;font-size:21px;line-height:1.4;color:#dbe7f5}.step .n{flex:0 0 32px;height:32px;border-radius:10px;background:#285d5c;color:#a6ffeb;display:grid;place-items:center;font-weight:900;font-size:16px;margin-top:1px}.step b{color:#fff}.step.new{border-color:var(--amber);background:#2d2a25;animation:pop .35s ease}.step.new .n{background:#ffcc77;color:#2a1c05}@keyframes pop{from{transform:translateX(-8px)}}.step.key{border-color:#8e7de0;background:#262247}.step.key .n{background:#b7a0ff;color:#140a30}
+.more{margin-top:auto;font-size:15px;color:var(--muted);font-weight:800}.more kbd{border:1px solid #5a708c;border-radius:6px;padding:2px 8px;background:#172541;color:#fff;font-family:inherit}
+.vis{align-items:center;justify-content:center}
+.big{font-size:42px;font-weight:1000;letter-spacing:-1px}.mid{font-size:26px;font-weight:850}
+.teal-text{color:var(--teal)}.amber-text{color:var(--amber)}.pink-text{color:var(--pink)}.purple-text{color:var(--purple)}.subtle{color:var(--muted)}
+.formula{font-family:"Cascadia Code",Consolas,monospace;font-size:25px;font-weight:700;padding:12px 20px;border-radius:14px;background:#262247;border:2px solid #8e7de0;color:#f0ebff;text-align:center}
+.codebox{font-family:"Cascadia Code",Consolas,monospace;font-size:19px;line-height:1.6;background:#081326;border:1px solid #43536d;border-radius:14px;padding:14px 18px;white-space:pre;color:#d9f1ff;width:100%}.codebox .k{color:#7effde;font-weight:800}.codebox .cm{color:#88aac7}
+.feedback{border-radius:14px;border:1px solid #476984;background:#172c46;padding:11px 16px;font-size:19px;line-height:1.45;color:#e4f1ff;width:100%}.feedback.ok{border-color:var(--teal);background:#143c3d}.feedback.no{border-color:var(--pink);background:#3b273b}.feedback.hint{border-color:var(--amber);background:#3d3126}.feedback b{color:#fff}
+.table{border-collapse:collapse;width:100%;font-size:22px}.table td{padding:10px 14px;border-bottom:1px solid #40536e}.table tr:last-child td{border-bottom:0}.table td.r{text-align:right;font-weight:900;font-variant-numeric:tabular-nums}
+.chips{display:flex;gap:8px;flex-wrap:wrap}.chip{border:1px solid #2ca692;background:#16413d;border-radius:10px;padding:6px 10px;font-size:20px;font-weight:900;letter-spacing:2px}
+/* lab grid */
+.gridtab{border-collapse:separate;border-spacing:6px;margin:0 auto}.gridtab td{width:72px;height:56px;text-align:center;border:2px solid #3c5675;background:#16253d;border-radius:12px;font-weight:950;font-size:24px;transition:all .2s}.gridtab th{color:var(--muted);font-size:13px;font-weight:800}
+.gridtab td.base{border-color:#8e7de0;background:#2e2b53}.gridtab td.done{border-color:#2ca692;background:#16413d;cursor:pointer}.gridtab td.done:hover{border-color:#fff}.gridtab td.cur{border-color:var(--amber);background:#4f4024;color:#ffe2a6;box-shadow:0 0 0 4px #ffcc7733}.gridtab td.dep{border-color:var(--teal)!important;box-shadow:0 0 0 4px #45e3c266}.gridtab td.why{border-color:#fff!important;box-shadow:0 0 0 4px #ffffff44}.gridtab td.empty{border-style:dashed;color:#5d7591}.gridtab td.rock{background:#3a2c2c;border-color:#7d5a5a;font-size:28px}
+.gridtab.sm td{width:62px;height:48px;font-size:21px}
+input.ans{width:110px;background:#101d32;border:2px solid #b7a0ff;color:#fff;border-radius:11px;padding:8px 12px;font-size:24px;font-weight:900;text-align:center}
+.labbar{display:flex;gap:9px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.tabs{display:flex;gap:7px;justify-content:center}.tab{border:1px solid #5a708c;background:#172541;border-radius:10px;color:var(--ink);font-size:16px;font-weight:850;padding:7px 13px}.tab.on{background:#b7a0ff;border-color:#b7a0ff;color:#140a30}
+.stars{font-size:18px;font-weight:900;color:var(--amber)}
+.qcard{display:flex;align-items:center;gap:14px;border:1px solid #3c5675;background:#16253d;border-radius:14px;padding:12px 14px;margin-top:10px;width:100%}.qcard .q{flex:1;font-size:20px;font-weight:800}.qcard .ans{font-size:18px;color:var(--teal);margin-top:4px}
+.footer{position:absolute;bottom:0;left:0;right:0;height:76px;padding:0 56px;display:flex;align-items:center;gap:15px;border-top:1px solid #ffffff27;background:#071126e8;z-index:3}.foot-hint{color:#9bb3cb;font-size:15px;margin-right:auto}.page-count{color:#d5ebfa;font-size:16px;font-weight:850;min-width:150px;text-align:center}.nav-button{height:50px;min-width:130px;font-size:18px;font-weight:900;border-radius:12px;color:var(--ink);border:1px solid #617c9d;background:#1a2d4d}.nav-button.next{color:#140a30;background:#b7a0ff;border-color:#b7a0ff;min-width:190px}.nav-button.next.slide{background:#45e3c2;border-color:#45e3c2;color:#05142c}.nav-button:disabled{opacity:.35}
+.overlay{position:absolute;inset:0;background:#030a19e9;z-index:10;display:none;align-items:center;justify-content:center;padding:72px}.overlay.open{display:flex}.overlay-panel{width:100%;height:100%;background:#15213a;border:1px solid #7b9db2;border-radius:25px;padding:35px 45px;display:flex;flex-direction:column;gap:18px}.overlay-head{display:flex;align-items:center;gap:22px}.overlay-head h2{font-size:34px;margin:0}.notes-content{font-size:25px;line-height:1.58;white-space:pre-line;color:#dbeaf9;overflow:auto}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="deck" role="application" aria-label="2-D dynamic programming challenge: robot grid paths">
+ <header class="topbar"><div class="brand">🤖</div><div><div class="course">CS332 · SESSION 31 · CHALLENGE: A 2-D DP TABLE</div><div class="course-sub">Air University · Week 11 · robot grid paths · press Space for the next step</div></div><div class="dots" id="dots"></div><button class="small-btn" id="timerBtn" data-act="timer">⏱ 00:00</button><button class="small-btn" data-act="notes" title="Tutor notes (Ctrl+Shift+P)">☼ Notes</button><button class="small-btn" data-act="full" title="Full screen (F)">⛶</button></header>
+ <main id="slide" aria-live="polite"></main>
+ <footer class="footer"><div class="foot-hint"><b>Space</b> / <b>→</b> = next step &nbsp;·&nbsp; <b>←</b> = back &nbsp;·&nbsp; in a lab, type then press <b>Enter</b></div><div class="page-count" id="pageCount"></div><button class="nav-button" id="prevButton" data-act="prev">← Back</button><button class="nav-button next" id="nextButton" data-act="next">Next step ▸</button></footer>
+ <div id="notesOverlay" class="overlay" aria-hidden="true"><div class="overlay-panel"><div class="overlay-head"><h2>Tutor notes</h2><div style="margin-left:auto;color:var(--muted)" id="notesPosition"></div><button class="small-btn" data-act="close">✕ Close</button></div><div id="notesContent" class="notes-content"></div></div></div>
+</div>
+<script>
+'use strict';
+const $=(q,r=document)=>r.querySelector(q);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const slides=[];const add=o=>slides.push(o);
+
+/* ---------- SVG grid helper ---------- */
+function gridSvg(R,C,{cs=86,text=()=>'',fill=()=>null,path=null,robot=false,arrows=[]}={}){
+ const W=C*cs+20,H=R*cs+20;let s=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:${Math.min(W,720)}px;max-height:470px">`;
+ for(let r=0;r<R;r++)for(let c=0;c<C;c++){const f=fill(r,c)||['#16253d','#3c5675'];s+=`<rect x="${10+c*cs+3}" y="${10+r*cs+3}" width="${cs-6}" height="${cs-6}" rx="12" fill="${f[0]}" stroke="${f[1]}" stroke-width="3"/>`;const t=text(r,c);if(t!=='')s+=`<text x="${10+c*cs+cs/2}" y="${10+r*cs+cs/2+11}" text-anchor="middle" font-size="${String(t).length>2?24:30}" font-weight="900" fill="#fff">${t}</text>`;}
+ const ctr=(r,c)=>[10+c*cs+cs/2,10+r*cs+cs/2];
+ if(path){let r=0,c=0;const pts=[ctr(0,0)];for(const m of path){if(m==='→')c++;else r++;pts.push(ctr(r,c));}s+=`<polyline points="${pts.map(p=>p.join(',')).join(' ')}" fill="none" stroke="#45e3c2" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/>`;if(robot){const [x,y]=pts.at(-1);s+=`<text x="${x}" y="${y+14}" text-anchor="middle" font-size="40">🤖</text>`;}}
+ arrows.forEach(([r1,c1,r2,c2,col])=>{const [x1,y1]=ctr(r1,c1),[x2,y2]=ctr(r2,c2),dx=x2-x1,dy=y2-y1,L=Math.hypot(dx,dy),ux=dx/L,uy=dy/L;const a=[x1+ux*26,y1+uy*26],b=[x2-ux*30,y2-uy*30];s+=`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="${col}" stroke-width="7" stroke-linecap="round"/><polygon points="${b[0]+ux*14},${b[1]+uy*14} ${b[0]-uy*10},${b[1]+ux*10} ${b[0]+uy*10},${b[1]-ux*10}" fill="${col}"/>`;});
+ return s+'</svg>';}
+const F={base:['#2e2b53','#8e7de0'],done:['#16413d','#2ca692'],cur:['#4f4024','#ffcc77'],dep:['#16413d','#45e3c2'],start:['#285d5c','#45e3c2'],goal:['#4f4024','#ffcc77'],dim:['#111c2e','#26384f']};
+
+/* ---------- 1 · robot ---------- */
+const robot={moves:'',found:[]};const RR=3,RC=4;
+add({time:'00–03 min',title:'Meet the robot',steps:[
+ ['🤖 A robot stands at the <b>top-left</b> corner <b>S</b> of a grid.'],
+ ['It can move only <b>RIGHT →</b> or <b>DOWN ↓</b>, never left or up.'],
+ ['Goal: reach the <b>bottom-right</b> corner <b>G</b>. Try it with the <b>→</b> and <b>↓</b> buttons.'],
+ ['Find as many <b>different</b> paths as you can. How many are there in total?','key']],
+ vis:()=>`<div id="robotLab" style="width:100%"></div>`,mount:mountRobot,
+ notes:'Let 3–4 students each drive one path. Collect them on the board. Answer: 10 paths on a 3 × 4 grid. Don\'t reveal yet; slide 2 does.'});
+function mountRobot(){const el=$('#robotLab');if(!el)return;let r=0,c=0;for(const m of robot.moves){if(m==='→')c++;else r++;}const atGoal=r===RR-1&&c===RC-1;
+ el.innerHTML=`${gridSvg(RR,RC,{cs:110,path:robot.moves,robot:true,text:(y,x)=>y===0&&x===0&&robot.moves?'S':y===RR-1&&x===RC-1&&!atGoal?'G':'',fill:(y,x)=>y===0&&x===0?F.start:y===RR-1&&x===RC-1?F.goal:null})}
+ <div class="labbar"><button class="small-btn purple big" data-act="rb" data-m="→" ${c>=RC-1?'disabled':''}>→</button><button class="small-btn purple big" data-act="rb" data-m="↓" ${r>=RR-1?'disabled':''}>↓</button><button class="small-btn" data-act="rb-reset">↺ New path</button><span class="mid" style="font-size:22px;letter-spacing:2px;min-width:140px">${robot.moves||'—'}</span></div>
+ <div class="feedback ${atGoal?'ok':''}" style="margin-top:10px">${atGoal?(robot.found.includes(robot.moves)?`You already found <b>${robot.moves}</b>. Click <b>New path</b> and try a different one!`:`🎉 New path found!`):'Move the robot from S to G.'} &nbsp; Paths found: <b>${robot.found.length}</b></div>
+ <div class="chips" style="margin-top:10px">${robot.found.map(p=>`<span class="chip">${p}</span>`).join('')}</div>`;}
+
+/* ---------- 2 · too many ---------- */
+add({time:'03–05 min',title:'Counting by hand gets hard',steps:[
+ ['A 3 × 4 grid already has <b>10</b> paths. Did you find them all?'],
+ ['A 10 × 10 grid has <b>48,620</b> paths!'],
+ ['A 20 × 20 grid has over <b>35 billion</b>. Listing them all (brute force) is far too slow. 🐢'],
+ ['💡 DP idea: count paths to <b>every cell</b>, small cells first, and <b>reuse</b> those counts.','key']],
+ vis:s=>`<table class="table">${[['3 × 3','6'],['3 × 4','10'],['5 × 5','70'],['10 × 10','48,620'],['20 × 20','35,345,263,800 🐢']].slice(0,s===1?2:s===2?4:5).map(([g,v])=>`<tr><td>Grid ${g}</td><td class="r ${v.includes('🐢')?'pink-text':''}">${v} paths</td></tr>`).join('')}</table>
+ ${s>=4?`<div class="feedback ok" style="margin-top:18px;font-size:22px">⚡ With DP, a 20 × 20 grid needs only <b>400 cells</b>, with one addition each.</div>`:''}`,
+ notes:'Numbers are binomial coefficients, e.g. 10 × 10 → C(18, 9) = 48,620. Students don\'t need the formula; DP gets there by adding.'});
+
+/* ---------- 3 · last move ---------- */
+add({time:'05–09 min',title:'The key question: what was the LAST move?',steps:[
+ ['Pick any cell, say the amber <b>?</b>. Ask: how did the robot <b>enter</b> it?'],
+ ['Either it came from the cell <b>ABOVE</b>, moving down ↓…'],
+ ['…or from the cell on the <b>LEFT</b>, moving right →. There is no other way in.'],
+ ['So paths(cell) = paths(<b>above</b>) + paths(<b>left</b>).','key'],
+ ['Example: 3 paths reach above, 3 reach left → <b>3 + 3 = 6</b> reach the cell.']],
+ vis:s=>{const ar=[];if(s>=2)ar.push([1,2,2,2,'#45e3c2']);if(s>=3)ar.push([2,1,2,2,'#ffcc77']);
+  return gridSvg(3,3,{cs:120,arrows:ar,text:(r,c)=>r===2&&c===2?(s>=5?'6':'?'):s>=5&&r===1&&c===2?'3':s>=5&&r===2&&c===1?'3':'',fill:(r,c)=>r===2&&c===2?F.cur:s>=2&&r===1&&c===2?F.dep:s>=3&&r===2&&c===1?['#4f4024','#ffcc77']:null})+(s>=4?`<div class="formula" style="margin-top:14px">P[r][c] = P[r−1][c] + P[r][c−1]</div>`:'');},
+ notes:'This is the whole recurrence. Add (not multiply) because the two groups of paths are separate: a path enters either from above or from the left, never both.'});
+
+/* ---------- 4 · base cases ---------- */
+add({time:'09–12 min',title:'Base cases: the edges',steps:[
+ ['<b>Top row:</b> the robot can only keep moving right, so there is exactly <b>1</b> way to reach each cell.'],
+ ['<b>Left column:</b> it can only keep moving down, so again exactly <b>1</b> way.'],
+ ['So the top row and left column are all <b>1s</b>. These are the <b>base cases</b>.','key'],
+ ['Everything else is filled with above + left, row by row. 🚀']],
+ vis:s=>gridSvg(4,5,{cs:100,text:(r,c)=>(r===0&&s>=1)||(c===0&&s>=2)?'1':s>=4&&r===1&&c===1?'?':'',fill:(r,c)=>(r===0&&s>=1)||(c===0&&s>=2)?F.base:s>=4&&r===1&&c===1?F.cur:F.dim,arrows:s===1?[[0,0,0,4,'#b7a0ff']]:s===2?[[0,0,3,0,'#b7a0ff']]:s>=4?[[0,1,1,1,'#45e3c2'],[1,0,1,1,'#45e3c2']]:[]}),
+ notes:'Ask: "Why is the top row not 0?" Because there IS one path: straight right. P[0][0] = 1 too (stand still).'});
+
+/* ---------- lab engine (fill with hints) ---------- */
+function makeLab(R,C,rock){const L={R,C,rock};labReset(L);return L;}
+function labReset(L){L.order=[];for(let r=1;r<L.R;r++)for(let c=1;c<L.C;c++)if(!isRock(L,r,c))L.order.push([r,c]);L.k=0;L.hint=0;L.stars=[];L.fb='';L.cls='';L.why=null;}
+const isRock=(L,r,c)=>!!L.rock&&L.rock[0]===r&&L.rock[1]===c;
+function val(L,r,c){if(isRock(L,r,c))return 0;if(r===0||c===0)return 1;L.memo=L.memo||{};const k=r+','+c;if(L.memo[k]==null)L.memo[k]=val(L,r-1,c)+val(L,r,c-1);return L.memo[k];}
+const filled=(L,r,c)=>r===0||c===0||isRock(L,r,c)||L.order.findIndex(([a,b])=>a===r&&b===c)<L.k;
+const nm=(L,r,c)=>isRock(L,r,c)?'0 (rock 🪨)':val(L,r,c);
+function labHtml(L,id){const done=L.k>=L.order.length,cur=done?null:L.order[L.k];
+ const deps=L.why?[[L.why[0]-1,L.why[1]],[L.why[0],L.why[1]-1]]:cur&&L.hint>=1?[[cur[0]-1,cur[1]],[cur[0],cur[1]-1]]:[];
+ const isDep=(r,c)=>deps.some(([a,b])=>a===r&&b===c);
+ let t=`<table class="gridtab ${L.R*L.C>24?'sm':''}"><tr><th></th>${Array.from({length:L.C},(_,c)=>`<th>c${c}</th>`).join('')}</tr>`;
+ for(let r=0;r<L.R;r++){t+=`<tr><th>r${r}</th>`;for(let c=0;c<L.C;c++){const rk=isRock(L,r,c),isCur=cur&&cur[0]===r&&cur[1]===c,f=filled(L,r,c),why=L.why&&L.why[0]===r&&L.why[1]===c,interior=r>0&&c>0&&!rk;
+  const cls=rk?'rock':r===0||c===0?'base':isCur?'cur':f?'done':'empty';
+  t+=`<td class="${cls} ${isDep(r,c)?'dep':''} ${why?'why':''}" ${f&&interior?`data-act="why" data-lab="${id}" data-r="${r}" data-c="${c}" title="Why?"`:''}>${rk?'🪨':f?val(L,r,c):isCur?'?':'·'}</td>`;}t+='</tr>';}t+='</table>';
+ const earned=L.stars.reduce((a,b)=>a+b,0),max=L.order.length*3;
+ const bar=done?`<div class="feedback ok" style="margin-top:12px;font-size:21px">🎉 <b>Done! P[${L.R-1}][${L.C-1}] = ${val(L,L.R-1,L.C-1)} paths.</b> Stars: ${earned} / ${max}. Click any green cell to see <b>why</b>.</div>`:
+ `<div class="labbar"><span class="big" style="font-size:30px">P[${cur[0]}][${cur[1]}] =</span><input class="ans" id="ans-${id}" data-lab="${id}" inputmode="numeric" autocomplete="off" aria-label="Value of P[${cur[0]}][${cur[1]}]"><button class="small-btn purple" data-act="chk" data-lab="${id}">Check</button><button class="small-btn amber" data-act="hint" data-lab="${id}" ${L.hint>=3?'disabled':''}>💡 Hint ${Math.min(L.hint+1,3)}/3</button><button class="small-btn warning" data-act="show" data-lab="${id}">Show answer</button></div>
+ <div class="feedback ${L.cls}" style="margin-top:10px">${L.fb||'Think: which two cells lead into the amber cell? Type the number, press <b>Enter</b>.'}</div>`;
+ return t+bar+`<div class="labbar" style="margin-top:8px"><span class="stars">⭐ ${earned} / ${max}</span><span class="subtle" style="font-size:15px">3 ⭐ no hint · 2 ⭐ one hint · 1 ⭐ two or more</span><button class="small-btn" data-act="lab-reset" data-lab="${id}">↺ Restart</button></div>`;}
+function labHint(L){const [r,c]=L.order[L.k];L.why=null;L.hint=Math.min(3,L.hint+1);const a=nm(L,r-1,c),b=nm(L,r,c-1);
+ L.fb=L.hint===1?'💡 <b>Hint 1:</b> The robot enters this cell from the two <span class="teal-text">teal</span> cells: one <b>above</b>, one on the <b>left</b>.':L.hint===2?`💡 <b>Hint 2:</b> Above = <b>${a}</b>, left = <b>${b}</b>.`:`💡 <b>Hint 3:</b> Add them: <b>${val(L,r-1,c)} + ${val(L,r,c-1)} = ?</b>`;L.cls='hint';}
+function labCheck(L,show,id){const [r,c]=L.order[L.k],a=val(L,r-1,c),b=val(L,r,c-1),want=a+b;L.why=null;
+ if(show){L.stars.push(0);L.fb=`P[${r}][${c}] = above ${a} + left ${b} = <b>${want}</b>. (0 ⭐ for this one)`;L.cls='hint';L.k++;L.hint=0;return true;}
+ const v=parseInt(($('#ans-'+id)||{}).value,10);
+ if(v===want){const st=L.hint===0?3:L.hint===1?2:1;L.stars.push(st);L.fb=`✓ Correct! ${a} + ${b} = ${want}. ${'⭐'.repeat(st)}`;L.cls='ok';L.k++;L.hint=0;return true;}
+ L.fb=isNaN(v)?'Type a number first.':(v===a||v===b)?'✗ That is only <b>one</b> of the two ways in. Add <b>both</b> neighbours.':v===a*b&&a*b!==a+b?'✗ Don\'t multiply: a path comes from above <b>or</b> from the left, so <b>add</b>.':'✗ Not quite. Try a 💡 hint.';L.cls='no';return false;}
+
+/* ---------- 5 · main lab ---------- */
+const SIZES=[[3,3],[4,5],[5,6]];let sizeI=1;const LABS={main:makeLab(4,5,null),rock:makeLab(4,5,[1,2])};
+add({time:'12–24 min',title:'Your turn: fill the table',steps:[
+ ['Fill the dashed cells <b>row by row, left to right</b>. The amber cell is next.'],
+ ['Type a number and press <b>Enter</b>. Stuck? Use <b>💡 hints</b>, one at a time.'],
+ ['Earn ⭐⭐⭐ by not using hints. Click any <b>green cell</b> to see <b>why</b> it has that number.','key']],
+ vis:()=>`<div style="width:100%"><div class="tabs" style="margin-bottom:8px">${SIZES.map(([r,c],i)=>`<button class="tab ${i===sizeI?'on':''}" data-act="size" data-i="${i}">${r} × ${c}</button>`).join('')}</div><div id="lab-main"></div></div>`,mount:()=>mountLab('main'),
+ notes:'Start with 3 × 3 as a class (answer 6), then let pairs do 4 × 5 (answer 35). Fast pairs: 5 × 6 (answer 126).\nHint ladder: 1 = where to look, 2 = the two values, 3 = the sum to compute.\nWrong-answer messages catch the two classic mistakes: using only one neighbour, and multiplying.'});
+function mountLab(id,focus){const el=$('#lab-'+id);if(!el)return;el.innerHTML=labHtml(LABS[id],id);if(focus)$('#ans-'+id)?.focus();}
+
+/* ---------- 6 · prove it ---------- */
+const P33=['→→↓↓','→↓→↓','→↓↓→','↓→→↓','↓→↓→','↓↓→→'];let pk=0;
+add({time:'24–28 min',title:'Prove it: does DP match counting by hand?',steps:[
+ ['On a 3 × 3 grid, DP says the corner has <b>6</b> paths.'],
+ ['Let\'s list every path, one by one. Click <b>Show next path</b>.'],
+ ['Brute force also finds <b>6</b>. ✓ DP is right, and it never listed a single path!','key']],
+ vis:()=>`<div id="proofLab" style="width:100%"></div>`,mount:mountProof,
+ notes:'Each path = an order of 2 rights and 2 downs. DP got 6 by adding 3 + 3. For a 20 × 20 grid, listing is impossible but DP still takes 400 additions.'});
+function mountProof(){const el=$('#proofLab');if(!el)return;const D=[[1,1,1],[1,2,3],[1,3,6]];
+ el.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:center"><div><div class="subtle center" style="text-align:center;font-weight:800">DP table</div>${gridSvg(3,3,{cs:90,text:(r,c)=>D[r][c],fill:(r,c)=>r===2&&c===2?F.cur:r===0||c===0?F.base:F.done})}</div>
+ <div><div class="subtle" style="text-align:center;font-weight:800">Path ${pk} of 6</div>${gridSvg(3,3,{cs:90,path:pk?P33[pk-1]:'',robot:pk>0,fill:(r,c)=>r===0&&c===0?F.start:r===2&&c===2?F.goal:null})}</div></div>
+ <div class="chips" style="margin:10px 0;justify-content:center">${P33.slice(0,pk).map(p=>`<span class="chip">${p}</span>`).join('')}</div>
+ <div class="labbar"><button class="small-btn purple" data-act="pk-next" ${pk>=6?'disabled':''}>Show next path ▶</button><button class="small-btn" data-act="pk-reset">↺</button></div>
+ <div class="feedback ${pk>=6?'ok':''}" style="margin-top:8px">${pk>=6?'<b>6 paths by brute force = 6 by DP. ✓</b>':'Every path uses exactly 2 rights (→) and 2 downs (↓).'}</div>`;}
+
+/* ---------- 7 · rock ---------- */
+add({time:'28–36 min',title:'Level 2: a blocked cell',steps:[
+ ['A rock 🪨 blocks one cell. The robot <b>cannot</b> step on it.'],
+ ['Paths to a blocked cell = <b>0</b>.'],
+ ['Every other cell: still <b>above + left</b>. The 0 spreads automatically!','key'],
+ ['Fill the table using hints if needed. Is the answer still 35?']],
+ vis:()=>`<div id="lab-rock" style="width:100%"></div>`,mount:()=>mountLab('rock'),
+ notes:'Answer: 17 (instead of 35). P[1][3] = 1 + 0 = 1 is where students learn the rock "spreads".\nRows: 1 1 1 1 1 / 1 2 🪨 1 2 / 1 3 3 4 6 / 1 4 7 11 17.'});
+
+/* ---------- 8 · summary ---------- */
+add({time:'36–40 min',title:'The DP recipe for this challenge',steps:[
+ ['① <b>Subproblem:</b> P[r][c] = number of paths to cell (r, c).'],
+ ['② <b>Recurrence:</b> P[r][c] = P[r−1][c] + P[r][c−1] (0 if blocked).'],
+ ['③ <b>Base cases:</b> top row and left column = 1.'],
+ ['④ <b>Order:</b> row by row, left to right, so the inputs are always ready.'],
+ ['⑤ <b>Answer:</b> the bottom-right cell. Time = <b>O(rows × cols)</b>. Next session, knapsack uses the same 2-D table!','key']],
+ vis:s=>`<div class="codebox">${[
+  '<span class="k">for</span> r ← 0 <span class="k">to</span> R−1:',
+  '  <span class="k">for</span> c ← 0 <span class="k">to</span> C−1:',
+  '    <span class="k">if</span> blocked(r, c): P[r][c] ← 0',
+  '    <span class="k">else if</span> r = 0 <span class="k">or</span> c = 0: P[r][c] ← 1',
+  '    <span class="k">else</span>: P[r][c] ← P[r−1][c] + P[r][c−1]',
+  '<span class="k">return</span> P[R−1][C−1]'].map((l,i)=>`<div style="${(s===2&&(i===2||i===4))||(s===3&&i===3)||(s===4&&i<2)||(s===5&&i===5)?'background:#4f4024;color:#ffe2a6;border-radius:6px':''}">${l}</div>`).join('')}</div>
+  <div style="width:100%">${[['Grid 3 × 3: how many paths?','6'],['Above = 10, left = 15. Value of the cell?','25'],['Which cells need no work at all?','The top row and left column (all 1) and blocked cells (0).']].map(([q,a],i)=>`<div class="qcard"><div class="q">${q}<div class="ans" id="sq${i}" hidden>✓ ${a}</div></div><button class="small-btn" data-act="reveal" data-id="sq${i}">Answer</button></div>`).join('')}</div>`,
+ notes:'Note: with a rock on the top row or left column, the simple base case would need "0 after the rock". Our rock is inside the grid, so the simple version works. Mention this only if asked.'});
+
+/* ---------- engine ---------- */
+let cur=0,step=1;const seen=new Set([0]);
+function renderSlide(){const s=slides[cur];
+ $('#slide').innerHTML=`<div class="head"><div class="kicker">2-D DP challenge · slide ${cur+1} of ${slides.length} · <span class="time">⏱ ${s.time}</span></div><h1 class="slide-title">${s.title}</h1></div><div class="body"><div class="panel" id="stepsPanel"></div><div class="panel vis" id="visPanel"></div></div>`;
+ $('#dots').innerHTML=slides.map((x,i)=>`<button class="${i===cur?'on':seen.has(i)?'seen':''}" data-act="jump" data-t="${i}" title="${esc(x.title)}">${i+1}</button>`).join('');renderStep(true);}
+function renderStep(full){const s=slides[cur],n=s.steps.length;
+ $('#stepsPanel').innerHTML=`<div class="stephead">Step ${step} of ${n}<div class="pips">${s.steps.map((_,i)=>`<i class="${i<step?'on':''}"></i>`).join('')}</div></div>${s.steps.slice(0,step).map(([t,k],i)=>`<div class="step ${i===step-1?'new':''} ${k?'key':''}"><span class="n">${i+1}</span><div>${t}</div></div>`).join('')}<div class="more">${step<n?'Press <kbd>Space</kbd> for the next step':'✓ Slide complete. <kbd>Space</kbd> = next slide'}</div>`;
+ if(full||!s.mount){$('#visPanel').innerHTML=s.vis(step);if(s.mount)s.mount();}
+ const nb=$('#nextButton');nb.disabled=step>=n&&cur===slides.length-1;nb.textContent=step<n?'Next step ▸':'Next slide →';nb.classList.toggle('slide',step>=n);
+ $('#prevButton').disabled=cur===0&&step===1;$('#pageCount').textContent=`Slide ${cur+1}/${slides.length} · step ${step}/${n}`;}
+function next(){const n=slides[cur].steps.length;if(step<n){step++;renderStep(false);}else if(cur<slides.length-1){cur++;step=1;seen.add(cur);renderSlide();}}
+function prev(){if(step>1){step--;renderStep(false);}else if(cur>0){cur--;step=slides[cur].steps.length;renderSlide();}}
+function jump(i){cur=i;step=1;seen.add(i);renderSlide();}
+function fitDeck(){const r=Math.min(innerWidth/1600,innerHeight/900),d=$('#deck');d.style.position='absolute';d.style.left='50%';d.style.top='50%';d.style.transform=`translate(-50%,-50%) scale(${r})`;}
+function closeNotes(){$('#notesOverlay').classList.remove('open');}
+function toggleNotes(){const o=$('#notesOverlay');if(o.classList.contains('open'))return closeNotes();$('#notesPosition').textContent=`Slide ${cur+1} · ${slides[cur].time}`;$('#notesContent').textContent=slides[cur].notes;o.classList.add('open');}
+let cs=null,ca=0,ct=null;const ctext=()=>{const t=Math.floor((ca+(cs?Date.now()-cs:0))/1000);return '⏱ '+String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');};
+function toggleClock(){const b=$('#timerBtn');if(cs){ca+=Date.now()-cs;cs=null;clearInterval(ct);b.classList.remove('running');}else{cs=Date.now();ct=setInterval(()=>b.textContent=ctext(),1000);b.classList.add('running');}b.textContent=ctext();}
+document.addEventListener('click',ev=>{const b=ev.target.closest('[data-act]');if(!b)return;const a=b.dataset.act,id=b.dataset.lab;
+ if(a==='next')return next();if(a==='prev')return prev();if(a==='jump')return jump(+b.dataset.t);
+ if(a==='timer')return toggleClock();if(a==='notes')return toggleNotes();if(a==='close')return closeNotes();
+ if(a==='full'){if(!document.fullscreenElement)$('#deck').requestFullscreen?.().then(fitDeck).catch(()=>{});else document.exitFullscreen?.();return;}
+ if(a==='reveal'){const n=document.getElementById(b.dataset.id);if(n)n.hidden=!n.hidden;return;}
+ if(a==='rb'){let r=0,c=0;for(const m of robot.moves){if(m==='→')c++;else r++;}robot.moves+=b.dataset.m;if(b.dataset.m==='→')c++;else r++;if(r===RR-1&&c===RC-1&&!robot.found.includes(robot.moves)){robot.found.push(robot.moves);robot.moves=robot.moves;}return mountRobot();}
+ if(a==='rb-reset'){robot.moves='';return mountRobot();}
+ if(a==='pk-next'){pk=Math.min(6,pk+1);return mountProof();}if(a==='pk-reset'){pk=0;return mountProof();}
+ if(a==='size'){sizeI=+b.dataset.i;const [R,C]=SIZES[sizeI];LABS.main=makeLab(R,C,null);$('#visPanel').innerHTML=slides[cur].vis(step);return mountLab('main');}
+ if(a==='hint'){labHint(LABS[id]);return mountLab(id,true);}
+ if(a==='chk'){labCheck(LABS[id],false,id);return mountLab(id,true);}
+ if(a==='show'){labCheck(LABS[id],true,id);return mountLab(id,true);}
+ if(a==='lab-reset'){labReset(LABS[id]);return mountLab(id);}
+ if(a==='why'){const L=LABS[id],r=+b.dataset.r,c=+b.dataset.c;L.why=[r,c];L.fb=`🔍 <b>Why P[${r}][${c}] = ${val(L,r,c)}?</b> Above (P[${r-1}][${c}]) = ${nm(L,r-1,c)}, left (P[${r}][${c-1}]) = ${nm(L,r,c-1)}. ${val(L,r-1,c)} + ${val(L,r,c-1)} = ${val(L,r,c)}.`;L.cls='hint';return mountLab(id);}});
+document.addEventListener('keydown',ev=>{
+ if(ev.ctrlKey&&ev.shiftKey&&ev.key.toLowerCase()==='p'){ev.preventDefault();return toggleNotes();}
+ const ae=document.activeElement;if(ev.key==='Escape'){closeNotes();ae?.blur?.();return;}
+ if(ae&&ae.classList.contains('ans')){if(ev.key==='Enter'){ev.preventDefault();const id=ae.dataset.lab;labCheck(LABS[id],false,id);mountLab(id,true);}return;}
+ if($('#notesOverlay').classList.contains('open'))return;
+ if(ev.key==='ArrowRight'||ev.key==='PageDown'||ev.key===' '){ev.preventDefault();return next();}
+ if(ev.key==='ArrowLeft'||ev.key==='PageUp'){ev.preventDefault();return prev();}
+ if(ev.key.toLowerCase()==='f'){ev.preventDefault();if(!document.fullscreenElement)$('#deck').requestFullscreen?.().then(fitDeck).catch(()=>{});else document.exitFullscreen?.();}});
+addEventListener('resize',fitDeck);document.addEventListener('fullscreenchange',fitDeck);fitDeck();renderSlide();
+</script>
+</body>
+</html>

@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#090e21">
+<title>CS332 Session 31 | DP Fundamentals</title>
+<style>
+:root{color-scheme:dark;--bg:#080f24;--ink:#eef6ff;--muted:#abc1d7;--teal:#45e3c2;--amber:#ffcc77;--pink:#ff8fa8;--purple:#b7a0ff}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#030814;color:var(--ink);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;display:grid;place-items:center;overflow:hidden}button,select,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.35;cursor:not-allowed}
+#deck{width:1600px;height:900px;position:relative;overflow:hidden;background:radial-gradient(ellipse 950px 620px at 92% -10%,#2e2650 0%,transparent 60%),radial-gradient(ellipse 700px 480px at 0% 100%,#133243 0%,transparent 60%),var(--bg);box-shadow:0 24px 90px #0009;border:1px solid #29354c}
+#deck:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.16;background-image:radial-gradient(#6383a5 1px,transparent 1px);background-size:28px 28px;mask-image:linear-gradient(90deg,transparent,#000 30%,transparent)}
+.topbar{position:absolute;top:0;left:0;right:0;height:84px;padding:0 40px 0 50px;display:flex;align-items:center;gap:14px;border-bottom:1px solid #ffffff20;background:#071126b5;z-index:3}
+.brand{width:47px;height:47px;border-radius:13px;background:linear-gradient(135deg,#b7a0ff,#45e3c2);color:#120a2a;display:grid;place-items:center;font-weight:1000;font-size:19px}.course{font-size:18px;font-weight:900;letter-spacing:.06em}.course-sub{font-size:13px;color:var(--muted);margin-top:2px}
+.dots{display:flex;gap:7px;margin-left:auto;align-items:center}.dots button{width:34px;height:34px;border-radius:50%;border:1px solid #5a708c;background:#172541;color:#cfe0f5;font-weight:900;font-size:14px}.dots button.on{background:#b7a0ff;border-color:#b7a0ff;color:#140a30}.dots button.seen{border-color:#8e7de0}
+.small-btn{border:1px solid #5a708c;background:#172541;border-radius:10px;color:var(--ink);font-size:16px;font-weight:850;padding:10px 15px;min-height:42px}.small-btn:hover{border-color:var(--teal);background:#26395a}.small-btn.primary{background:#29bca3;border-color:#29bca3;color:#05142c}.small-btn.warning{border-color:#c38b59;color:#ffda9b}.small-btn.amber{background:#ffcc77;border-color:#ffcc77;color:#2a1c05}.small-btn.purple{background:#b7a0ff;border-color:#b7a0ff;color:#140a30}.small-btn:focus-visible,.choice:focus-visible,.tab:focus-visible{outline:4px solid var(--amber);outline-offset:2px}
+#timerBtn{font-variant-numeric:tabular-nums;min-width:92px}#timerBtn.running{border-color:var(--amber);color:var(--amber)}
+#slide{position:absolute;inset:100px 60px 94px;display:flex;flex-direction:column;min-height:0;z-index:1}#slide>*{animation:rise .35s ease both}@keyframes rise{from{transform:translateY(12px)}}
+.kicker{display:inline-flex;align-items:center;gap:11px;color:var(--purple);font-weight:900;font-size:15px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:6px}.kicker .dot{width:10px;height:10px;border-radius:100%;background:var(--purple);box-shadow:0 0 0 5px #b7a0ff1a}.kicker .time{color:var(--amber);letter-spacing:.08em}
+.slide-title{font-size:46px;line-height:1.07;font-weight:930;letter-spacing:-1.4px;margin:0 0 6px}.slide-sub{color:#c2d1e7;font-size:20px;line-height:1.38;margin:0 0 16px}.slide-body{flex:1;min-height:0;display:flex;flex-direction:column;gap:14px;overflow:hidden}
+.grid{display:grid;gap:18px;min-height:0}.grid.two{grid-template-columns:1fr 1fr}.grid.lab{grid-template-columns:1.12fr .88fr}.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}.fill{flex:1;min-height:0}
+.panel{border:1px solid #ffffff26;background:linear-gradient(152deg,#192842e6,#101b34eb);border-radius:22px;padding:18px 22px;min-height:0;position:relative;overflow:hidden}.panel.teal{border-color:#2ca69288}.panel.purple{border-color:#8e7de088}.panel.amber{border-color:#dfa95b88}.panel.pink{border-color:#d76b8b88}.panel h3{margin:0 0 8px;font-weight:900;font-size:24px}.panel p{font-size:19px;color:#d1dded;line-height:1.45;margin:7px 0}.panel b{color:#fff}.col{display:flex;flex-direction:column}
+.lead{font-size:24px!important;line-height:1.3!important;font-weight:800;color:var(--ink)!important}.mini{font-size:15px!important;color:var(--muted)!important}.big{font-size:40px;font-weight:1000;letter-spacing:-1.4px}
+.callout{display:block;border:1px solid #62c8bb79;border-left:6px solid var(--teal);border-radius:14px;padding:12px 18px;background:#1538459d;font-size:18px;line-height:1.4;color:#e0fff8}.callout.amber{border-color:#ffcd76;border-left-color:var(--amber);background:#3d312693}.callout.purple{border-color:#a48fe2;border-left-color:var(--purple);background:#2c264a8a}
+.tag{display:inline-block;font-weight:900;font-size:14px;letter-spacing:.06em;text-transform:uppercase;border-radius:9px;padding:6px 10px;background:#304465;color:#d6ebff;align-self:start}.tag.teal{color:#7cffe5;background:#205448}.tag.amber{color:#ffd58d;background:#58402a}.tag.pink{color:#ffacc1;background:#5b3348}.tag.purple{color:#c8b8ff;background:#403569}
+.teal-text{color:var(--teal)}.amber-text{color:var(--amber)}.pink-text{color:var(--pink)}.purple-text{color:var(--purple)}.subtle{color:var(--muted)}
+.summary-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.summary-row span{border:1px solid #50657e;background:#1e314d;border-radius:10px;padding:6px 11px;font-size:16px;font-weight:800}.summary-row span b{color:var(--teal)}
+.controls{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.status{font-size:17px;color:#bad1e7}
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.choice{border:1px solid #65809b;background:#203250;color:var(--ink);border-radius:13px;min-height:52px;padding:9px 14px;font-size:18px;font-weight:850;text-align:left}.choice:hover{background:#2d4767;border-color:var(--teal)}.choice.selected{border-color:var(--teal);background:#1a5b57}.choice.bad{border-color:var(--pink);background:#643247}
+.feedback{border-radius:14px;border:1px solid #476984;background:#172c46;padding:11px 16px;font-size:18px;line-height:1.45;color:#e4f1ff;min-height:50px}.feedback.ok{border-color:var(--teal);background:#143c3d}.feedback.no{border-color:var(--pink);background:#3b273b}.feedback.hint{border-color:var(--amber);background:#3d3126}.feedback b{color:#fff}
+.table{border-collapse:collapse;width:100%;font-size:17px}.table th,.table td{padding:9px 12px;border-bottom:1px solid #40536e;text-align:left}.table th{font-size:14px;color:#c8b8ff;font-weight:900;background:#262247}.table tr:last-child td{border-bottom:0}.table td{color:#d7e5f3}
+.tabs{display:flex;gap:7px;flex-wrap:wrap}.tab{border:1px solid #5a708c;background:#172541;border-radius:10px;color:var(--ink);font-size:16px;font-weight:850;padding:8px 13px}.tab:hover{border-color:var(--teal)}.tab.on{background:#b7a0ff;border-color:#b7a0ff;color:#140a30}
+input[type=range]{accent-color:var(--purple);width:100%;height:28px;margin:4px 0;cursor:pointer}.range-line{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:17px;color:var(--muted)}.range-line strong{font-size:28px;color:var(--purple)}
+input.ans{width:110px;background:#101d32;border:2px solid #b7a0ff;color:#fff;border-radius:11px;padding:8px 12px;font-size:22px;font-weight:900;text-align:center}
+.codebox{font-family:"Cascadia Code",Consolas,monospace;font-size:15.5px;line-height:1.55;background:#081326;border:1px solid #43536d;border-radius:12px;padding:10px 14px;white-space:pre;color:#d9f1ff}.codebox .k{color:#7effde;font-weight:800}.codebox .ln{display:block;border-radius:6px;padding:0 6px;margin:0 -6px}.codebox .ln.hl{background:#4f4024;color:#ffe2a6}.codebox .ln.new{background:#173a36;color:#bfffee}.codebox .cm{color:#88aac7}
+/* guide */
+.guide-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}.guide-head h3{margin:0!important}.pips{display:flex;gap:6px;margin-left:auto}.pips i{width:24px;height:8px;border-radius:5px;background:#33496a}.pips i.on{background:var(--purple)}
+.gcard{display:flex;gap:12px;align-items:flex-start;border:1px solid #2c4867;background:#14233b;border-radius:13px;padding:8px 12px;margin-bottom:6px}.gcard .num{flex:0 0 28px;height:28px;border-radius:9px;background:#285d5c;color:#a6ffeb;display:grid;place-items:center;font-weight:900;font-size:14px}.gcard b.t{display:block;font-size:16.5px;color:#fff;margin-bottom:1px}.gcard div{font-size:16px;line-height:1.36;color:#d1dded}.gcard.new{border-color:var(--amber);background:#2b2a2a;animation:pop .35s ease}.gcard.new .num{background:#ffcc77;color:#2a1c05}@keyframes pop{from{transform:scale(.97)}}.gcard.check{border-color:#8e7de0;background:#221f3f}.gcard.check .num{background:#403569;color:#c8b8ff}
+.mini-btn{padding:3px 10px;min-height:0;font-size:14px;border-radius:8px;border:1px solid #8e7de0;background:#2e2b53;color:#ded4ff;font-weight:850}
+/* DP cells */
+.cells{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}.cell{text-align:center}.cell .v{width:62px;height:58px;display:grid;place-items:center;border:2px solid #3c5675;background:#16253d;border-radius:12px;font-weight:950;font-size:22px;color:#e6f6ff;transition:all .25s}.cell small{display:block;color:var(--muted);font-size:13px;margin-top:3px;font-weight:800}.cell.base .v{border-color:#8e7de0;background:#2e2b53}.cell.done .v{border-color:#2ca692;background:#16413d}.cell.cur .v{border-color:var(--amber);background:#4f4024;color:#ffe2a6;box-shadow:0 0 0 4px #ffcc7733}.cell.dep .v{border-color:var(--teal);box-shadow:0 0 0 4px #45e3c255}.cell.empty .v{border-style:dashed;color:#5d7591}
+.gridtab{border-collapse:separate;border-spacing:5px;margin:0 auto}.gridtab td{width:66px;height:44px;text-align:center;border:2px solid #3c5675;background:#16253d;border-radius:11px;font-weight:950;font-size:21px}.gridtab th{color:var(--muted);font-size:13px;font-weight:800}.gridtab td.base{border-color:#8e7de0;background:#2e2b53}.gridtab td.done{border-color:#2ca692;background:#16413d}.gridtab td.cur{border-color:var(--amber);background:#4f4024;color:#ffe2a6}.gridtab td.dep{border-color:var(--teal);box-shadow:0 0 0 3px #45e3c255}.gridtab td.empty{border-style:dashed;color:#5d7591}
+.opt{border:2px solid #3c5675;background:#16253d;border-radius:14px;padding:10px 12px;text-align:center}.opt.show{border-color:#2ca692}.opt.win{border-color:var(--amber);background:#4f4024;box-shadow:0 0 0 3px #ffcc7733}.opt .big{font-size:30px}
+.recline{font-family:"Cascadia Code",Consolas,monospace;font-size:19px;padding:8px 12px;border-radius:10px;background:#16413d;border:1px solid #2ca692;margin-bottom:6px}
+.howto{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px}.howto .icon{width:70px;height:70px;border-radius:20px;display:grid;place-items:center;font-size:34px;background:#2e2b53;border:1px solid #8e7de0}
+.jump{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:1px solid #47617f;background:#1a2b46;color:var(--ink);border-radius:12px;padding:9px 13px;font-size:17px;font-weight:800;margin-bottom:7px}.jump:hover{border-color:var(--purple)}.jump span{width:30px;height:30px;border-radius:9px;background:#403569;color:#c8b8ff;display:grid;place-items:center;font-size:15px;flex:0 0 auto}
+.footer{position:absolute;bottom:0;left:0;right:0;height:77px;padding:0 57px;display:flex;align-items:center;gap:15px;border-top:1px solid #ffffff27;background:#071126e8;z-index:3}.foot-hint{color:#9bb3cb;font-size:15px;margin-right:auto}.page-count{color:#d5ebfa;font-size:17px;font-weight:850;min-width:80px;text-align:center}.progress-track{height:7px;background:#39516d;border-radius:9px;width:172px;overflow:hidden}.progress-fill{height:100%;background:linear-gradient(90deg,#b7a0ff,#45e3c2);transition:width .3s}.nav-button{height:49px;min-width:116px;font-size:17px;font-weight:850;border-radius:12px;color:var(--ink);border:1px solid #617c9d;background:#1a2d4d}.nav-button.next{color:#140a30;background:#b7a0ff;border-color:#b7a0ff}.nav-button:disabled{opacity:.35}
+.fullsize{font-size:70px;font-weight:1000;line-height:1.04;letter-spacing:-2.4px}
+.overlay{position:absolute;inset:0;background:#030a19e9;z-index:10;display:none;align-items:center;justify-content:center;padding:72px}.overlay.open{display:flex}.overlay-panel{width:100%;height:100%;background:#15213a;border:1px solid #7b9db2;border-radius:25px;padding:35px 45px;display:flex;flex-direction:column;gap:18px}.overlay-head{display:flex;align-items:center;gap:22px}.overlay-head h2{font-size:34px;margin:0}.notes-content{font-size:25px;line-height:1.58;white-space:pre-line;color:#dbeaf9;overflow:auto}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="deck" role="application" aria-label="Session 31 step-by-step lesson: dynamic programming fundamentals">
+ <header class="topbar"><div class="brand">CS</div><div><div class="course">CS332 · SESSION 31</div><div class="course-sub">Air University · Week 11 · Dynamic programming fundamentals · step-by-step lesson</div></div><div class="dots" id="dots"></div><button class="small-btn" id="timerBtn" data-act="timer" title="Start / pause the clock">⏱ 00:00</button><button class="small-btn" data-act="notes" title="Instructor notes (Ctrl+Shift+P)">☼ Notes</button><button class="small-btn" data-act="full" title="Full screen (F)">⛶</button></header>
+ <main id="slide" aria-live="polite"></main>
+ <footer class="footer"><div class="foot-hint">← → change slide &nbsp;·&nbsp; <b>Next step</b> buttons build each idea &nbsp;·&nbsp; Ctrl + Shift + P = tutor notes</div><div class="progress-track"><div class="progress-fill" id="progressFill"></div></div><div class="page-count" id="pageCount"></div><button class="nav-button" id="prevButton" data-act="prev">← Back</button><button class="nav-button next" id="nextButton" data-act="next">Next →</button></footer>
+ <div id="notesOverlay" class="overlay" aria-hidden="true"><div class="overlay-panel"><div class="overlay-head"><h2>Instructor notes</h2><div style="margin-left:auto" class="status" id="notesPosition"></div><button class="small-btn" data-act="close">✕ Close</button></div><div id="notesContent" class="notes-content"></div></div></div>
+</div>
+<script>
+'use strict';
+const slides=[];
+function add(time,title,sub,content,notes){slides.push({time,title,sub,content,notes});}
+const chk=(id,txt,cls='teal-text')=>` <button class="mini-btn" data-act="reveal" data-id="${id}">Answer</button> <b id="${id}" hidden class="${cls}">${txt}</b>`;
+
+/* ---------- step-by-step guides ---------- */
+const GUIDES={
+ subs:{title:'Optimal substructure in 5 steps',steps:[
+  ['Recall','DP fits when a problem has <b>two</b> properties. This slide covers the first: <b>optimal substructure</b>.'],
+  ['In plain words','The best answer to a big problem is <b>built from the best answers</b> to smaller problems.'],
+  ['See it on the left','To pay 6 with coins {1, 3, 4}, the <b>last coin</b> is 1, 3 or 4. Whatever it is, the rest must be paid <b>optimally</b> too. Click through each choice.'],
+  ['Write it as a formula','best(a) = 1 + min( best(a−1), best(a−3), best(a−4) )<br>best(0) = 0'],
+  ['Check yourself','Greedy also needs optimal substructure. What does DP do differently?'+chk('gs5','DP tries <b>every</b> last choice and keeps the best; greedy commits to one.')]]},
+ overlap:{title:'Overlapping subproblems in 5 steps',steps:[
+  ['Property 2','<b>Overlapping subproblems</b>: the same smaller question is asked again and again.'],
+  ['Watch it','Click <b>Next call</b>. The counter shows how often each F(k) is computed. Pink = wasted, repeated work.'],
+  ['Why it hurts','Plain recursion makes about 1.6ⁿ calls. F(40) ≈ <b>331 million</b> calls for only <b>41</b> different subproblems.'],
+  ['The DP fix','Store each answer the first time; reuse it after that. The work drops to <b>O(n)</b>.'],
+  ['Check yourself','While computing F(5), how many times is F(2) computed?'+chk('go5','3 times (and F(3) twice).')]]},
+ recur:{title:'Recurrence recipe in 5 steps',steps:[
+  ['Why a recurrence?','It is the <b>heart of every DP</b>: it says how a big answer is made from smaller ones.'],
+  ['① State','Say in words what the function means: "ways(n) = number of ways to reach step n."'],
+  ['② Last choice','Ask: what was the <b>last decision</b>? Each possible last decision leads to one smaller subproblem.'],
+  ['③ Combine · ④ Base cases','Combine the choices (<b>+</b> to count, <b>min/max</b> to optimise). Stop the recursion with base cases.'],
+  ['Check yourself','If you may also take 3-steps, what is the new recurrence?'+chk('gr5','ways(n) = ways(n−1) + ways(n−2) + ways(n−3), with ways(0) = 1 and ways(n) = 0 for n &lt; 0.')]]},
+ memo:{title:'Memoization vs tabulation in 5 steps',steps:[
+  ['Same recurrence, two orders','You can store answers <b>top-down</b> (memoization) or <b>bottom-up</b> (tabulation).'],
+  ['Memoization','Keep the recursion. Before computing, <b>look in the memo</b>; after computing, <b>save</b> the answer. Only needed subproblems get solved.'],
+  ['Tabulation','No recursion. Fill a table from the <b>base cases upward</b> with a loop, so every lookup is already filled.'],
+  ['Compare','Both take O(n) here. Memo is quick to write from the recurrence. A table avoids deep recursion and makes saving memory easy.'],
+  ['Check yourself','For n = 1,000,000, which one risks a stack overflow?'+chk('gm5','Memoization, because the recursion goes 1,000,000 calls deep. Tabulation is just a loop.','pink-text')]]},
+ flow:{title:'The DP workflow in 6 steps',steps:[
+  ['Use it every time','Five moves for every DP in this course (knapsack, rod cutting, LCS).'],
+  ['① Define the subproblem','What does <b>one table cell</b> mean? T[a] = fewest coins to pay a.'],
+  ['② Recurrence · ③ Base cases','How a cell is built from <b>smaller</b> cells, and which cells are known without any work.'],
+  ['④ Evaluation order','Fill cells so that everything a cell needs is <b>already filled</b>: usually small → large.'],
+  ['⑤ Answer + cost','Read the answer cell, and trace back the choices if needed. Time = <b>#cells × work per cell</b>.'],
+  ['Check yourself','Coins {1, 3, 4}, amount A. What is the running time?'+chk('gf6','A + 1 cells × 3 choices = <b>O(A)</b>.')]]},
+ act:{title:'How to fill a DP table',steps:[
+  ['Your task','Turn the recurrence into a table by filling cells <b>in order</b>. Choose exercise A or B.'],
+  ['Find the inputs','The <span class="teal-text"><b>teal</b></span> cells are the ones the <span class="amber-text"><b>amber</b></span> cell depends on.'],
+  ['Compute & type','Apply the formula, type the value, press <b>Enter</b>. Stuck? <b>Show me</b> explains it.'],
+  ['Read the answer','The last cell is the final answer. In A, the coins are traced back for you.'],
+  ['Check yourself','In B, why can we fill row by row, left to right?'+chk('ga5','Each cell needs only the cell <b>above</b> and the cell to the <b>left</b>, and both are already filled.')]]}
+};
+const gStep={};
+function guideHtml(k){const g=GUIDES[k],s=gStep[k]||1,n=g.steps.length;
+ return `<div class="guide-head"><h3>${g.title}</h3><div class="pips">${g.steps.map((_,i)=>`<i class="${i<s?'on':''}"></i>`).join('')}</div></div>
+ <div style="flex:1;min-height:0">${g.steps.slice(0,s).map(([t,b],i)=>`<div class="gcard ${i===s-1?'new':''} ${t.startsWith('Check')?'check':''}"><span class="num">${i+1}</span><div><b class="t">${t}</b>${b}</div></div>`).join('')}</div>
+ <div class="controls" style="margin-top:8px"><button class="small-btn" data-act="g-prev" data-g="${k}" ${s<=1?'disabled':''}>← Back</button>${s<n?`<button class="small-btn amber" data-act="g-next" data-g="${k}">Next step (${s+1}/${n}) →</button>`:`<button class="small-btn primary" data-act="next">✓ Done: next slide →</button>`}</div>`;}
+function mountGuides(){document.querySelectorAll('[data-guide]').forEach(el=>el.innerHTML=guideHtml(el.dataset.guide));}
+
+/* ---------- slides ---------- */
+add('00–04 min','Dynamic programming: solve once, remember','Session 31 · How to use this lesson, and where we are going.',`
+<div class="grid two fill">
+ <div class="panel purple col" style="justify-content:center;gap:16px;background:linear-gradient(140deg,#2e2650,#151c37)">
+  <span class="tag purple">Week 11 · Session 31</span>
+  <div class="fullsize">Don't solve it twice.<br><span class="purple-text">Remember it.</span></div>
+  <div class="callout purple" style="font-size:17px">Last session, greedy failed for coins {1, 3, 4}: it paid 6 with 4+1+1 instead of 3+3. Today we learn the method that is <b>always</b> right: dynamic programming.</div>
+  <div class="grid three">
+   <div class="howto"><div class="icon">📖</div><b>1 · Read</b><span class="subtle">one step at a time</span></div>
+   <div class="howto"><div class="icon">🤔</div><b>2 · Predict</b><span class="subtle">before you click</span></div>
+   <div class="howto"><div class="icon">👆</div><b>3 · Click</b><span class="subtle">and check yourself</span></div>
+  </div>
+ </div>
+ <div class="panel col">
+  <h3>Today's path (click to jump)</h3>
+  <button class="jump" data-act="jump" data-target="1"><span>🧱</span>Optimal substructure: building from the best parts</button>
+  <button class="jump" data-act="jump" data-target="2"><span>🔁</span>Overlapping subproblems: the same work again</button>
+  <button class="jump" data-act="jump" data-target="3"><span>✍</span>Recurrence formulation: write the rule</button>
+  <button class="jump" data-act="jump" data-target="4"><span>⚖</span>Memoization vs tabulation</button>
+  <button class="jump" data-act="jump" data-target="5"><span>🔄</span>DP workflow: recursion → table</button>
+  <button class="jump" data-act="jump" data-target="6"><span>🧮</span>Activity: convert a recurrence to a DP table</button>
+  <button class="jump" data-act="jump" data-target="7"><span>✅</span>Summary &amp; exit ticket</button>
+  <p class="mini" style="margin-top:auto">Next session uses all of this for <b>0/1 knapsack</b> and <b>rod cutting</b>.</p>
+ </div>
+</div>`,`Start the clock. Hook: "Greedy gave 3 coins for 6 with {1,3,4}. How could a computer be SURE of the best answer without trying everything?"
+Answer preview: DP tries every choice, but solves each subproblem only once.`);
+
+add('04–10 min','🧱 Property 1 · Optimal substructure','Pay an amount with the fewest coins from {1, 3, 4}. Think about the LAST coin.',`
+<div class="grid lab fill">
+ <div class="panel purple col"><div id="subsLab" class="col" style="flex:1;min-height:0"></div></div>
+ <div class="panel col" data-guide="subs"></div>
+</div>`,`Amount 6: last coin 1 → 1 + best(5) = 3. Last coin 3 → 1 + best(3) = 2. Last coin 4 → 1 + best(2) = 3. Minimum = 2 (3 + 3).
+Stress: we do not know which last coin is right, so DP tries all of them. Each option uses the BEST answer of a smaller amount.`);
+
+add('10–16 min','🔁 Property 2 · Overlapping subproblems','Plain recursion for Fibonacci: F(n) = F(n−1) + F(n−2). Count how often each F(k) gets computed.',`
+<div class="grid lab fill">
+ <div class="panel purple col"><div id="overLab" class="col" style="flex:1;min-height:0"></div></div>
+ <div class="panel col" data-guide="overlap"></div>
+</div>`,`Click call by call for the first 6–7 calls, then Run all.
+15 calls for only 6 different subproblems (F0..F5). F(2) computed 3×, F(3) 2×.
+Bridge: "If we wrote each answer down the first time, we'd never repeat. That's the whole idea of DP."`);
+
+add('16–22 min','✍ Recurrence formulation','Problem: climb n stairs taking 1 or 2 steps at a time. How many different ways? Build the recurrence one part at a time.',`
+<div class="grid lab fill">
+ <div class="panel purple col"><div id="recLab" class="col" style="flex:1;min-height:0"></div></div>
+ <div class="panel col" data-guide="recur"></div>
+</div>`,`Let pairs answer each part before clicking. The key question is the LAST move: 1-step from n−1 or 2-step from n−2.
+ways(0) = 1 often confuses students: "there is exactly one way to be at the bottom: do nothing."
+Values: 1, 1, 2, 3, 5, 8, 13: Fibonacci again!`);
+
+add('22–28 min','⚖ Memoization vs tabulation','Same recurrence F(n) = F(n−1) + F(n−2). Watch the two ways of filling the answers for F(6).',`
+<div class="grid lab fill">
+ <div class="panel purple col"><div id="memoLab" class="col" style="flex:1;min-height:0"></div></div>
+ <div class="panel col" data-guide="memo"></div>
+</div>`,`Run top-down first: the call stack goes all the way down to F(1), then answers fill on the way back up. Later calls (F(2), F(3)…) are memo hits.
+Then bottom-up: a simple loop fills 0 → 6.
+Ask: "Which one fills cells in the same order?" Both fill small → large, but top-down gets there by recursion.`);
+
+add('28–34 min','🔄 The DP workflow: recursion → table','Convert the recursive min-coins solution into a table-filling loop in five moves.',`
+<div class="grid lab fill">
+ <div class="panel purple col"><div id="convLab" class="col" style="flex:1;min-height:0"></div></div>
+ <div class="panel col" data-guide="flow"></div>
+</div>`,`This is the exact skill for today's activity. Each move maps one part of the recursion to one part of the table code.
+Emphasise move 3 (evaluation order): smaller amounts first, so T[a − c] is ready when T[a] needs it.`);
+
+add('34–45 min','🧮 Activity: convert a recurrence to a DP table','Fill the table cell by cell. Type the value and press Enter. Teal cells are the inputs you need.',`
+<div class="grid lab fill">
+ <div class="panel purple col"><div id="actLab" class="col" style="flex:1;min-height:0"></div></div>
+ <div class="panel col" data-guide="act"></div>
+</div>`,`Main activity (11 min). Pairs: one computes, one checks. Everyone does A; fast pairs continue with B.
+A answers: 0 1 2 1 1 2 2 2 2 3 3 → T[10] = 3 coins (3 + 3 + 4).
+B: 4 × 5 grid, answer 35 = C(7, 3). Mention: this 2-D table style returns in knapsack and LCS.`);
+
+add('45–50 min','✅ Summary & exit ticket','The four ideas of DP on one page, then three quick questions.',`
+<div class="grid two fill">
+ <div class="panel col">
+  <table class="table"><thead><tr><th></th><th>Memoization</th><th>Tabulation</th></tr></thead><tbody>
+   <tr><td><b>Direction</b></td><td>Top-down (recursion)</td><td>Bottom-up (loop)</td></tr>
+   <tr><td><b>Solves</b></td><td>Only needed subproblems</td><td>Every cell in the table</td></tr>
+   <tr><td><b>Risk</b></td><td>Deep recursion / stack</td><td>Must choose the fill order</td></tr>
+   <tr><td><b>Best when</b></td><td>Recurrence is easy, few states used</td><td>All states needed, large n</td></tr>
+  </tbody></table>
+  <div class="callout purple" style="margin-top:12px"><b>DP workflow:</b> ① subproblem → ② recurrence → ③ base cases → ④ fill order → ⑤ answer + cost (#cells × work per cell).</div>
+  <div class="callout amber" style="margin-top:auto">Next session (32): <b>0/1 knapsack</b> and <b>rod cutting</b> with exactly this workflow.</div>
+ </div>
+ <div class="panel col">
+  <h3>Exit ticket</h3>
+  <p><b>Q1.</b> Which DP property is missing in Merge Sort?</p><button class="mini-btn" data-act="reveal" data-id="x1" style="align-self:start">Answer</button><div class="feedback ok" id="x1" hidden style="margin-top:6px">Overlapping subproblems: its halves never repeat.</div>
+  <p><b>Q2.</b> Write the recurrence for climbing stairs (1 or 2 steps).</p><button class="mini-btn" data-act="reveal" data-id="x2" style="align-self:start">Answer</button><div class="feedback ok" id="x2" hidden style="margin-top:6px">ways(n) = ways(n−1) + ways(n−2), with ways(0) = ways(1) = 1.</div>
+  <p><b>Q3.</b> A DP table has n × m cells and each takes O(1). Total time?</p><button class="mini-btn" data-act="reveal" data-id="x3" style="align-self:start">Answer</button><div class="feedback ok" id="x3" hidden style="margin-top:6px"><b>O(n · m)</b> = #cells × work per cell.</div>
+ </div>
+</div>`,`Collect exit answers verbally or on paper. Quiz 3 (Session 33) includes DP fundamentals, so mention it.`);
+
+/* ---------- helpers ---------- */
+const $=(q,r=document)=>r.querySelector(q);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let current=0;const seen=new Set([0]);
+const COINS=[1,3,4];
+function coinTable(A){const T=[0],pick=[0];for(let a=1;a<=A;a++){let b=Infinity,p=0;for(const c of COINS)if(c<=a&&T[a-c]+1<b){b=T[a-c]+1;p=c;}T.push(b);pick.push(p);}return {T,pick};}
+function coinList(A){const {pick}=coinTable(A),out=[];let a=A;while(a>0){out.push(pick[a]);a-=pick[a];}return out;}
+
+/* Slide 2: optimal substructure */
+let subAmt=6,subStep=0;
+function mountSubs(){const el=$('#subsLab');if(!el)return;const {T}=coinTable(subAmt),opts=COINS.map(c=>({c,rest:subAmt-c,ok:c<=subAmt,val:c<=subAmt?1+T[subAmt-c]:Infinity}));
+ const best=Math.min(...opts.map(o=>o.val)),winC=opts.find(o=>o.val===best).c,done=subStep>=4;
+ const msgs=[`🤔 Predict: what is the fewest number of coins for <b>${subAmt}</b>? Then reveal each possible last coin.`,'If the last coin is <b>1</b>, the rest must be paid optimally.','If the last coin is <b>3</b>…','If the last coin is <b>4</b>…',`<b>best(${subAmt}) = ${best}</b> coins (${coinList(subAmt).join(' + ')}). Each option used the <b>best</b> answer of a smaller amount: that is <b>optimal substructure</b>.`];
+ el.innerHTML=`<div class="range-line"><span>Amount to pay</span><strong>${subAmt}</strong></div><input type="range" id="subRange" min="2" max="12" value="${subAmt}" aria-label="Amount">
+ <div class="recline" style="margin:8px 0;text-align:center">best(${subAmt}) = 1 + min( best(${subAmt-1}), ${subAmt>=3?'best('+(subAmt-3)+')':'—'}, ${subAmt>=4?'best('+(subAmt-4)+')':'—'} )</div>
+ <div class="grid three" style="flex:1;min-height:0;align-content:center">${opts.map((o,i)=>{const show=subStep>i;return `<div class="opt ${show?(done&&o.c===winC?'win':'show'):''}"><span class="tag ${show?'teal':''}">Last coin ${o.c}</span><div class="big" style="margin:8px 0">${!o.ok?'✗':show?`1 + ${T[o.rest]}`:'?'}</div><div class="status">${!o.ok?`${o.c} &gt; ${subAmt}: not allowed`:show?`best(${o.rest}) = ${T[o.rest]}${o.rest?' ('+coinList(o.rest).join('+')+')':''}`:`then pay ${o.rest} optimally`}</div>${show&&o.ok?`<div class="amber-text" style="font-weight:900;margin-top:6px">= ${o.val} coins</div>`:''}</div>`;}).join('')}</div>
+ <div class="feedback ${done?'ok':subStep?'':'hint'}" style="margin-top:10px">${msgs[Math.min(subStep,4)]}</div>
+ <div class="controls" style="margin-top:10px"><button class="small-btn purple" data-act="sub-next" ${done?'disabled':''}>${subStep<3?'Reveal next choice →':'Pick the minimum →'}</button><button class="small-btn" data-act="sub-reset">↺ Reset</button><span class="status">Try other amounts with the slider.</span></div>`;
+ $('#subRange').addEventListener('input',e=>{subAmt=+e.target.value;subStep=0;mountSubs();$('#subRange').focus();});}
+
+/* Slide 3: overlapping (Fibonacci call tree) */
+function fibTree(k){return {v:'F'+k,n:k,k:k>1?[fibTree(k-1),fibTree(k-2)]:[]};}
+const FT=fibTree(5),FORDER=[];(function pre(t){FORDER.push(t);t.k.forEach(pre);})(FT);
+let ovStep=0;
+function svgCalls(root,W,H,cls){let leaf=0;const pos=new Map(),all=[];
+ (function place(t,d){all.push(t);if(!t.k.length)pos.set(t,{xi:leaf++,d});else{t.k.forEach(c=>place(c,d+1));pos.set(t,{xi:(pos.get(t.k[0]).xi+pos.get(t.k.at(-1)).xi)/2,d});}})(root,0);
+ const maxD=Math.max(...[...pos.values()].map(p=>p.d)),r=22,pad=r+10,top=r+8,gap=(H-top-r-8)/maxD,X=p=>pad+p.xi*(W-2*pad)/Math.max(1,leaf-1),Y=p=>top+p.d*gap;
+ const C={norm:['#1e3d5c','#8fbfdd','#fff'],cur:['#5a4520','#ffcc77','#fff3d6'],rep:['#5b3348','#ff8fa8','#ffe0e8'],hide:['#121d2e','#2c3e55','#4e6680']};let e='',s='';
+ all.forEach(t=>{const a=pos.get(t);t.k.forEach(c=>{const b=pos.get(c);e+=`<line x1="${X(a)}" y1="${Y(a)}" x2="${X(b)}" y2="${Y(b)}" stroke="${cls(c)==='hide'?'#22324a':'#5f88a6'}" stroke-width="3"/>`;});const k=cls(t),col=C[k];s+=`<circle cx="${X(a)}" cy="${Y(a)}" r="${r}" fill="${col[0]}" stroke="${col[1]}" stroke-width="3"/><text x="${X(a)}" y="${Y(a)+6}" text-anchor="middle" font-size="16" font-weight="900" fill="${col[2]}">${k==='hide'?'?':t.v}</text>`;});
+ return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:100%">${e}${s}</svg>`;}
+function mountOver(){const el=$('#overLab');if(!el)return;const shown=FORDER.slice(0,ovStep),cnt={},firstSeen=new Map();
+ shown.forEach(t=>{cnt[t.n]=(cnt[t.n]||0)+1;if(!firstSeen.has(t.n))firstSeen.set(t.n,t);});
+ const cur=shown.at(-1),cls=t=>!shown.includes(t)?'hide':t===cur?'cur':firstSeen.get(t.n)!==t?'rep':'norm',done=ovStep===FORDER.length,wasted=shown.length-firstSeen.size;
+ el.innerHTML=`<div class="summary-row"><span>Calls so far <b>${ovStep} / 15</b></span><span>Wasted repeats <b class="pink-text">${wasted}</b></span>${cur?`<span>Now computing <b class="amber-text">${cur.v}</b></span>`:''}</div>
+ <div style="flex:1;min-height:0;margin:6px 0">${svgCalls(FT,780,270,cls)}</div>
+ <div class="cells">${[5,4,3,2,1,0].map(k=>`<div class="cell ${cnt[k]>1?'cur':cnt[k]?'done':'empty'}"><div class="v">${cnt[k]||0}×</div><small>F(${k})</small></div>`).join('')}</div>
+ <div class="feedback ${done?'no':''}" style="margin-top:8px">${!ovStep?'🤔 Predict: how many calls does F(5) need? Click <b>Next call</b>.':done?`<b>15 calls</b> for only <b>6</b> different subproblems: <b>9</b> calls were repeats. Those are <b>overlapping subproblems</b>.`:cls(cur)==='rep'?`<b>${cur.v}</b> again! It was already computed before: wasted work.`:`First time computing <b>${cur.v}</b>.`}</div>
+ <div class="controls" style="margin-top:8px"><button class="small-btn purple" data-act="ov-next" ${done?'disabled':''}>Next call →</button><button class="small-btn" data-act="ov-all" ${done?'disabled':''}>Run all</button><button class="small-btn" data-act="ov-reset">↺ Reset</button></div>`;}
+
+/* Slide 4: recurrence builder */
+const RQ=[
+ {q:'① What should ways(n) mean?',o:['Number of ways to reach step n','Number of steps in the staircase','Ways to take a single step','The biggest step allowed'],a:0,line:'ways(n) = number of different ways to reach step n',why:['Yes: one value per staircase height n.','That is just n, which we already know.','Too small: we need whole routes to step n.','That is fixed (2); it is not what we count.']},
+ {q:'② Your LAST move onto step n was…',o:['A 1-step from n−1, or a 2-step from n−2','Always a 1-step','A jump straight from step 0','From any lower step'],a:0,line:'last move: 1-step (from n−1) or 2-step (from n−2)',why:['Exactly: only two possible last moves.','A 2-step could also be last.','Only steps of size 1 or 2 are allowed.','Only steps of size 1 or 2 are allowed.']},
+ {q:'③ So how do we combine them?',o:['ways(n) = ways(n−1) + ways(n−2)','ways(n) = ways(n−1) × ways(n−2)','ways(n) = max(ways(n−1), ways(n−2))','ways(n) = ways(n−1) + 1'],a:0,line:'ways(n) = ways(n−1) + ways(n−2)',why:['Right: the two groups of routes are separate, so we ADD them (counting).','Multiplying would mix routes together. The groups are separate, so add.','max is for optimising; here we count all routes.','Routes through n−2 would be missed.']},
+ {q:'④ What are the base cases?',o:['ways(0) = 1 and ways(1) = 1','ways(0) = 0 and ways(1) = 0','ways(1) = 2','No base cases needed'],a:0,line:'ways(0) = 1,  ways(1) = 1',why:['Yes: one way to stand at the bottom (do nothing), one way to reach step 1.','Then every answer would be 0.','There is only one way to reach step 1.','Without them, the recursion never stops.']}];
+let rqStep=0,rqWrong=-1;
+function mountRec(){const el=$('#recLab');if(!el)return;const done=rqStep>=RQ.length,q=RQ[rqStep];const w=[1,1];for(let i=2;i<=7;i++)w.push(w[i-1]+w[i-2]);
+ el.innerHTML=`<div class="summary-row"><span class="tag purple">Part ${Math.min(rqStep+1,4)} / 4</span><span>🪜 1 or 2 steps at a time</span></div>
+ <div style="margin:10px 0">${RQ.slice(0,rqStep).map(x=>`<div class="recline">${x.line}</div>`).join('')||'<p class="subtle">Your recurrence will appear here, one part at a time.</p>'}</div>
+ ${done?`<div class="feedback ok"><b>Recurrence complete!</b> Values: ${w.slice(0,8).map((v,i)=>`ways(${i}) = ${v}`).join(', ')}. Look familiar? It is Fibonacci again.</div>`:`<p class="lead" style="margin:4px 0 10px">${q.q}</p><div class="choice-grid">${q.o.map((t,i)=>`<button class="choice ${i===rqWrong?'bad':''}" data-act="rq" data-i="${i}">${esc(t)}</button>`).join('')}</div>
+ <div class="feedback ${rqWrong>=0?'no':''}" style="margin-top:10px">${rqWrong>=0?'✗ '+esc(q.why[rqWrong])+' Try again.':'Discuss with your partner, then choose.'}</div>`}
+ <div class="controls" style="margin-top:auto"><button class="small-btn" data-act="rq-reset">↺ Start over</button></div>`;}
+
+/* Slide 5: memo vs tab */
+let mvMode='top',mvStep=0;const N6=6;
+function simTop(){const ev=[],memo=Array(N6+1).fill(null),stack=[];
+ (function f(n){stack.push(n);if(n<=1){memo[n]=n;ev.push({cur:n,deps:[],memo:memo.slice(),stack:stack.slice(),msg:`Call F(${n}): <b>base case</b> = ${n}. Save it.`});}
+  else if(memo[n]!=null){ev.push({cur:n,deps:[],memo:memo.slice(),stack:stack.slice(),msg:`Call F(${n}): <b>already in the memo</b> → reuse ${memo[n]}. No work!`,hit:true});}
+  else{ev.push({cur:n,deps:[],memo:memo.slice(),stack:stack.slice(),msg:`Call F(${n}): not in the memo yet, so call F(${n-1}) first.`,open:true});f(n-1);f(n-2);memo[n]=memo[n-1]+memo[n-2];ev.push({cur:n,deps:[n-1,n-2],memo:memo.slice(),stack:stack.slice(),msg:`Back in F(${n}): F(${n-1}) + F(${n-2}) = ${memo[n-1]} + ${memo[n-2]} = <b>${memo[n]}</b>. Save it.`});}
+  stack.pop();})(N6);return ev;}
+function simBot(){const ev=[],T=Array(N6+1).fill(null);T[0]=0;ev.push({cur:0,deps:[],memo:T.slice(),msg:'Base case: T[0] = 0.'});T[1]=1;ev.push({cur:1,deps:[],memo:T.slice(),msg:'Base case: T[1] = 1.'});
+ for(let i=2;i<=N6;i++){T[i]=T[i-1]+T[i-2];ev.push({cur:i,deps:[i-1,i-2],memo:T.slice(),msg:`Loop i = ${i}: T[${i}] = T[${i-1}] + T[${i-2}] = ${T[i-1]} + ${T[i-2]} = <b>${T[i]}</b>.`});}return ev;}
+const MV={top:simTop(),bot:simBot()};
+const MVCODE={top:'F(n):\n  <span class="k">if</span> n ≤ 1: <span class="k">return</span> n\n  <span class="k">if</span> memo[n] exists: <span class="k">return</span> memo[n]\n  memo[n] ← F(n−1) + F(n−2)\n  <span class="k">return</span> memo[n]',bot:'T[0] ← 0 ;  T[1] ← 1\n<span class="k">for</span> i ← 2 <span class="k">to</span> n:\n  T[i] ← T[i−1] + T[i−2]\n<span class="k">return</span> T[n]'};
+function mountMemo(){const el=$('#memoLab');if(!el)return;const evs=MV[mvMode],e=mvStep?evs[mvStep-1]:null,done=mvStep===evs.length,memo=e?e.memo:Array(N6+1).fill(null);
+ el.innerHTML=`<div class="tabs"><button class="tab ${mvMode==='top'?'on':''}" data-act="mv-mode" data-m="top">① Memoization (top-down)</button><button class="tab ${mvMode==='bot'?'on':''}" data-act="mv-mode" data-m="bot">② Tabulation (bottom-up)</button><span class="status" style="margin-left:auto">Step ${mvStep} / ${evs.length}</span></div>
+ <div class="codebox" style="margin:10px 0">${MVCODE[mvMode]}</div>
+ <p class="status" style="margin:0 0 6px">${mvMode==='top'?'memo[ ]':'T[ ]'} for F(0) … F(6):</p>
+ <div class="cells">${memo.map((v,i)=>`<div class="cell ${e&&e.cur===i?'cur':e&&e.deps.includes(i)?'dep':v==null?'empty':'done'}"><div class="v">${v==null?'·':v}</div><small>${i}</small></div>`).join('')}</div>
+ ${mvMode==='top'?`<div class="summary-row" style="margin-top:10px"><span>Call stack: <b>${e?e.stack.map(n=>'F('+n+')').join(' → '):'empty'}</b></span></div>`:''}
+ <div class="feedback ${done?'ok':e&&e.hit?'ok':''}" style="margin-top:auto">${!e?(mvMode==='top'?'🤔 Predict: which cell gets filled first, even though we call F(6) first?':'🤔 Predict: in what order will the cells fill?'):done?(mvMode==='top'?'<b>Done: F(6) = 8.</b> Only 11 calls (plain recursion: 25). Cells filled on the way <b>back up</b> the stack.':'<b>Done: T[6] = 8.</b> A simple loop, no recursion, and each cell is computed exactly once.'):e.msg}</div>
+ <div class="controls" style="margin-top:8px"><button class="small-btn" data-act="mv-prev" ${mvStep?'':'disabled'}>← Back</button><button class="small-btn purple" data-act="mv-next" ${done?'disabled':''}>Next step →</button><button class="small-btn" data-act="mv-all" ${done?'disabled':''}>Run all</button><button class="small-btn" data-act="mv-reset">↺</button></div>`;}
+
+/* Slide 6: converter */
+const REC=['MinCoins(a):','  <span class="k">if</span> a = 0: <span class="k">return</span> 0','  best ← ∞','  <span class="k">for each</span> coin c:','    <span class="k">if</span> c ≤ a: best ← min(best, 1 + MinCoins(a − c))','  <span class="k">return</span> best'];
+const TAB=[['T ← array[0 .. A]','parameter a → table index'],['T[0] ← 0','base case → first cell'],['<span class="k">for</span> a ← 1 <span class="k">to</span> A:','smaller a first → lookups are ready'],['  T[a] ← min over coins c ≤ a of (1 + T[a − c])','recursive call → table lookup'],['<span class="k">return</span> T[A]','answer cell · time O(A·k)']];
+const RECHL=[[0],[1],[4],[4],[5]];
+const CONVMSG=['We will turn this recursion into a table in <b>5 moves</b>. 🤔 Predict: what will the table be indexed by?','<b>Move 1 · Subproblem.</b> The only changing parameter is <b>a</b>, so make one cell per value: T[0..A].','<b>Move 2 · Base case.</b> "if a = 0: return 0" becomes <b>T[0] ← 0</b>.','<b>Move 3 · Order.</b> MinCoins(a) only calls <b>smaller</b> amounts (a − c), so fill a = 1, 2, 3, … upward.','<b>Move 4 · Recurrence.</b> Every recursive call MinCoins(a − c) becomes a <b>lookup</b> T[a − c].','<b>Move 5 · Answer + cost.</b> Return T[A]. A + 1 cells × k coins = <b>O(A·k)</b> time, no recursion.'];
+let convStep=0;
+function mountConv(){const el=$('#convLab');if(!el)return;const hl=convStep?RECHL[convStep-1]:[];
+ el.innerHTML=`<div class="summary-row"><span class="tag purple">Move ${convStep} / 5</span><span>coins = {1, 3, 4}</span></div>
+ <p class="status" style="margin:10px 0 4px"><b>Recursive version</b> (slow: repeats subproblems)</p>
+ <div class="codebox">${REC.map((l,i)=>`<span class="ln ${hl.includes(i)?'hl':''}">${l}</span>`).join('')}</div>
+ <p class="status" style="margin:10px 0 4px"><b>Table version</b> (DP)</p>
+ <div class="codebox" style="min-height:150px">${TAB.slice(0,convStep).map(([l,c],i)=>`<span class="ln ${i===convStep-1?'new':''}">${l.padEnd?l:l}   <span class="cm">// ${c}</span></span>`).join('')||'<span class="cm">// builds here, one line per move</span>'}</div>
+ <div class="feedback ${convStep===5?'ok':''}" style="margin-top:auto">${CONVMSG[convStep]}</div>
+ <div class="controls" style="margin-top:8px"><button class="small-btn" data-act="cv-prev" ${convStep?'':'disabled'}>← Back</button><button class="small-btn purple" data-act="cv-next" ${convStep===5?'disabled':''}>Next move →</button><button class="small-btn" data-act="cv-reset">↺ Reset</button></div>`;}
+
+/* Slide 7: activity */
+let actMode='A';const ACTA={A:10};const A_T=coinTable(10).T;
+const actA={i:1,fb:'',cls:''};
+const GR=4,GC=5;const gridVal=(r,c)=>{const g=[];for(let i=0;i<GR;i++){g.push([]);for(let j=0;j<GC;j++)g[i].push(i===0||j===0?1:g[i-1][j]+g[i][j-1]);}return g[r][c];};
+const INTERIOR=[];for(let r=1;r<GR;r++)for(let c=1;c<GC;c++)INTERIOR.push([r,c]);
+const actB={k:0,fb:'',cls:''};
+function mountAct(){const el=$('#actLab');if(!el)return;
+ const tabs=`<div class="tabs"><button class="tab ${actMode==='A'?'on':''}" data-act="act-mode" data-m="A">A · 1-D: fewest coins</button><button class="tab ${actMode==='B'?'on':''}" data-act="act-mode" data-m="B">B · 2-D: grid paths</button></div>`;
+ if(actMode==='A'){const i=actA.i,done=i>10,deps=done?[]:COINS.filter(c=>c<=i).map(c=>i-c);
+  el.innerHTML=`${tabs}<div class="recline" style="margin:10px 0 8px">T[a] = 1 + min( T[a−1], T[a−3], T[a−4] ) &nbsp;<span class="subtle" style="font-family:inherit;font-size:15px">(only terms with a−c ≥ 0) · T[0] = 0</span></div>
+  <div class="cells">${A_T.map((v,a)=>`<div class="cell ${a===0?'base':a<i?'done':a===i?'cur':'empty'} ${deps.includes(a)?'dep':''}"><div class="v">${a<i?v:a===i?'?':'·'}</div><small>T[${a}]</small></div>`).join('')}</div>
+  ${done?`<div class="feedback ok" style="margin-top:14px"><b>Table complete! T[10] = 3 coins.</b> Trace back: 10 → (−3) 7 → (−3) 4 → (−4) 0, so <b>3 + 3 + 4</b>. Greedy would give 4 + 4 + 1 + 1 = 4 coins.</div>`:
+  `<div class="summary-row" style="margin:14px 0 8px"><span>Inputs: ${deps.map(d=>`T[${d}] = <b>${A_T[d]}</b>`).join(' · ')}</span></div>
+  <div class="controls"><span class="lead" style="font-size:22px!important">T[${i}] =</span><input class="ans" id="ansA" inputmode="numeric" aria-label="Value of T[${i}]" autocomplete="off"><button class="small-btn purple" data-act="actA-check">Check ✓</button><button class="small-btn warning" data-act="actA-show">Show me</button></div>
+  <div class="feedback ${actA.cls}" style="margin-top:10px">${actA.fb||`Compute 1 + min( ${deps.map(d=>'T['+d+']').join(', ')} ).`}</div>`}
+  <div class="controls" style="margin-top:auto"><button class="small-btn" data-act="actA-reset">↺ Restart A</button><span class="status">Filled ${Math.min(i-1,10)} / 10</span></div>`;
+  $('#ansA')?.focus();}
+ else{const k=actB.k,done=k>=INTERIOR.length,[cr,cc]=done?[-1,-1]:INTERIOR[k];const filled=(r,c)=>r===0||c===0||INTERIOR.findIndex(([a,b])=>a===r&&b===c)<k;
+  let tbl=`<table class="gridtab"><tr><th></th>${Array.from({length:GC},(_,c)=>`<th>c${c}</th>`).join('')}</tr>`;
+  for(let r=0;r<GR;r++){tbl+=`<tr><th>r${r}</th>`;for(let c=0;c<GC;c++){const isCur=r===cr&&c===cc,isDep=(r===cr-1&&c===cc)||(r===cr&&c===cc-1);tbl+=`<td class="${r===0||c===0?'base':isCur?'cur':filled(r,c)?'done':'empty'} ${isDep?'dep':''}">${filled(r,c)?gridVal(r,c):isCur?'?':'·'}</td>`;}tbl+='</tr>';}tbl+='</table>';
+  el.innerHTML=`${tabs}<p class="status" style="margin:8px 0 4px">🤖 A robot starts at the top-left and moves only <b>right</b> or <b>down</b>. How many paths reach each cell?</p><div class="recline" style="margin:0 0 8px">P[r][c] = P[r−1][c] + P[r][c−1] &nbsp;<span class="subtle" style="font-family:inherit;font-size:15px">· row 0 and column 0 = 1</span></div>
+  ${tbl}
+  ${done?`<div class="feedback ok" style="margin-top:12px"><b>Table complete! P[3][4] = 35 paths.</b> Same shape as the knapsack and LCS tables coming next.</div>`:
+  `<div class="controls" style="margin-top:12px"><span class="lead" style="font-size:22px!important">P[${cr}][${cc}] =</span><input class="ans" id="ansB" inputmode="numeric" aria-label="Value of P[${cr}][${cc}]" autocomplete="off"><button class="small-btn purple" data-act="actB-check">Check ✓</button><button class="small-btn warning" data-act="actB-show">Show me</button></div>
+  <div class="feedback ${actB.cls}" style="margin-top:8px">${actB.fb||`Above (P[${cr-1}][${cc}] = ${gridVal(cr-1,cc)}) + left (P[${cr}][${cc-1}] = ${gridVal(cr,cc-1)}).`}</div>`}
+  <div class="controls" style="margin-top:auto"><button class="small-btn" data-act="actB-reset">↺ Restart B</button><span class="status">Filled ${Math.min(k,12)} / 12</span></div>`;
+  $('#ansB')?.focus();}}
+function checkA(show){const i=actA.i,deps=COINS.filter(c=>c<=i).map(c=>i-c),want=A_T[i],expl=`1 + min(${deps.map(d=>A_T[d]).join(', ')}) = ${want}`;
+ if(show){actA.fb=`T[${i}] = ${expl}. Filled for you.`;actA.cls='hint';actA.i++;return mountAct();}
+ const v=parseInt(($('#ansA')||{}).value,10);if(v===want){actA.fb=`✓ Correct: T[${i}] = ${expl}.`;actA.cls='ok';actA.i++;}else{actA.fb=`✗ Not ${isNaN(v)?'empty':v}. Take the smallest input (${Math.min(...deps.map(d=>A_T[d]))}) and add 1.`;actA.cls='no';}mountAct();}
+function checkB(show){const [r,c]=INTERIOR[actB.k],want=gridVal(r,c),expl=`${gridVal(r-1,c)} + ${gridVal(r,c-1)} = ${want}`;
+ if(show){actB.fb=`P[${r}][${c}] = ${expl}. Filled for you.`;actB.cls='hint';actB.k++;return mountAct();}
+ const v=parseInt(($('#ansB')||{}).value,10);if(v===want){actB.fb=`✓ Correct: ${expl}.`;actB.cls='ok';actB.k++;}else{actB.fb=`✗ Not ${isNaN(v)?'empty':v}. Add the teal cell above and the teal cell to the left.`;actB.cls='no';}mountAct();}
+
+/* ---------- deck control ---------- */
+function mountAll(){mountGuides();mountSubs();mountOver();mountRec();mountMemo();mountConv();mountAct();}
+function fitDeck(){const r=Math.min(innerWidth/1600,innerHeight/900),d=$('#deck');d.style.position='absolute';d.style.left='50%';d.style.top='50%';d.style.transform=`translate(-50%,-50%) scale(${r})`;}
+function closeOverlays(){const o=$('#notesOverlay');o.classList.remove('open');o.setAttribute('aria-hidden','true');}
+function openNotes(){const s=slides[current];$('#notesPosition').textContent=`Slide ${current+1} · ${s.time}`;$('#notesContent').textContent=s.notes;$('#notesOverlay').classList.add('open');$('#notesOverlay').setAttribute('aria-hidden','false');}
+function goTo(i){current=Math.max(0,Math.min(slides.length-1,i));seen.add(current);closeOverlays();render();}
+function render(){const s=slides[current];
+ $('#slide').innerHTML=`<div class="kicker"><span class="dot"></span> SESSION 31 · DYNAMIC PROGRAMMING FUNDAMENTALS &nbsp;·&nbsp; <span class="time">⏱ ${s.time}</span></div><h1 class="slide-title">${s.title}</h1><div class="slide-sub">${s.sub}</div><div class="slide-body">${s.content}</div>`;
+ $('#dots').innerHTML=slides.map((x,i)=>`<button class="${i===current?'on':seen.has(i)?'seen':''}" data-act="jump" data-target="${i}" title="${esc(x.title)}">${i+1}</button>`).join('');
+ $('#pageCount').textContent=(current+1)+' / '+slides.length;$('#progressFill').style.width=((current+1)*100/slides.length)+'%';
+ $('#prevButton').disabled=current===0;$('#nextButton').disabled=current===slides.length-1;mountAll();}
+let cs=null,ca=0,ct=null;const ctext=()=>{const s=Math.floor((ca+(cs?Date.now()-cs:0))/1000);return '⏱ '+String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');};
+function toggleClock(){const b=$('#timerBtn');if(cs){ca+=Date.now()-cs;cs=null;clearInterval(ct);b.classList.remove('running');}else{cs=Date.now();ct=setInterval(()=>b.textContent=ctext(),1000);b.classList.add('running');}b.textContent=ctext();}
+
+document.addEventListener('click',ev=>{const b=ev.target.closest('[data-act]');if(!b)return;const a=b.dataset.act;
+ if(a==='prev')return goTo(current-1);if(a==='next')return goTo(current+1);if(a==='jump')return goTo(+b.dataset.target);
+ if(a==='timer')return toggleClock();if(a==='close')return closeOverlays();if(a==='notes')return $('#notesOverlay').classList.contains('open')?closeOverlays():openNotes();
+ if(a==='full'){if(!document.fullscreenElement)$('#deck').requestFullscreen?.().then(fitDeck).catch(()=>{});else document.exitFullscreen?.();return;}
+ if(a==='reveal'){const n=document.getElementById(b.dataset.id);if(n)n.hidden=!n.hidden;return;}
+ if(a==='g-next'||a==='g-prev'){const k=b.dataset.g,n=GUIDES[k].steps.length;gStep[k]=Math.max(1,Math.min(n,(gStep[k]||1)+(a==='g-next'?1:-1)));return mountGuides();}
+ if(a==='sub-next'){subStep=Math.min(4,subStep+1);return mountSubs();}if(a==='sub-reset'){subStep=0;return mountSubs();}
+ if(a==='ov-next'){ovStep=Math.min(15,ovStep+1);return mountOver();}if(a==='ov-all'){ovStep=15;return mountOver();}if(a==='ov-reset'){ovStep=0;return mountOver();}
+ if(a==='rq'){const i=+b.dataset.i;if(i===RQ[rqStep].a){rqStep++;rqWrong=-1;}else rqWrong=i;return mountRec();}
+ if(a==='rq-reset'){rqStep=0;rqWrong=-1;return mountRec();}
+ if(a==='mv-mode'){mvMode=b.dataset.m;mvStep=0;return mountMemo();}
+ if(a.startsWith('mv-')){const L=MV[mvMode].length;mvStep=a==='mv-reset'?0:a==='mv-all'?L:Math.max(0,Math.min(L,mvStep+(a==='mv-next'?1:-1)));return mountMemo();}
+ if(a.startsWith('cv-')){convStep=a==='cv-reset'?0:Math.max(0,Math.min(5,convStep+(a==='cv-next'?1:-1)));return mountConv();}
+ if(a==='act-mode'){actMode=b.dataset.m;return mountAct();}
+ if(a==='actA-check')return checkA(false);if(a==='actA-show')return checkA(true);if(a==='actA-reset'){actA.i=1;actA.fb='';actA.cls='';return mountAct();}
+ if(a==='actB-check')return checkB(false);if(a==='actB-show')return checkB(true);if(a==='actB-reset'){actB.k=0;actB.fb='';actB.cls='';return mountAct();}
+});
+document.addEventListener('keydown',ev=>{
+ if(ev.ctrlKey&&ev.shiftKey&&ev.key.toLowerCase()==='p'){ev.preventDefault();return $('#notesOverlay').classList.contains('open')?closeOverlays():openNotes();}
+ if(ev.key==='Escape')return closeOverlays();const ae=document.activeElement;
+ if(ae&&ae.classList.contains('ans')){if(ev.key==='Enter'){ev.preventDefault();ae.id==='ansA'?checkA(false):checkB(false);}return;}
+ if(ae&&ae.type==='range'&&(ev.key==='ArrowLeft'||ev.key==='ArrowRight'))return;
+ if(ev.key==='ArrowRight'||ev.key==='PageDown'||ev.key===' '){ev.preventDefault();if(!$('.overlay.open'))goTo(current+1);return;}
+ if(ev.key==='ArrowLeft'||ev.key==='PageUp'){ev.preventDefault();if(!$('.overlay.open'))goTo(current-1);return;}
+ if(ev.key.toLowerCase()==='f'){ev.preventDefault();if(!document.fullscreenElement)$('#deck').requestFullscreen?.().then(fitDeck).catch(()=>{});else document.exitFullscreen?.();}
+});
+addEventListener('resize',fitDeck);document.addEventListener('fullscreenchange',fitDeck);fitDeck();render();
+</script>
+</body>
+</html>
